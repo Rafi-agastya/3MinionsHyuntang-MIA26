@@ -99,7 +99,7 @@ export default async function ProyekIndexPage() {
 
           <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0">
             <Link
-              href="/ide"
+              href="/proyek/panduan"
               className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full bg-white border border-zinc-200 text-xs sm:text-sm font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-all shadow-2xs"
             >
               <span>Panduan Pengajuan Proposal Kelompok Warga</span>
