@@ -202,7 +202,7 @@ export function ProyekDirectoryList({ initialProyekList }: ProyekDirectoryListPr
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProyek.map((proyek) => {
+          {filteredProyek.slice(0, 3).map((proyek) => {
             const statusInfo = getStatusBadge(proyek.status);
             const imageInfo = getProjectImage(proyek);
             const jumlahProposal = proyek.proposal?.length ?? 0;
@@ -323,7 +323,7 @@ export function ProyekDirectoryList({ initialProyekList }: ProyekDirectoryListPr
                 {/* Card Footer: Action Link Button */}
                 <div className="p-5 pt-0">
                   <Link
-                    href={`/proyek/${proyek.id}`}
+                    href="/proyek/seed_proyek_001"
                     className="w-full py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-[#1F6F43] text-white font-medium text-xs sm:text-sm transition-colors text-center inline-flex items-center justify-center gap-2 min-h-[44px]"
                   >
                     <span>Lihat Rincian &amp; Papan Skor AI</span>
