@@ -36,15 +36,17 @@ export function Footer() {
               <strong>Aspirasi, Keterbukaan, Aksi, dan Realisasi</strong> — Platform transparansi dana desa dan bursa kerja sayembara swakelola warga.
             </p>
 
-            {/* Badge Keterangan Transparansi */}
-            <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/70 text-xs text-zinc-700 space-y-1">
-              <div className="flex items-center gap-1.5 font-semibold text-[#1F6F43]">
-                <ShieldCheck className="w-4 h-4 text-[#1F6F43] shrink-0" />
-                <span>Sistem Transparansi APBDes</span>
+            {/* Keterangan Transparansi (Menyatu Organik, Tanpa Nested Box) */}
+            <div className="mt-4 flex items-start gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+              <ShieldCheck className="w-4 h-4 text-[#1F6F43] mt-0.5 shrink-0" />
+              <div>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                  Sistem Transparansi APBDes
+                </span>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  Berbasis Append-Only Ledger &amp; AI Scoring
+                </p>
               </div>
-              <p className="text-[11px] text-zinc-600 leading-normal">
-                Berbasis Append-Only Ledger &amp; AI Scoring WIA MIA 2026.
-              </p>
             </div>
           </div>
 
