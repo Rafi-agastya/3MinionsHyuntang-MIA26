@@ -271,17 +271,17 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
       {/* ========================================================================= */}
       {/* APPEND-ONLY DATA TABLE / CARD LIST                                        */}
       {/* ========================================================================= */}
-      <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-xs">
+      <div className="w-full overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         {filteredTransaksi.length === 0 ? (
           /* Empty State */
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center text-zinc-400">
+            <div className="w-12 h-12 rounded-2xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
               <Search className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-semibold text-zinc-800">
+            <h3 className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
               Tidak ada mutasi yang cocok
             </h3>
-            <p className="text-xs text-zinc-500 max-w-sm leading-relaxed">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm leading-relaxed">
               Kami tidak menemukan transaksi dengan kata kunci &quot;{searchQuery}&quot; atau
               kombinasi filter yang Anda pilih. Coba sesuaikan kata kunci atau reset filter.
             </p>
@@ -292,7 +292,7 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
                 setFilterJenis("SEMUA");
                 setFilterBidang("Semua");
               }}
-              className="mt-2 text-xs font-semibold text-[#1F6F43] hover:underline min-h-[44px] flex items-center"
+              className="mt-2 text-xs font-semibold text-[#1F6F43] dark:text-emerald-400 hover:underline min-h-[44px] flex items-center"
             >
               Reset Semua Filter
             </button>
@@ -301,100 +301,108 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
           <>
             {/* Desktop Table View */}
             <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-[#FAFAF7] border-b border-zinc-200/80 text-xs font-bold text-zinc-600 uppercase tracking-wider">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-zinc-50/80 dark:bg-zinc-800/60 border-b border-zinc-200/80 dark:border-zinc-800 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                   <tr>
-                    <th className="px-5 py-3.5">ID / No. Bukti</th>
-                    <th className="px-5 py-3.5">Tanggal &amp; Waktu</th>
-                    <th className="px-5 py-3.5">Uraian Transaksi</th>
+                    <th className="px-4 py-3.5">ID / No. Bukti</th>
+                    <th className="px-4 py-3.5">Tanggal &amp; Waktu</th>
+                    <th className="px-4 py-3.5">Uraian Transaksi</th>
                     <th className="px-4 py-3.5">Bidang</th>
-                    <th className="px-5 py-3.5 text-right">Nominal Arus</th>
+                    <th className="px-4 py-3.5 text-right">Nominal Arus</th>
                     <th className="px-4 py-3.5 text-center">Verifikasi BPD</th>
                     <th className="px-4 py-3.5 text-center">Bukti</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-100 text-xs">
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80 text-xs">
                   {filteredTransaksi.map((item) => {
                     const isMasuk = item.jenis === "PEMASUKAN";
                     return (
                       <tr
                         key={item.id}
                         onClick={() => setSelectedTx(item)}
-                        className="group hover:bg-[#FAFAF7] cursor-pointer transition-colors duration-150"
+                        className="group hover:bg-zinc-50/70 dark:hover:bg-zinc-800/40 transition-colors cursor-pointer"
                       >
-                        {/* ID / No Bukti */}
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <div className="font-mono font-bold text-zinc-900 group-hover:text-[#1F6F43] transition-colors">
+                        {/* ID / No Bukti - Monospace code badge with high contrast */}
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className="font-mono text-xs font-medium text-zinc-700 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 px-2 py-0.5 rounded">
                             {item.nomorBukti}
-                          </div>
-                          <div className="text-[11px] font-mono text-zinc-400 mt-0.5">
+                          </span>
+                          <div className="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
                             {item.id}
                           </div>
                         </td>
 
                         {/* Tanggal & Jam */}
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <div className="font-medium text-zinc-900">
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                             {formatTanggal(item.tanggal)}
                           </div>
-                          <div className="text-zinc-500 mt-0.5 flex items-center gap-1 text-[11px]">
-                            <Clock className="w-3 h-3 text-zinc-400" />
+                          <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-zinc-400" />
                             <span>{formatWaktu(item.tanggal)}</span>
                           </div>
                         </td>
 
                         {/* Uraian Transaksi */}
-                        <td className="px-5 py-4 max-w-sm">
-                          <div className="font-semibold text-zinc-900 group-hover:text-[#1F6F43] transition-colors line-clamp-1">
+                        <td className="px-4 py-3.5 max-w-sm">
+                          <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-snug group-hover:text-[#1F6F43] transition-colors line-clamp-1">
                             {item.uraian}
                           </div>
-                          <div className="text-zinc-500 text-[11px] mt-0.5">
+                          <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                             Kategori: {item.kategori}
                           </div>
                         </td>
 
-                        {/* Bidang */}
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-zinc-100 text-zinc-700">
+                        {/* Bidang - Clean pill readable */}
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
                             {item.bidang}
                           </span>
                         </td>
 
                         {/* Nominal Arus Kas */}
-                        <td className="px-5 py-4 whitespace-nowrap text-right">
+                        <td className="px-4 py-3.5 whitespace-nowrap text-right">
                           <div
-                            className={`font-mono text-sm font-bold flex items-center justify-end gap-1 ${
-                              isMasuk ? "text-emerald-700" : "text-[#8A5A2B]"
+                            className={`font-mono text-sm font-bold ${
+                              isMasuk
+                                ? "text-emerald-700 dark:text-emerald-400"
+                                : "text-zinc-900 dark:text-zinc-100"
                             }`}
                           >
-                            <span>{isMasuk ? "+" : "-"}</span>
+                            <span>{isMasuk ? "+ " : "- "}</span>
                             <span>{formatRupiah(item.jumlah)}</span>
                           </div>
-                          <div className="text-[11px] text-zinc-400 mt-0.5">
-                            {isMasuk ? "Debit (RKD)" : "Kredit"}
+                          <div
+                            className={`text-xs font-medium mt-0.5 ${
+                              isMasuk
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-zinc-500 dark:text-zinc-400"
+                            }`}
+                          >
+                            {isMasuk ? "+ Kas Masuk (Debit)" : "- Kas Keluar (Kredit)"}
                           </div>
                         </td>
 
                         {/* Verifikasi BPD */}
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-[#1F6F43] text-[11px] font-semibold border border-emerald-200/60">
-                            <CheckCircle2 className="w-3 h-3 text-[#1F6F43]" />
-                            <span>Terverifikasi</span>
-                          </span>
+                        <td className="px-4 py-3.5 whitespace-nowrap text-center">
+                          <div className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full flex items-center gap-1.5 w-fit mx-auto">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
+                            <span>Terverifikasi BPD</span>
+                          </div>
                         </td>
 
-                        {/* Bukti Link Button */}
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                        {/* Bukti Button */}
+                        <td className="px-4 py-3.5 whitespace-nowrap text-center">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedTx(item);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 hover:bg-[#1F6F43] hover:text-white text-zinc-700 font-medium transition-colors text-xs"
+                            className="text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 px-2.5 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 transition-colors inline-flex items-center gap-1.5"
                             aria-label={`Buka rincian bukti transaksi ${item.nomorBukti}`}
                           >
-                            <FileText className="w-3.5 h-3.5" />
+                            <FileText className="w-3.5 h-3.5 text-zinc-500" />
                             <span>Rincian</span>
                           </button>
                         </td>
@@ -406,32 +414,32 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
             </div>
 
             {/* Mobile / Tablet Card View */}
-            <div className="lg:hidden divide-y divide-zinc-100">
+            <div className="lg:hidden divide-y divide-zinc-100 dark:divide-zinc-800">
               {filteredTransaksi.map((item) => {
                 const isMasuk = item.jenis === "PEMASUKAN";
                 return (
                   <article
                     key={item.id}
                     onClick={() => setSelectedTx(item)}
-                    className="p-4 sm:p-5 hover:bg-[#FAFAF7] cursor-pointer transition-colors space-y-3"
+                    className="p-4 sm:p-5 hover:bg-zinc-50/70 dark:hover:bg-zinc-800/40 cursor-pointer transition-colors space-y-3"
                   >
                     {/* Top Row: No Bukti & Date */}
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-mono font-bold text-zinc-900 bg-zinc-100 px-2 py-0.5 rounded">
+                      <span className="font-mono text-xs font-medium text-zinc-700 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 px-2 py-0.5 rounded">
                         {item.nomorBukti}
                       </span>
-                      <span className="text-zinc-500 font-medium">
+                      <span className="text-zinc-500 dark:text-zinc-400 font-medium">
                         {formatTanggal(item.tanggal)} • {formatWaktu(item.tanggal)}
                       </span>
                     </div>
 
                     {/* Middle: Uraian */}
                     <div>
-                      <h4 className="text-sm font-semibold text-zinc-900 leading-snug">
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-snug">
                         {item.uraian}
                       </h4>
-                      <div className="flex items-center gap-2 mt-1.5 text-xs text-zinc-500">
-                        <span className="bg-zinc-100 px-2 py-0.5 rounded text-[11px] text-zinc-700">
+                      <div className="flex items-center gap-2 mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
                           {item.bidang}
                         </span>
                         <span>•</span>
@@ -440,19 +448,21 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
                     </div>
 
                     {/* Bottom: Nominal & Verification */}
-                    <div className="pt-2 border-t border-zinc-100 flex items-center justify-between gap-2">
+                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2">
                       <div
-                        className={`font-mono text-base font-bold ${
-                          isMasuk ? "text-emerald-700" : "text-[#8A5A2B]"
+                        className={`font-mono text-sm sm:text-base font-bold ${
+                          isMasuk
+                            ? "text-emerald-700 dark:text-emerald-400"
+                            : "text-zinc-900 dark:text-zinc-100"
                         }`}
                       >
                         {isMasuk ? "+" : "-"} {formatRupiah(item.jumlah)}
                       </div>
 
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-[#1F6F43] text-xs font-semibold">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      <div className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 dark:bg-emerald-950/30 dark:border-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                         <span>BPD Sah</span>
-                      </span>
+                      </div>
                     </div>
                   </article>
                 );

@@ -183,7 +183,7 @@ export default async function KasPage() {
             <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               Buku Kas Umum Publik
             </h1>
-            <p className="max-w-2xl text-xs leading-relaxed text-zinc-600 sm:text-sm">
+            <p className="max-w-2xl text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
               Catatan mutasi realisasi anggaran pendapatan dan belanja {kasData.namaDesa} Tahun Anggaran 2026. Seluruh mutasi tersimpan dengan sistem ledger append-only berantai SHA-256 dan diverifikasi bersama Badan Permusyawaratan Desa (BPD).
             </p>
           </div>
