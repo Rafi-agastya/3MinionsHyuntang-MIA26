@@ -1,139 +1,156 @@
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ShieldCheck, Database, FileText, ExternalLink, HelpCircle, Mail, MapPin } from "lucide-react";
+import {
+  ShieldCheck,
+  MapPin,
+  ExternalLink,
+  Mail,
+  ChevronRight,
+} from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-akar-border bg-white text-akar-ink">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand & Ringkasan */}
+    <footer className="w-full border-t border-zinc-200/80 bg-white text-zinc-900 font-sans snap-end">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-12 lg:px-8 space-y-8">
+        {/* Main Grid: Responsive 1 col on mobile, 3 cols on tablet/desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          {/* Column 1: Brand & Keterangan Transparansi */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-akar-primary text-white">
-                <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+            <Link href="/" className="inline-flex items-center gap-2.5 group">
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-emerald-50 border border-emerald-200/60 p-1 flex items-center justify-center">
+                <Image
+                  src="/logo-akar.png"
+                  alt="Logo AKAR"
+                  width={28}
+                  height={28}
+                  className="object-contain"
+                />
               </div>
-              <span className="font-extrabold text-xl tracking-tight text-akar-primary">
+              <span className="font-extrabold text-xl tracking-tight text-[#1F6F43]">
                 AKAR
               </span>
-            </div>
-            <p className="text-xs sm:text-sm text-akar-muted leading-relaxed">
+            </Link>
+
+            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
               <strong>Aspirasi, Keterbukaan, Aksi, dan Realisasi</strong> — Platform transparansi dana desa dan bursa kerja sayembara swakelola warga.
             </p>
-            <div className="inline-flex items-center gap-2 rounded-lg bg-akar-primary-light/60 px-3 py-2 text-xs font-medium text-akar-primary">
-              <MapPin className="h-3.5 w-3.5" />
-              <span>Desa Karang Sari, Kec. Harapan</span>
+
+            {/* Keterangan Transparansi (Menyatu Organik, Tanpa Nested Box) */}
+            <div className="mt-4 flex items-start gap-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
+              <ShieldCheck className="w-4 h-4 text-[#1F6F43] mt-0.5 shrink-0" />
+              <div>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200">
+                  Sistem Transparansi APBDes
+                </span>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  Berbasis Append-Only Ledger &amp; AI Scoring
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Navigasi Modul */}
+          {/* Column 2: Menu Tautan Cepat */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-akar-ink">
-              Modul Transparansi
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+              Menu Navigasi Utama
             </h4>
-            <ul className="space-y-2 text-sm text-akar-muted">
+            <ul className="space-y-2.5 text-xs sm:text-sm font-medium text-zinc-600">
               <li>
                 <Link
-                  href="/proyek"
-                  className="hover:text-akar-primary transition-colors flex items-center gap-1.5 py-1"
+                  href="/"
+                  className="hover:text-[#1F6F43] transition-colors flex items-center gap-2 py-0.5"
                 >
-                  <FileText className="h-3.5 w-3.5" />
-                  Sayembara Swakelola
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/ide"
-                  className="hover:text-akar-primary transition-colors flex items-center gap-1.5 py-1"
-                >
-                  <HelpCircle className="h-3.5 w-3.5" />
-                  Aspirasi & Aduan Warga
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Beranda</span>
                 </Link>
               </li>
               <li>
                 <Link
                   href="/kas"
-                  className="hover:text-akar-primary transition-colors flex items-center gap-1.5 py-1"
+                  className="hover:text-[#1F6F43] transition-colors flex items-center gap-2 py-0.5"
                 >
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  Buku Kas Publik (Log Anti-Ubah)
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Buku Kas Publik (Log Anti-Ubah)</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/proyek"
+                  className="hover:text-[#1F6F43] transition-colors flex items-center gap-2 py-0.5"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Sayembara Proyek &amp; Swakelola</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/ide"
+                  className="hover:text-[#1F6F43] transition-colors flex items-center gap-2 py-0.5"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Aspirasi &amp; Aduan Warga</span>
                 </Link>
               </li>
               <li>
                 <Link
                   href="/data"
-                  className="hover:text-akar-primary transition-colors flex items-center gap-1.5 py-1"
+                  className="hover:text-[#1F6F43] transition-colors flex items-center gap-2 py-0.5"
                 >
-                  <Database className="h-3.5 w-3.5" />
-                  Data Terbuka (Unduh CSV/JSON)
+                  <ChevronRight className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Data Terbuka (CSV/JSON)</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Standar & Regulasi */}
+          {/* Column 3: Kontak & Pengawasan Desa */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-akar-ink">
-              Rujukan & Akuntabilitas
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+              Pemerintah Desa &amp; Pengawas
             </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-akar-muted">
-              <li>
-                <span className="font-medium text-akar-ink">Permendes PDT 16/2025:</span>
-                <span className="block text-xs">Pola Padat Karya Tunai Desa (PKTD)</span>
-              </li>
-              <li>
-                <span className="font-medium text-akar-ink">Peraturan LKPP 12/2019:</span>
-                <span className="block text-xs">Pedoman Pengadaan Barang/Jasa di Desa</span>
-              </li>
-              <li>
-                <span className="font-medium text-akar-ink">PMK 7/2026:</span>
-                <span className="block text-xs">Ketentuan Penyaluran & Alokasi KDMP</span>
-              </li>
-              <li>
-                <span className="font-medium text-akar-ink">UU PDP No. 27/2022:</span>
-                <span className="block text-xs">Privasi identitas NIK & pelapor anonim</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Kontak & Bantuan */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-akar-ink">
-              Kontak & Pengawasan
-            </h4>
-            <p className="text-xs text-akar-muted leading-relaxed">
-              Pemerintah Desa Karang Sari & Badan Permusyawaratan Desa (BPD) selaku pengawas independen.
+            <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              Pemerintah Desa Karang Sari &amp; Badan Permusyawaratan Desa (BPD) selaku pengawas independen.
             </p>
-            <div className="text-xs text-akar-muted space-y-1">
-              <div className="flex items-center gap-1.5">
-                <Mail className="h-3.5 w-3.5 text-akar-earth" />
+
+            <div className="space-y-2 text-xs text-zinc-600 pt-1">
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-[#8A5A2B] shrink-0 mt-0.5" />
+                <span>Kecamatan Harapan, Kabupaten Contoh</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-[#8A5A2B] shrink-0" />
                 <span>aspirasi@karangsari.desa.id</span>
               </div>
-              <div className="pt-2">
-                <Link
-                  href="/tiket"
-                  className="text-xs font-semibold text-akar-primary hover:underline inline-flex items-center gap-1"
-                >
-                  Lacak Tiket Audit Warga
-                  <ExternalLink className="h-3 w-3" />
-                </Link>
-              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                href="/tiket"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1F6F43] hover:underline"
+              >
+                <span>Lacak Tiket Aduan Warga</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between border-t border-akar-border/60 pt-6 text-xs text-akar-muted gap-4">
-          <p>© 2026 AKAR - Tim 3MinionsHyuntang. Hak Cipta Dilindungi.</p>
-          <div className="flex items-center space-x-6">
-            <Link href="/data" className="hover:text-akar-primary transition-colors">
+        {/* Bottom Bar: Copyright & Attribution */}
+        <div className="border-t border-zinc-200/70 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <p className="text-center sm:text-left">
+            © 2026 Tim 3MinionsHyuntang — Platform Aspirasi &amp; Akuntabilitas Dana Desa.
+          </p>
+
+          <div className="flex items-center space-x-5 text-xs font-medium">
+            <Link href="/data" className="hover:text-[#1F6F43] transition-colors">
               Data Terbuka
             </Link>
-            <Link href="/tentang" className="hover:text-akar-primary transition-colors">
-              Tentang AKAR
+            <Link href="/kas" className="hover:text-[#1F6F43] transition-colors">
+              Buku Kas
             </Link>
-            <Link href="/privasi" className="hover:text-akar-primary transition-colors">
-              Kebijakan Privasi
+            <Link href="/proyek" className="hover:text-[#1F6F43] transition-colors">
+              Sayembara
             </Link>
           </div>
         </div>
@@ -141,4 +158,3 @@ export function Footer() {
     </footer>
   );
 }
-
