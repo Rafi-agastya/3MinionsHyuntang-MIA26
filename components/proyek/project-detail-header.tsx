@@ -148,18 +148,18 @@ export function ProjectDetailHeader({
           className="flex items-center gap-1.5 text-xs sm:text-sm text-akar-muted flex-wrap"
         >
           <Link
-            href="/"
+            href="/proyek"
             className="flex items-center gap-1 hover:text-akar-primary transition-colors focus:outline-none focus-visible:underline"
           >
             <Home className="w-3.5 h-3.5" />
-            <span>Beranda</span>
+            <span>Proyek</span>
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-stone-400 shrink-0" />
           <Link
             href="/proyek"
             className="hover:text-akar-primary transition-colors focus:outline-none focus-visible:underline"
           >
-            <span>Sayembara</span>
+            <span>Sayembara Swakelola</span>
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-stone-400 shrink-0" />
           <span

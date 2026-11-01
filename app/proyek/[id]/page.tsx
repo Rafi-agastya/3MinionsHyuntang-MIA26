@@ -7,6 +7,7 @@ import { ProjectTimeline } from "@/components/proyek/project-timeline";
 import { ProjectSummaryCards } from "@/components/proyek/project-summary-cards";
 import { ProjectTabs } from "@/components/proyek/project-tabs";
 import { getProyekDetail } from "@/lib/proyek-api";
+import { getMockProjectById } from "@/components/proyek/mock-detail-data";
 
 interface ProyekDetailPageProps {
   params: Promise<{ id: string }>;
@@ -24,9 +25,10 @@ export async function generateMetadata({
       description: proyek.deskripsi,
     };
   } catch {
+    const fallback = getMockProjectById(id);
     return {
-      title: "Proyek | AKAR Transparansi Desa",
-      description: "Rincian sayembara pembangunan desa.",
+      title: `${fallback.judul} | AKAR Transparansi Desa`,
+      description: fallback.deskripsi,
     };
   }
 }
@@ -35,7 +37,17 @@ export default async function ProyekDetailPage({
   params,
 }: ProyekDetailPageProps) {
   const { id } = await params;
-  const proyek = await getProyekDetail(id);
+  let proyek;
+  try {
+    proyek = await getProyekDetail(id);
+  } catch (error) {
+    console.warn(`[ProyekDetailPage] Backend API fetch failed for id '${id}', falling back to mock data:`, error);
+    proyek = getMockProjectById(id);
+  }
+
+  if (!proyek) {
+    proyek = getMockProjectById(id);
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
