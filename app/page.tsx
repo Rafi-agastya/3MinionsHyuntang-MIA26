@@ -13,6 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import { SlideIndicator } from "@/components/slide-indicator";
 import { AnimatedMetricCards } from "@/components/animated-metric-cards";
 import { LandingProjectsIdeas } from "@/components/landing-projects-ideas";
@@ -394,9 +395,9 @@ export default function HomePage() {
       <section
         id="slide-footer"
         aria-label="Data Terbuka dan Informasi Platform"
-        className="min-h-screen lg:h-screen w-full lg:snap-start flex flex-col justify-between items-center relative p-4 sm:p-6 lg:p-8 py-16 lg:py-0 bg-stone-50"
+        className="min-h-screen w-full lg:snap-start flex flex-col justify-between items-center relative pt-16 sm:pt-20 bg-stone-50"
       >
-        <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center my-auto">
+        <div className="w-full max-w-6xl mx-auto flex-1 flex flex-col justify-center my-auto px-4 sm:px-6 lg:px-8 mb-12">
           {/* Top Banner Callout */}
           <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-akar-primary to-akar-primary-hover p-6 sm:p-8 text-white shadow-lg mb-6 sm:mb-8">
             {/* Subtle Grid / Dot SVG Background Overlay */}
@@ -542,26 +543,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Bottom Footer Bar */}
-        <div className="w-full max-w-6xl mx-auto px-4 pb-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-akar-muted gap-3 border-t border-akar-border/60 pt-6">
-            <p>© 2026 AKAR - Tim 3MinionsHyuntang. Hak Cipta Dilindungi.</p>
-            <div className="flex items-center space-x-5">
-              <Link href="/data" className="hover:text-akar-primary transition-colors">
-                Data Terbuka
-              </Link>
-              <Link href="/kas" className="hover:text-akar-primary transition-colors">
-                Buku Kas
-              </Link>
-              <Link href="/proyek" className="hover:text-akar-primary transition-colors">
-                Sayembara
-              </Link>
-              <Link href="/ide" className="hover:text-akar-primary transition-colors">
-                Aspirasi
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* Global Standardized Footer Component */}
+        <Footer />
       </section>
     </div>
   );
