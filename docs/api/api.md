@@ -36,3 +36,7 @@ POST /api/desa/:id/kas/entri (K8 — entri penerimaan/pembayaran, validasi bukti
 POST /api/kas/entri/:id/koreksi (K9 — pencatatan entri koreksi pembalik).
 POST /api/kas/entri/:id/verifikasi (K10 — verifikasi pengawas, aturan pemisahan wewenang).
 PATCH /api/proyek/:id/termin/:tahap/buka (K11 — pembukaan termin berdasarkan progres).
+
+BE7:
+GET /api/data/:dataset (K12 — dataset publik: anggaran, proyek, termin, kas, tiket-agregat, query ?format=json|csv, rate limit 60/menit/IP, cache-control 60 detik).
+GET /api/health (Pemeriksaan status layanan & kesiapan basis data).
