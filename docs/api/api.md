@@ -32,3 +32,7 @@ POST /api/desa/:id/sumber-dana (K6)
 POST /api/desa/:id/pos-anggaran (K7)
 
 BE6:
+POST /api/desa/:id/kas/entri (K8 — entri penerimaan/pembayaran, validasi bukti & termin).
+POST /api/kas/entri/:id/koreksi (K9 — pencatatan entri koreksi pembalik).
+POST /api/kas/entri/:id/verifikasi (K10 — verifikasi pengawas, aturan pemisahan wewenang).
+PATCH /api/proyek/:id/termin/:tahap/buka (K11 — pembukaan termin berdasarkan progres).
