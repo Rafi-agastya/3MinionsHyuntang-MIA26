@@ -9,6 +9,20 @@ datasource db {
 }
 
 // ================= ENUMERASI ================= 
+enum Peran {
+  WARGA
+  PERANGKAT
+  PENGAWAS
+  ADMIN
+}
+
+enum StatusAkun {
+  MENUNGGU
+  AKTIF
+  DITOLAK
+  DINONAKTIFKAN
+}
+
 enum KelasProyek {
   KECIL
   MENENGAH
@@ -50,28 +64,58 @@ enum KeputusanFlag {
   TIDAK_SAH
 }
 
-// ================= STUB PENDUKUNG ================= 
-// Disediakan agar relasi pada Kelompok dan AnggotaKelompok tervalidasi
+// ================= MODEL PENGGUNA & AUDIT ================= 
+
 model Pengguna {
   id               String            @id @default(cuid())
+  authId           String            @unique
   nama             String
+  email            String            @unique
+  peran            Peran             @default(WARGA)
+  statusAkun       StatusAkun        @default(MENUNGGU)
+  desaId           String
+  rtRw             String?
+  kontak           String?
+  setujuSyaratPada DateTime?
+  createdAt        DateTime          @default(now())
+
+  desa             Desa              @relation(fields: [desaId], references: [id])
   kelompokDipimpin Kelompok[]
   anggotaKelompok  AnggotaKelompok[]
+  audit            AuditLog[]
+
+  @@index([desaId])
+}
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  aktorId   String?
+  aksi      String
+  entitas   String
+  entitasId String
+  sebelum   Json?
+  sesudah   Json?
+  waktu     DateTime  @default(now())
+
+  aktor     Pengguna? @relation(fields: [aktorId], references: [id])
+
+  @@index([entitas, entitasId])
 }
 
 // ================= MODEL INTI T1 ================= 
 
 model Desa {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   nama        String
   kecamatan   String
   kabupaten   String
-  tahun       Int      @default(0)
+  tahun       Int        @default(0)
   pagu        BigInt
-  pagukdmp    BigInt   @default(0)
+  pagukdmp    BigInt     @default(0)
   konfigurasi Json?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
   proyek      Proyek[]
+  pengguna    Pengguna[]
 }
 
 model Proyek {

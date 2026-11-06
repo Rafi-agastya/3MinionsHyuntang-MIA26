@@ -1,4 +1,4 @@
-import { Prisma, KelasProyek, Jalur, StatusProyek, StatusAnalisis, JenisFlag, KeputusanFlag } from "@prisma/client";
+import { Prisma, KelasProyek, Jalur, StatusProyek, StatusAnalisis, JenisFlag, KeputusanFlag, Peran, StatusAkun } from "@prisma/client";
 import { hitungSkor } from "../lib/scoring";
 import { prisma } from "../lib/prisma";
 
@@ -14,6 +14,7 @@ async function main() {
   await prisma.kelompok.deleteMany();
   await prisma.rabItem.deleteMany();
   await prisma.proyek.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.pengguna.deleteMany();
   await prisma.desa.deleteMany();
 
@@ -160,22 +161,82 @@ async function main() {
 
   // 4. Buat Pengguna (Minimal 4 peran)
   const kades = await prisma.pengguna.create({
-    data: { nama: "Pak Hendy (Kepala Desa / Perangkat)" },
+    data: {
+      authId: "seed_auth_kades",
+      email: "kades@karangsari.desa.id",
+      nama: "Pak Hendy (Kepala Desa / Perangkat)",
+      peran: Peran.PERANGKAT,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/01",
+      kontak: "081234567890",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
   const pengawas = await prisma.pengguna.create({
-    data: { nama: "Pak Bambang (Pengawas BPD)" },
+    data: {
+      authId: "seed_auth_pengawas",
+      email: "bpd@karangsari.desa.id",
+      nama: "Pak Bambang (Pengawas BPD)",
+      peran: Peran.PENGAWAS,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "02/01",
+      kontak: "081234567891",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
   const admin = await prisma.pengguna.create({
-    data: { nama: "Siti Rahma (Admin Desa)" },
+    data: {
+      authId: "seed_auth_admin",
+      email: "admin@karangsari.desa.id",
+      nama: "Siti Rahma (Admin Desa)",
+      peran: Peran.ADMIN,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/02",
+      kontak: "081234567892",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
   const ketuaA = await prisma.pengguna.create({
-    data: { nama: "Rudi Hermawan (Ketua Kelompok Tani Muda)" },
+    data: {
+      authId: "seed_auth_ketua_a",
+      email: "rudi@karangsari.desa.id",
+      nama: "Rudi Hermawan (Ketua Kelompok Tani Muda)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/02",
+      kontak: "081234567893",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
   const ketuaB = await prisma.pengguna.create({
-    data: { nama: "Joko Widodo (Ketua CV Karya Warga)" },
+    data: {
+      authId: "seed_auth_ketua_b",
+      email: "joko@karangsari.desa.id",
+      nama: "Joko Widodo (Ketua CV Karya Warga)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "02/03",
+      kontak: "081234567894",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
   const ketuaC = await prisma.pengguna.create({
-    data: { nama: "Budi Santoso (Ketua Kelompok Tukang RT 3)" },
+    data: {
+      authId: "seed_auth_ketua_c",
+      email: "budi@karangsari.desa.id",
+      nama: "Budi Santoso (Ketua Kelompok Tukang RT 3)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "03/03",
+      kontak: "081234567895",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
 
   console.log("Pengguna (Perangkat, Pengawas, Admin, dan Warga) berhasil dibuat.");
