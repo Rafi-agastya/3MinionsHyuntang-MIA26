@@ -78,6 +78,22 @@ export function checkRateLimit(
 }
 
 /**
+ * Pembatasan harian per akun pengguna (PRD Bagian 35.4: 5 ide/hari dan 5 tiket/hari per akun).
+ *
+ * @param userId ID pengguna terotentikasi
+ * @param action Jenis aksi ("ide" | "tiket")
+ * @param limit Batas harian (default: 5)
+ */
+export function checkAccountDailyLimit(
+  userId: string,
+  action: "ide" | "tiket",
+  limit = 5
+): RateLimitResult {
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+  return checkRateLimit(`account:${action}:${userId}`, limit, ONE_DAY_MS);
+}
+
+/**
  * Membersihkan seluruh catatan rate limit (berguna untuk isolasi pengujian Vitest).
  */
 export function resetRateLimitStore(): void {

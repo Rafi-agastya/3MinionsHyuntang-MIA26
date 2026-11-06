@@ -40,3 +40,12 @@ PATCH /api/proyek/:id/termin/:tahap/buka (K11 — pembukaan termin berdasarkan p
 BE7:
 GET /api/data/:dataset (K12 — dataset publik: anggaran, proyek, termin, kas, tiket-agregat, query ?format=json|csv, rate limit 60/menit/IP, cache-control 60 detik).
 GET /api/health (Pemeriksaan status layanan & kesiapan basis data).
+
+BE8:
+POST /api/ide (Pembuatan ide/aduan warga, rate limit 5/hari/akun).
+GET /api/ide (Daftar ide publik, filter status/kategori, sensor pengaju anonim, penanda tenggat).
+POST /api/ide/:id/dukung (Dukungan warga, anti-duplikasi 409).
+PATCH /api/ide/:id/status (Transisi status ide oleh perangkat/admin, validasi alasan penolakan).
+POST /api/tiket (Pembuatan tiket audit/aduan lanjutan, rate limit 5/hari/akun, nomor lacak unik).
+GET /api/tiket/:nomor (Pelacakan publik via nomor tiket, privasi pelapor disembunyikan total).
+PATCH /api/tiket/:id (Tanggapan dan pembaruan status tiket oleh perangkat/admin).

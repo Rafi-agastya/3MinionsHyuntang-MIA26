@@ -95,6 +95,29 @@ enum StatusVerifikasi {
   DITOLAK
 }
 
+enum SumberIde {
+  WARGA
+  KADES
+  MUSDES
+  BPD
+  KECAMATAN
+}
+
+enum StatusIde {
+  DIAJUKAN
+  VERIFIKASI
+  DITERIMA
+  DITOLAK
+  JADI_PROYEK
+}
+
+enum StatusTiket {
+  BARU
+  DITINJAU
+  DITANGGAPI
+  SELESAI
+}
+
 // ================= MODEL PENGGUNA & AUDIT ================= 
 
 model Pengguna {
@@ -119,6 +142,11 @@ model Pengguna {
   entriDicatat     EntriKas[]        @relation("Pencatat")
   verifikasiKas    VerifikasiEntri[] @relation("PemverifikasiKas")
   audit            AuditLog[]
+  ideDiajukan      Ide[]             @relation("PengajuIde")
+  dukunganIde      DukunganIde[]
+  tiketDilaporkan  Tiket[]           @relation("PelaporTiket")
+  laporanDiunggah     LaporanProgres[]  @relation("PengunggahLaporan")
+  laporanDiverifikasi LaporanProgres[]  @relation("PengawasLaporan")
 
   @@index([desaId])
 }
@@ -155,6 +183,7 @@ model Desa {
   sumberDana  SumberDana[]
   posAnggaran PosAnggaran[]
   entriKas    EntriKas[]
+  ide         Ide[]
 }
 
 model Proyek {
@@ -184,6 +213,10 @@ model Proyek {
   keputusan        Keputusan?
   termin           Termin[]
   entriKas         EntriKas[]
+  ideId            String?
+  ide              Ide?            @relation(fields: [ideId], references: [id])
+  tiket            Tiket[]
+  laporanProgres   LaporanProgres[]
 
   @@index([desaId, status])
 }
@@ -456,3 +489,88 @@ model VerifikasiEntri {
 
   @@index([entriId])
 }
+
+// ================= MODEL IDE & TIKET (BAGIAN 11 & 33) =================
+
+model Ide {
+  id               String        @id @default(cuid())
+  nomor            String        @unique
+  judul            String
+  deskripsi        String
+  lokasi           String?
+  kategori         String
+  sumber           SumberIde     @default(WARGA)
+  status           StatusIde     @default(DIAJUKAN)
+  alasan           String?
+  dasarKebutuhan   String?
+  anonim           Boolean       @default(false)
+  tenggatTanggapan DateTime
+  desaId           String
+  pengajuId        String
+  createdAt        DateTime      @default(now())
+
+  desa             Desa          @relation(fields: [desaId], references: [id])
+  pengaju          Pengguna      @relation("PengajuIde", fields: [pengajuId], references: [id])
+  dukungan         DukunganIde[]
+  proyek           Proyek[]
+
+  @@index([desaId, status])
+  @@index([nomor])
+}
+
+model DukunganIde {
+  ideId      String
+  penggunaId String
+  createdAt  DateTime @default(now())
+
+  ide        Ide      @relation(fields: [ideId], references: [id])
+  pengguna   Pengguna @relation(fields: [penggunaId], references: [id])
+
+  @@id([ideId, penggunaId])
+  @@index([ideId])
+}
+
+model Tiket {
+  id         String      @id @default(cuid())
+  nomor      String      @unique
+  proyekId   String?
+  pelaporId  String
+  kategori   String
+  isi        String
+  anonim     Boolean     @default(false)
+  status     StatusTiket @default(BARU)
+  tanggapan  String?
+  tenggat    DateTime
+  dibuatPada DateTime    @default(now())
+
+  proyek     Proyek?     @relation(fields: [proyekId], references: [id])
+  pelapor    Pengguna    @relation("PelaporTiket", fields: [pelaporId], references: [id])
+
+  @@index([proyekId])
+  @@index([nomor])
+}
+
+model LaporanProgres {
+  id              String           @id @default(cuid())
+  proyekId        String
+  minggu          Int
+  persen          Int
+  fotoUrls        String[]
+  exif            Json?
+  checklist       Json
+  catatan         String?
+  status          StatusVerifikasi @default(MENUNGGU)
+  catatanPengawas String?
+  pengunggahId    String
+  pengawasId      String?
+  dibuatPada      DateTime         @default(now())
+
+  proyek          Proyek           @relation(fields: [proyekId], references: [id])
+  pengunggah      Pengguna         @relation("PengunggahLaporan", fields: [pengunggahId], references: [id])
+  pengawas        Pengguna?        @relation("PengawasLaporan", fields: [pengawasId], references: [id])
+
+  @@unique([proyekId, minggu])
+  @@index([proyekId])
+}
+
+
