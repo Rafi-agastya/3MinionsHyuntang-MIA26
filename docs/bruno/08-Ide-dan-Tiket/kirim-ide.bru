@@ -1,0 +1,28 @@
+meta {
+  name: Kirim Ide / Aspirasi Baru
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/ide
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:json {
+  {
+    "desaId": "desa_karangsari",
+    "judul": "Pengaspalan Jalan Lingkungan Menuju Pemakaman Umum",
+    "deskripsi": "Akses jalan menuju pemakaman umum sering becek dan licin saat musim hujan sehingga menyulitkan warga saat iring-iringan jenazah.",
+    "kategori": "INFRASTRUKTUR",
+    "lokasi": "RT 04 RW 02 Dusun Kidul",
+    "perkiraanBiaya": 45000000,
+    "dasarKebutuhan": "Aspirasi hasil rembug warga RT 04 pada pertemuan bulanan warga Oktober 2026."
+  }
+}
+

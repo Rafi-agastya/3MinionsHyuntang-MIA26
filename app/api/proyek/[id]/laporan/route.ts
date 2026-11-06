@@ -34,16 +34,15 @@ export const POST = apiHandler(
       throw new ApiError("NOT_FOUND", "Proyek tidak ditemukan");
     }
 
-    // Hak Akses: Penanggung jawab proyek (ketua kelompok pemenang sayembara atau admin/perangkat)
+    // Hak Akses (PRD Bagian 8): Penanggung jawab proyek (ketua kelompok pemenang) atau ADMIN
     const isKetuaPemenang =
       proyek.keputusan?.proposal?.kelompok?.ketuaId === actor.id;
-    const isInternal =
-      actor.peran === Peran.ADMIN || actor.peran === Peran.PERANGKAT;
+    const isAdmin = actor.peran === Peran.ADMIN;
 
-    if (!isKetuaPemenang && !isInternal) {
+    if (!isKetuaPemenang && !isAdmin) {
       throw new ApiError(
         "FORBIDDEN",
-        "Hanya penanggung jawab proyek (ketua kelompok pemenang) yang berhak mengunggah laporan mingguan.",
+        "Hanya penanggung jawab proyek (ketua kelompok pemenang) atau administrator yang berhak mengunggah laporan mingguan.",
         undefined,
         403
       );

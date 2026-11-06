@@ -1,0 +1,16 @@
+meta {
+  name: Beri Dukungan pada Ide Warga
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/ide/ide_seed_001/dukung
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+

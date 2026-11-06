@@ -1,0 +1,23 @@
+meta {
+  name: Registrasi Akun Warga
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/registrasi
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nama": "Budi Santoso",
+    "email": "budi.santoso@karangsari.desa.id",
+    "kataSandi": "SandiKuat123#",
+    "desaId": "desa_karangsari",
+    "rtRw": "02/05",
+    "nik": "3201011234560001"
+  }
+}
+

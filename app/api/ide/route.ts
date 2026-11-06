@@ -49,7 +49,7 @@ const buatIdeSchema = z.object({
 
 export const POST = apiHandler(async (req: Request) => {
   const actor = await requireAuth(req);
-  requireRole(actor, Peran.WARGA, Peran.PERANGKAT, Peran.ADMIN);
+  requireRole(actor, Peran.WARGA, Peran.PERANGKAT, Peran.PENGAWAS, Peran.ADMIN);
   requireAktif(actor);
 
   // Batas laju pengiriman ide harian (PRD 35.4: 5 ide/hari per akun)

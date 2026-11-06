@@ -1,0 +1,23 @@
+meta {
+  name: Ubah Status Ide / Aspirasi
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/ide/ide_seed_001/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "status": "DISETUJUI",
+    "catatan": "Usulan disetujui dalam Musrenbangdes untuk dimasukkan ke RKPDes Tahun Anggaran 2027."
+  }
+}
+

@@ -1,0 +1,30 @@
+meta {
+  name: Pencatatan Entri Kas (Penerimaan / Pembayaran)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/desa/desa_karangsari/kas/entri
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "tanggal": "2026-11-05T09:00:00.000Z",
+    "posAnggaranId": "pos_balai_warga_001",
+    "tipe": "PEMBAYARAN",
+    "jumlah": 41400000,
+    "uraian": "Pencairan termin 1 pembangunan balai warga (30% kontrak)",
+    "buktiUrl": "https://storage.karangsari.desa.id/bukti-kas/sp2d-termin-1.pdf",
+    "proyekId": "seed_proyek_001",
+    "terminId": "termin_seed_001",
+    "penerimaDisamarkan": false
+  }
+}
+

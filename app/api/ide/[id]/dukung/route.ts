@@ -7,7 +7,7 @@ import { Peran, StatusIde } from "@prisma/client";
 export const POST = apiHandler(
   async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     const actor = await requireAuth(req);
-    requireRole(actor, Peran.WARGA, Peran.PERANGKAT, Peran.ADMIN);
+    requireRole(actor, Peran.WARGA, Peran.PERANGKAT, Peran.PENGAWAS, Peran.ADMIN);
     requireAktif(actor);
 
     const { id: ideId } = await params;

@@ -1,0 +1,40 @@
+meta {
+  name: Pendaftaran Kelompok Masyarakat (Pokmas)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/kelompok
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:json {
+  {
+    "nama": "Kelompok Swakelola Guyub Rukun",
+    "desaId": "desa_karangsari",
+    "anggota": [
+      {
+        "nama": "Budi Santoso",
+        "nik": "3201011234560001",
+        "rtRw": "02/05"
+      },
+      {
+        "nama": "Agus Pratama",
+        "nik": "3201011234560002",
+        "rtRw": "02/05"
+      },
+      {
+        "nama": "Slamet Riyadi",
+        "nik": "3201011234560003",
+        "rtRw": "03/05"
+      }
+    ]
+  }
+}
+

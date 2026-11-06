@@ -1,0 +1,22 @@
+meta {
+  name: Buka Termin Progres Manual
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/termin/2/buka
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPengawas}}
+}
+
+body:json {
+  {
+    "alasan": "Progres pekerjaan fisik telah terverifikasi mencapai 35%, memenuhi ambang pembukaan Termin 2 (30%)."
+  }
+}
+

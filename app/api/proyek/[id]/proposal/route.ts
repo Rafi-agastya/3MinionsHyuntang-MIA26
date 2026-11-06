@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Peran, StatusProyek, StatusAnalisis } from "@prisma/client";
 import { prisma, serializeBigInt } from "@/lib/prisma";
 import { apiHandler, ok, ApiError } from "@/lib/api";
-import { getPengguna, requireAuth, requireAktif } from "@/lib/auth";
+import { getPengguna, requireAuth, requireAktif, requireRole } from "@/lib/auth";
 import { tulisAudit } from "@/lib/audit";
 import { sanitasiKelompok } from "@/lib/nik";
 import {
@@ -74,8 +74,9 @@ function parseKelengkapanCount(kelengkapan: unknown): number {
 // ================= POST: AJUKAN PROPOSAL =================
 export const POST = apiHandler(
   async (req: Request, context: { params: Promise<{ id: string }> }) => {
-    // 1. Autentikasi dan pengecekan status akun aktif
+    // 1. Autentikasi dan pengecekan status akun aktif serta peran WARGA
     const user = await requireAuth(req);
+    requireRole(user, Peran.WARGA);
     requireAktif(user);
 
     const { id: proyekId } = await context.params;

@@ -58,7 +58,7 @@ export function cariTumpangTindihAnggota(
               kelompokBId: entries[j].kelompokId,
               proposalAId: entries[i].proposalId,
               proposalBId: entries[j].proposalId,
-              identitas: entries[i].nama || entries[i].nikHash || "Anggota",
+              identitas: entries[i].nama || "Anggota Terdaftar",
             });
           }
         }

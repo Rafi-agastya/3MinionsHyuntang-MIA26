@@ -1,0 +1,12 @@
+meta {
+  name: Unduh Dataset Publik (Open Data CSV/JSON)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/data/proyek?format=csv
+  body: none
+  auth: none
+}
+

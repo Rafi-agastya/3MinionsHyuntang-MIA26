@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "name": "AKAR API - Platform Transparansi Dana Desa & Sayembara Swakelola",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
+

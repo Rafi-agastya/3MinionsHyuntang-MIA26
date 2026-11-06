@@ -1,0 +1,25 @@
+meta {
+  name: Tambah Sumber Dana Desa
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/desa/desa_karangsari/sumber-dana
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "tahun": 2026,
+    "kode": "DDS",
+    "nama": "Dana Desa (DDS)",
+    "pagu": 1000000000
+  }
+}
+

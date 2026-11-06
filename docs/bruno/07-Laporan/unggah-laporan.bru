@@ -1,0 +1,23 @@
+meta {
+  name: Unggah Laporan Progres Mingguan
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/laporan
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:multipart-form {
+  minggu: 1
+  persen: 35
+  checklist: {"pekerjaSesuaiRencana":true,"materialTersedia":true,"pekerjaanSesuaiGambar":true}
+  catatan: Progres minggu pertama meliputi pembersihan dan pekerjaan struktur pondasi.
+}
+

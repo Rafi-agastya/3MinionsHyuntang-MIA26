@@ -1,0 +1,29 @@
+meta {
+  name: Pengiriman Proposal Sayembara Warga
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/proposal
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:json {
+  {
+    "kelompokId": "seed_kelompok_001",
+    "penawaran": 92000000,
+    "durasiHari": 45,
+    "tenagaTotal": 12,
+    "tenagaLokal": 10,
+    "narasiMetode": "Pekerjaan dimulai dari penyiapan lahan, penggalian saluran dengan alat manual, dan pemasangan dinding retaining wall bergotong-royong.",
+    "narasiJadwal": "Minggu 1-2 pembersihan dan galian, Minggu 3-5 pemasangan struktur dan plesteran, Minggu 6 finishing dan pembersihan akhir.",
+    "narasiRisiko": "Risiko hujan lebat diantisipasi dengan penyiapan pompa sedot air dan penutupan terpal plastik pada area galian baru."
+  }
+}
+
