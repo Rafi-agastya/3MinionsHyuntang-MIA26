@@ -34,7 +34,7 @@ export interface ApiResponseError {
   error: {
     code: ApiErrorCode;
     message: string;
-    fields?: Record<string, string[]>;
+    fields?: Record<string, unknown>;
   };
 }
 
@@ -42,7 +42,7 @@ export class ApiError extends Error {
   constructor(
     public code: ApiErrorCode,
     message: string,
-    public fields?: Record<string, string[]>,
+    public fields?: Record<string, unknown>,
     public status?: number
   ) {
     super(message);
@@ -90,7 +90,7 @@ export function ok<T>(
 export function fail(
   code: ApiErrorCode,
   message: string,
-  fields?: Record<string, string[]>,
+  fields?: Record<string, unknown>,
   status?: number
 ): NextResponse<ApiResponseError> {
   const httpStatus = status ?? HTTP_STATUS_MAP[code] ?? 500;
@@ -109,8 +109,8 @@ export function fail(
  * Wrapper handler API route Next.js:
  * Menangkap ZodError (mengubah ke VALIDATION_ERROR 400), ApiError, dan kesalahan internal tak terduga.
  */
-export function apiHandler<T = unknown, C = unknown>(
-  fn: (req: Request, context: C) => Promise<NextResponse<T>>
+export function apiHandler<C = unknown>(
+  fn: (req: Request, context: C) => Promise<NextResponse>
 ) {
   return async (req: Request, context: C): Promise<NextResponse> => {
     try {
