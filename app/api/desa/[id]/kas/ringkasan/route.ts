@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import { prisma, serializeBigInt } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
+import { apiHandler, ok, ApiError } from "@/lib/api";
+import { hitungRingkasanKas } from "@/lib/kas-ringkasan";
 
-export async function GET(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+export const GET = apiHandler(
+  async (req, { params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
+    const url = new URL(req.url);
+    const tahunParam = url.searchParams.get("tahun");
 
     let desa = await prisma.desa.findUnique({
       where: { id },
@@ -18,74 +18,97 @@ export async function GET(
     }
 
     if (!desa) {
-      return NextResponse.json(
-        {
-          data: null,
-          error: {
-            code: "NOT_FOUND",
-            message: `Desa dengan ID '${id}' tidak ditemukan`,
-          },
-        },
-        { status: 404 }
+      throw new ApiError(
+        "NOT_FOUND",
+        `Desa dengan ID '${id}' tidak ditemukan`
       );
     }
 
-    const konfigurasi =
-      desa.konfigurasi && typeof desa.konfigurasi === "object"
-        ? (desa.konfigurasi as Record<string, unknown>)
-        : {};
+    const tahun = tahunParam ? parseInt(tahunParam, 10) : desa.tahun;
 
-    const bukuKas =
-      konfigurasi.bukuKas && typeof konfigurasi.bukuKas === "object"
-        ? (konfigurasi.bukuKas as Record<string, unknown>)
-        : {};
+    // 1. Ambil Sumber Dana desa
+    const sumberDanaList = await prisma.sumberDana.findMany({
+      where: {
+        desaId: desa.id,
+        ...(tahun ? { tahun } : {}),
+      },
+    });
 
-    const totalPemasukan =
-      typeof bukuKas.totalPemasukan === "number"
-        ? bukuKas.totalPemasukan
-        : Number(desa.pagu ?? 0);
+    // 2. Ambil Pos Anggaran desa dengan relasi akun (termasuk hierarki akun induk)
+    const posList = await prisma.posAnggaran.findMany({
+      where: {
+        desaId: desa.id,
+        ...(tahun ? { tahun } : {}),
+      },
+      include: {
+        akun: {
+          include: {
+            parent: {
+              include: {
+                parent: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-    const totalPengeluaran =
-      typeof bukuKas.totalPengeluaran === "number"
-        ? bukuKas.totalPengeluaran
-        : 0;
+    // 3. Ambil seluruh Entri Kas desa beserta riwayat verifikasi
+    const entriList = await prisma.entriKas.findMany({
+      where: {
+        desaId: desa.id,
+      },
+      include: {
+        verifikasi: true,
+      },
+      orderBy: { nomorUrut: "asc" },
+    });
 
-    const sisaSaldo =
-      typeof bukuKas.sisaSaldo === "number"
-        ? bukuKas.sisaSaldo
-        : totalPemasukan - totalPengeluaran;
+    // 4. Ambil daftar Bidang utama (LevelAkun.BIDANG)
+    const bidangList = await prisma.refAkun.findMany({
+      where: { level: "BIDANG" },
+      orderBy: { kode: "asc" },
+    });
 
-    const transaksiTerakhir = Array.isArray(bukuKas.transaksiTerakhir)
-      ? bukuKas.transaksiTerakhir
-      : [];
+    // 5. Hitung agregasi kas murni
+    const ringkasan = hitungRingkasanKas({
+      sumberDanaList,
+      posList,
+      entriList,
+      bidangList,
+    });
+
+    // 6. Buat daftar transaksi terakhir untuk kompatibilitas tampilan lama
+    const transaksiTerakhir = entriList
+      .slice(-10)
+      .reverse()
+      .map((e) => ({
+        id: e.id,
+        nomorUrut: e.nomorUrut,
+        tanggal: e.tanggal.toISOString(),
+        jenis: e.jenis,
+        uraian: e.uraian,
+        jumlah: Number(e.jumlah),
+        hash: e.hash,
+        hashPendek: e.hash.slice(0, 8),
+      }));
 
     const responsePayload = {
       desaId: desa.id,
       namaDesa: desa.nama,
-      totalPemasukan,
-      totalPengeluaran,
-      sisaSaldo,
+      sumberDana: ringkasan.sumberDana,
+      total: ringkasan.total,
+      perPos: ringkasan.perPos,
+      perBidang: ringkasan.perBidang,
+      hashTerakhir: ringkasan.hashTerakhir,
+      diperbaruiPada: ringkasan.diperbaruiPada,
+      // Kompatibilitas UI
+      totalPemasukan: ringkasan.total.diterima,
+      totalPengeluaran: ringkasan.total.terealisasi,
+      sisaSaldo: ringkasan.total.kasTersediaUntukDibayar,
       transaksiTerakhir,
     };
 
-    return NextResponse.json({
-      data: serializeBigInt(responsePayload),
-      error: null,
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Terjadi kesalahan pada server";
-
-    return NextResponse.json(
-      {
-        data: null,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: errorMessage,
-        },
-      },
-      { status: 500 }
-    );
+    return ok(responsePayload);
   }
-}
-
+);

@@ -64,6 +64,37 @@ enum KeputusanFlag {
   TIDAK_SAH
 }
 
+enum StatusSanggah {
+  TERBUKA
+  DITANGGAPI
+}
+
+enum JenisEntri {
+  PENERIMAAN
+  KOMITMEN
+  PEMBAYARAN
+  KOREKSI
+}
+
+enum LevelAkun {
+  BIDANG
+  SUB_BIDANG
+  KEGIATAN
+}
+
+enum JenisBelanja {
+  PEGAWAI
+  BARANG_JASA
+  MODAL
+  TAK_TERDUGA
+}
+
+enum StatusVerifikasi {
+  MENUNGGU
+  DISETUJUI
+  DITOLAK
+}
+
 // ================= MODEL PENGGUNA & AUDIT ================= 
 
 model Pengguna {
@@ -82,6 +113,11 @@ model Pengguna {
   desa             Desa              @relation(fields: [desaId], references: [id])
   kelompokDipimpin Kelompok[]
   anggotaKelompok  AnggotaKelompok[]
+  penilaian        VerifikasiKompetensi[]
+  keputusan        Keputusan[]
+  sanggahan        Sanggahan[]
+  entriDicatat     EntriKas[]        @relation("Pencatat")
+  verifikasiKas    VerifikasiEntri[] @relation("PemverifikasiKas")
   audit            AuditLog[]
 
   @@index([desaId])
@@ -105,22 +141,26 @@ model AuditLog {
 // ================= MODEL INTI T1 ================= 
 
 model Desa {
-  id          String     @id @default(cuid())
+  id          String        @id @default(cuid())
   nama        String
   kecamatan   String
   kabupaten   String
-  tahun       Int        @default(0)
+  tahun       Int           @default(0)
   pagu        BigInt
-  pagukdmp    BigInt     @default(0)
+  pagukdmp    BigInt        @default(0)
   konfigurasi Json?
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime      @default(now())
   proyek      Proyek[]
   pengguna    Pengguna[]
+  sumberDana  SumberDana[]
+  posAnggaran PosAnggaran[]
+  entriKas    EntriKas[]
 }
 
 model Proyek {
   id               String          @id @default(cuid())
   desaId           String
+  posAnggaranId    String?
   judul            String
   deskripsi        String
   lokasi           String
@@ -137,9 +177,13 @@ model Proyek {
   createdAt        DateTime        @default(now())
 
   desa             Desa            @relation(fields: [desaId], references: [id])
+  posAnggaran      PosAnggaran?    @relation(fields: [posAnggaranId], references: [id])
   rab              RabItem[]
   proposal         Proposal[]
   flag             FlagKemiripan[]
+  keputusan        Keputusan?
+  termin           Termin[]
+  entriKas         EntriKas[]
 
   @@index([desaId, status])
 }
@@ -202,10 +246,13 @@ model Proposal {
 
   proyek    Proyek          @relation(fields: [proyekId], references: [id])
   kelompok  Kelompok        @relation(fields: [kelompokId], references: [id])
-  ringkasan RingkasanAi?
-  skor      Skor?
-  flagA     FlagKemiripan[] @relation("FlagA")
-  flagB     FlagKemiripan[] @relation("FlagB")
+  ringkasan  RingkasanAi?
+  skor       Skor?
+  flagA      FlagKemiripan[]        @relation("FlagA")
+  flagB      FlagKemiripan[]        @relation("FlagB")
+  kompetensi VerifikasiKompetensi[]
+  keputusan  Keputusan?
+  sanggahan  Sanggahan[]
 
   @@unique([proyekId, kelompokId])
   @@index([proyekId])
@@ -249,4 +296,163 @@ model FlagKemiripan {
   proposalB Proposal @relation("FlagB", fields: [proposalBId], references: [id])
 
   @@index([proyekId])
+}
+
+model VerifikasiKompetensi {
+  id          String   @id @default(cuid())
+  proposalId  String
+  penilaiId   String
+  nilaiRubrik Json
+  catatan     String?
+  dibuatPada  DateTime @default(now())
+
+  proposal Proposal @relation(fields: [proposalId], references: [id])
+  penilai  Pengguna @relation(fields: [penilaiId], references: [id])
+
+  @@index([proposalId])
+}
+
+model Keputusan {
+  id                    String   @id @default(cuid())
+  proyekId              String   @unique
+  proposalId            String   @unique
+  alasan                String
+  alasanTambahan        String?
+  dibuatOlehId          String
+  bukanPeringkatTeratas Boolean  @default(false)
+  dibuatPada            DateTime @default(now())
+
+  proyek     Proyek   @relation(fields: [proyekId], references: [id])
+  proposal   Proposal @relation(fields: [proposalId], references: [id])
+  dibuatOleh Pengguna @relation(fields: [dibuatOlehId], references: [id])
+}
+
+model Sanggahan {
+  id         String        @id @default(cuid())
+  proposalId String
+  penggunaId String
+  isi        String
+  tanggapan  String?
+  status     StatusSanggah @default(TERBUKA)
+  dibuatPada DateTime      @default(now())
+
+  proposal Proposal @relation(fields: [proposalId], references: [id])
+  pengguna Pengguna @relation(fields: [penggunaId], references: [id])
+
+  @@index([proposalId])
+}
+
+// ================= MODEL BUKU KAS PUBLIK (BAGIAN 43) ================= 
+
+model SumberDana {
+  id        String        @id @default(cuid())
+  desaId    String
+  nama      String
+  tahun     Int
+  pagu      BigInt
+
+  desa      Desa          @relation(fields: [desaId], references: [id])
+  pos       PosAnggaran[]
+  entri     EntriKas[]
+
+  @@index([desaId, tahun])
+}
+
+model RefAkun {
+  id            String        @id @default(cuid())
+  kode          String
+  uraian        String
+  level         LevelAkun
+  parentId      String?
+  kodeSiskeudes String?
+  sensitif      Boolean       @default(false)
+
+  parent        RefAkun?      @relation("AkunInduk", fields: [parentId], references: [id])
+  anak          RefAkun[]     @relation("AkunInduk")
+  pos           PosAnggaran[]
+
+  @@unique([level, kode])
+}
+
+model PosAnggaran {
+  id           String       @id @default(cuid())
+  desaId       String
+  tahun        Int
+  akunId       String
+  sumberDanaId String
+  jenisBelanja JenisBelanja
+  uraian       String
+  anggaran     BigInt
+  sensitif     Boolean      @default(false)
+
+  desa         Desa         @relation(fields: [desaId], references: [id])
+  akun         RefAkun      @relation(fields: [akunId], references: [id])
+  sumberDana   SumberDana   @relation(fields: [sumberDanaId], references: [id])
+  proyek       Proyek[]
+  entri        EntriKas[]
+
+  @@index([desaId, tahun])
+}
+
+model Termin {
+  id       String     @id @default(cuid())
+  proyekId String
+  tahap    Int
+  nilai    BigInt
+  terbuka  Boolean    @default(false)
+
+  proyek   Proyek     @relation(fields: [proyekId], references: [id])
+  entriKas EntriKas[]
+
+  @@unique([proyekId, tahap])
+}
+
+model EntriKas {
+  id                 String            @id @default(cuid())
+  desaId             String
+  nomorUrut          Int
+  jenis              JenisEntri
+  jumlah             BigInt
+  tanggal            DateTime
+  uraian             String
+  sumberDanaId       String?
+  posId              String?
+  proyekId           String?
+  terminId           String?
+  koreksiDariId      String?
+  penerima           String?
+  penerimaDisamarkan Boolean           @default(true)
+  buktiUrls          String[]
+  pencatatId         String
+  hashSebelumnya     String?
+  hash               String            @unique
+  dibuatPada         DateTime          @default(now())
+
+  desa               Desa              @relation(fields: [desaId], references: [id])
+  sumberDana         SumberDana?       @relation(fields: [sumberDanaId], references: [id])
+  pos                PosAnggaran?      @relation(fields: [posId], references: [id])
+  proyek             Proyek?           @relation(fields: [proyekId], references: [id])
+  termin             Termin?           @relation(fields: [terminId], references: [id])
+  koreksiDari        EntriKas?         @relation("Koreksi", fields: [koreksiDariId], references: [id])
+  koreksi            EntriKas[]        @relation("Koreksi")
+  pencatat           Pengguna          @relation("Pencatat", fields: [pencatatId], references: [id])
+  verifikasi         VerifikasiEntri[]
+
+  @@unique([desaId, nomorUrut])
+  @@index([desaId, jenis])
+  @@index([proyekId])
+}
+
+model VerifikasiEntri {
+  id         String           @id @default(cuid())
+  entriId    String
+  pengawasId String
+  keputusan  StatusVerifikasi
+  catatan    String?
+  waktu      DateTime         @default(now())
+
+  entri      EntriKas         @relation(fields: [entriId], references: [id])
+  pengawas   Pengguna         @relation("PemverifikasiKas", fields: [pengawasId], references: [id])
+
+  @@index([entriId])
 }

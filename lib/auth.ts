@@ -122,7 +122,18 @@ export async function requireAuth(req: Request): Promise<Pengguna> {
  * Memastikan pengguna memiliki salah satu dari peran yang diizinkan (RBAC).
  * Melempar ApiError 403 FORBIDDEN jika peran tidak memenuhi.
  */
-export function requireRole(pengguna: Pengguna, ...roles: Peran[]): void {
+export function requireRole(
+  pengguna: Pengguna | null | undefined,
+  ...roles: Peran[]
+): asserts pengguna is Pengguna {
+  if (!pengguna) {
+    throw new ApiError(
+      "UNAUTHENTICATED",
+      "Sesi autentikasi tidak ditemukan atau telah berakhir. Silakan masuk terlebih dahulu.",
+      undefined,
+      401
+    );
+  }
   if (!roles.includes(pengguna.peran)) {
     throw new ApiError(
       "FORBIDDEN",
@@ -140,7 +151,17 @@ export function requireRole(pengguna: Pengguna, ...roles: Peran[]): void {
  * Sesuai PRD 35.1:
  * Akun MENUNGGU mengembalikan respons 403 dengan pesan "Akun Anda menunggu konfirmasi perangkat desa".
  */
-export function requireAktif(pengguna: Pengguna): void {
+export function requireAktif(
+  pengguna: Pengguna | null | undefined
+): asserts pengguna is Pengguna {
+  if (!pengguna) {
+    throw new ApiError(
+      "UNAUTHENTICATED",
+      "Sesi autentikasi tidak ditemukan atau telah berakhir. Silakan masuk terlebih dahulu.",
+      undefined,
+      401
+    );
+  }
   if (pengguna.statusAkun === StatusAkun.MENUNGGU) {
     throw new ApiError(
       "FORBIDDEN",
