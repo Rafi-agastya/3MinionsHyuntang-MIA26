@@ -1,13 +1,21 @@
 import * as React from "react";
 import { Metadata } from "next";
+import { ArrowDown } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { ProjectDetailHeader } from "@/components/proyek/project-detail-header";
 import { ProjectTimeline } from "@/components/proyek/project-timeline";
 import { ProjectSummaryCards } from "@/components/proyek/project-summary-cards";
 import { ProjectTabs } from "@/components/proyek/project-tabs";
 import { getProyekDetail } from "@/lib/proyek-api";
 import { getMockProjectById } from "@/components/proyek/mock-detail-data";
+
+const detailSlides = [
+  { id: "detail-frame-1", label: "Ringkasan Proyek" },
+  { id: "detail-frame-2", label: "Papan Skor & Rincian" },
+  { id: "detail-frame-footer", label: "Transparansi" },
+];
 
 interface ProyekDetailPageProps {
   params: Promise<{ id: string }>;
@@ -50,20 +58,26 @@ export default async function ProyekDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
-      {/* Global Header Navigation */}
+    <>
       <Navbar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-          {/* 1. Header & Status Action Banner */}
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+        {/* Desktop Dot Pagination */}
+        <SlideIndicator slides={detailSlides} />
+
+        {/* FRAME 1: Ringkasan Proyek & Timeline */}
+        <section
+          id="detail-frame-1"
+          aria-label="Ringkasan & Timeline Proyek"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-5 md:space-y-6"
+        >
+          {/* Header & Status Action Banner */}
           <ProjectDetailHeader proyek={proyek} />
 
-          {/* 2. Horizontal Project Stepper Timeline */}
+          {/* Horizontal Project Stepper Timeline */}
           <ProjectTimeline currentStatus={proyek.status} />
 
-          {/* 3. Quick Summary Metric Cards (4 Cards) */}
+          {/* Quick Summary Metric Cards (4 Cards) */}
           <ProjectSummaryCards
             pagu={proyek.pagu}
             durasiMin={proyek.durasiMin}
@@ -73,13 +87,36 @@ export default async function ProyekDetailPage({
             sumberDana={proyek.sumberDana}
           />
 
-          {/* 4. Interactive Tabs: Papan Skor AI, Teknis, Micro-RAB, Timeline/Audit */}
-          <ProjectTabs proyek={proyek} initialTab="proposal" />
-        </div>
-      </main>
+          {/* Helper Jump Action Button */}
+          <div className="pt-2 flex justify-start">
+            <a
+              href="#detail-frame-2"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+            >
+              <span>Lihat Papan Skor AI & Rincian Teknis</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
+          </div>
+        </section>
 
-      {/* Global Footer */}
-      <Footer />
-    </div>
+        {/* FRAME 2: Interactive Tabs (Papan Skor AI, Teknis, Micro-RAB, Timeline/Audit) */}
+        <section
+          id="detail-frame-2"
+          aria-label="Papan Skor AI dan Rincian Teknis"
+          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+        >
+          <ProjectTabs proyek={proyek} initialTab="proposal" />
+        </section>
+
+        {/* FRAME 3: Footer Snap End */}
+        <section
+          id="detail-frame-footer"
+          aria-label="Informasi Footer"
+          className="snap-end w-full"
+        >
+          <Footer />
+        </section>
+      </main>
+    </>
   );
 }

@@ -14,7 +14,6 @@ import {
   FileCheck2,
   Copy,
   Check,
-  Layers,
 } from "lucide-react";
 import { formatRupiah } from "@/lib/format";
 
@@ -224,10 +223,6 @@ export function KasMutasiTable({ transaksiList }: KasMutasiTableProps) {
         <div className="pt-2 border-t border-zinc-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           {/* Bidang Pills */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-zinc-500 font-medium mr-1 flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-[#1F6F43]" />
-              <span>Bidang:</span>
-            </span>
             {BIDANG_OPTIONS.map((opt) => (
               <button
                 key={opt}

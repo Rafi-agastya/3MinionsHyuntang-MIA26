@@ -12,9 +12,13 @@ import {
   BookOpen,
   Database,
   LogIn,
+  ShieldCheck,
+  ChevronDown,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCurrentRole, UserRole, ROLE_DETAILS } from "@/lib/use-current-role";
 
 const navItems = [
   { label: "Proyek", href: "/proyek", icon: FolderKanban },
@@ -29,7 +33,30 @@ interface NavbarProps {
 
 export function Navbar({ className }: NavbarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = React.useState(false);
   const pathname = usePathname();
+  const { role, setRole, details, permissions } = useCurrentRole();
+
+  // Combine standard nav with Admin Dashboard if user has access
+  const allNavItems = React.useMemo(() => {
+    const items = [...navItems];
+    if (permissions.hasAdminAccess) {
+      items.push({
+        label: "Panel Admin",
+        href: "/admin",
+        icon: ShieldCheck,
+      });
+    }
+    return items;
+  }, [permissions.hasAdminAccess]);
+
+  const availableRoles: UserRole[] = [
+    "PUBLIK",
+    "WARGA",
+    "PERANGKAT_DESA",
+    "PENGAWAS",
+    "ADMIN",
+  ];
 
   return (
     <header
@@ -64,9 +91,10 @@ export function Navbar({ className }: NavbarProps) {
           className="hidden md:flex items-center space-x-1 lg:space-x-2"
           aria-label="Navigasi Utama"
         >
-          {navItems.map((item) => {
+          {allNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
+            const isAdminItem = item.href === "/admin";
             return (
               <Link
                 key={item.href}
@@ -74,6 +102,8 @@ export function Navbar({ className }: NavbarProps) {
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
                   isActive
                     ? "bg-akar-primary-light text-akar-primary font-semibold"
+                    : isAdminItem
+                    ? "text-[#1F6F43] bg-emerald-50/80 hover:bg-emerald-100 font-semibold border border-emerald-200"
                     : "text-akar-ink hover:text-akar-primary hover:bg-akar-primary-light/50"
                 }`}
               >
@@ -84,31 +114,111 @@ export function Navbar({ className }: NavbarProps) {
           })}
         </nav>
 
-        {/* Action Button Desktop */}
-        <div className="hidden md:flex items-center space-x-3">
-          <Link href="/masuk">
-            <Button
-              variant="outline"
-              className="border-akar-primary/30 text-akar-primary hover:bg-akar-primary-light font-medium"
+        {/* Action Button & Role Switcher Desktop */}
+        <div className="hidden md:flex items-center space-x-2.5 relative">
+          {/* Quick Demo Role Switcher Dropdown */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+              className={cn(
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border min-h-[38px] transition-all cursor-pointer shadow-2xs",
+                details.badgeColor
+              )}
+              title="Klik untuk simulasi peran pengguna"
             >
-              <LogIn className="mr-2 h-4 w-4" />
-              Masuk
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>{details.badgeLabel}</span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-70" />
+            </button>
+
+            {isRoleDropdownOpen && (
+              <div
+                className="absolute right-0 mt-2 w-64 rounded-2xl border border-zinc-200 bg-white p-2 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150"
+                onMouseLeave={() => setIsRoleDropdownOpen(false)}
+              >
+                <div className="px-2.5 py-1.5 border-b border-zinc-100 text-left">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    Simulasi Peran Akses (Demo)
+                  </p>
+                  <p className="text-xs text-zinc-600 font-medium truncate">
+                    {details.label}
+                  </p>
+                </div>
+                <div className="py-1 space-y-0.5">
+                  {availableRoles.map((r) => {
+                    const rDetail = ROLE_DETAILS[r];
+                    const isSelected = r === role;
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => {
+                          setRole(r);
+                          setIsRoleDropdownOpen(false);
+                        }}
+                        className={cn(
+                          "w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium flex items-center justify-between transition-colors",
+                          isSelected
+                            ? "bg-emerald-50 text-[#1F6F43] font-semibold"
+                            : "text-zinc-700 hover:bg-zinc-50"
+                        )}
+                      >
+                        <div className="truncate">
+                          <p className="truncate font-semibold">{rDetail.badgeLabel}</p>
+                          <p className="text-[10px] text-zinc-500 font-normal truncate">
+                            {r === "PUBLIK" ? "Tanpa Login" : rDetail.defaultName}
+                          </p>
+                        </div>
+                        {isSelected && (
+                          <span className="w-2 h-2 rounded-full bg-[#1F6F43] shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {role === "PUBLIK" ? (
+            <Link href="/masuk">
+              <Button
+                variant="outline"
+                className="border-akar-primary/30 text-akar-primary hover:bg-akar-primary-light font-medium min-h-[40px]"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Masuk
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setRole("PUBLIK")}
+              className="text-xs text-zinc-500 hover:text-red-600 min-h-[38px] px-2.5"
+              title="Keluar dari akun demo"
+            >
+              Keluar
             </Button>
-          </Link>
+          )}
         </div>
 
         {/* Mobile Hamburger Toggle */}
         <div className="flex md:hidden items-center space-x-2">
-          <Link href="/masuk">
-            <Button
-              size="sm"
-              variant="outline"
-              className="min-h-[40px] px-3 border-akar-primary/30 text-akar-primary text-xs"
-            >
-              <LogIn className="mr-1.5 h-3.5 w-3.5" />
-              Masuk
-            </Button>
-          </Link>
+          {/* Mobile Role Badge */}
+          <button
+            type="button"
+            onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+            className={cn(
+              "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold border min-h-[36px]",
+              details.badgeColor
+            )}
+          >
+            <span>{details.badgeLabel}</span>
+            <ChevronDown className="w-3 h-3" />
+          </button>
+
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -125,6 +235,42 @@ export function Navbar({ className }: NavbarProps) {
         </div>
       </div>
 
+      {/* Mobile Role Switcher Popup */}
+      {isRoleDropdownOpen && (
+        <div className="md:hidden border-b border-zinc-200 bg-white px-4 py-3 shadow-md animate-in slide-in-from-top-2 duration-150">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">
+            Simulasi Peran Akses (Demo &amp; Penjurian)
+          </p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {availableRoles.map((r) => {
+              const rDetail = ROLE_DETAILS[r];
+              const isSelected = r === role;
+              return (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => {
+                    setRole(r);
+                    setIsRoleDropdownOpen(false);
+                  }}
+                  className={cn(
+                    "text-left p-2 rounded-xl border text-xs font-medium transition-colors",
+                    isSelected
+                      ? "border-[#1F6F43] bg-emerald-50 text-[#1F6F43] font-semibold"
+                      : "border-zinc-200 text-zinc-700 bg-white"
+                  )}
+                >
+                  <p className="font-semibold text-xs truncate">{rDetail.badgeLabel}</p>
+                  <p className="text-[10px] text-zinc-500 truncate">
+                    {r === "PUBLIK" ? "Tamu" : rDetail.defaultName}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Mobile Drawer Menu */}
       {isOpen && (
         <div className="md:hidden border-b border-akar-border bg-white px-4 pt-2 pb-5 shadow-lg animate-in slide-in-from-top-2 duration-200">
@@ -137,9 +283,10 @@ export function Navbar({ className }: NavbarProps) {
             </div>
           </div>
           <div className="space-y-1">
-            {navItems.map((item) => {
+            {allNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              const isAdminItem = item.href === "/admin";
               return (
                 <Link
                   key={item.href}
@@ -148,6 +295,8 @@ export function Navbar({ className }: NavbarProps) {
                   className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${
                     isActive
                       ? "bg-akar-primary-light text-akar-primary font-semibold"
+                      : isAdminItem
+                      ? "bg-emerald-50 text-[#1F6F43] font-semibold border border-emerald-200"
                       : "text-akar-ink hover:bg-akar-primary-light/40"
                   }`}
                 >
@@ -158,16 +307,29 @@ export function Navbar({ className }: NavbarProps) {
             })}
           </div>
           <div className="mt-4 pt-3 border-t border-akar-border">
-            <Link
-              href="/masuk"
-              onClick={() => setIsOpen(false)}
-              className="block w-full"
-            >
-              <Button className="w-full justify-center">
-                <LogIn className="mr-2 h-4 w-4" />
-                Masuk ke Akun Desa
+            {role === "PUBLIK" ? (
+              <Link
+                href="/masuk"
+                onClick={() => setIsOpen(false)}
+                className="block w-full"
+              >
+                <Button className="w-full justify-center min-h-[44px]">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Masuk ke Akun Desa
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRole("PUBLIK");
+                  setIsOpen(false);
+                }}
+                className="w-full justify-center min-h-[44px] text-red-600 border-red-200 hover:bg-red-50"
+              >
+                Keluar (Kembali ke Tamu Publik)
               </Button>
-            </Link>
+            )}
           </div>
         </div>
       )}

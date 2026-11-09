@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   Users,
@@ -5,9 +6,13 @@ import {
   ArrowRight,
   ShieldCheck,
   HardHat,
+  Sparkles,
+  FileText,
+  ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { ProyekDirectoryList } from "@/components/proyek/proyek-directory-list";
 import { getProyekList, type ProyekListItem } from "@/lib/proyek-api";
 
@@ -74,68 +79,163 @@ export default async function ProyekIndexPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-6 sm:space-y-8">
+      <SlideIndicator
+        slides={[
+          { id: "proyek-frame-1", label: "Sayembara PKTD" },
+          { id: "proyek-frame-2", label: "Daftar Proyek" },
+          { id: "proyek-frame-footer", label: "Transparansi" },
+        ]}
+      />
+
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
-        {/* 1. HEADER & PANDUAN SAYEMBARA PKTD                                        */}
+        {/* FRAME 1: BANNER SOROTAN SAYEMBARA (12-COL CSS GRID WITH EVEN OVERLAY)    */}
         {/* ========================================================================= */}
-        <div className="flex flex-col justify-between gap-6 border-b border-zinc-200/80 pb-6 md:flex-row md:items-end">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-[#1F6F43] text-xs font-semibold">
-              <HardHat className="w-4 h-4 text-[#1F6F43]" />
-              <span>Bursa Kerja Sayembara Swakelola Desa</span>
+        <section
+          id="proyek-frame-1"
+          aria-label="Bursa Sayembara Proyek"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6"
+        >
+        <div className="relative rounded-3xl overflow-hidden border border-emerald-800/20 shadow-md">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <Image
+              src="/proyek/jalan-desa.jpg"
+              alt="Suasana Pembangunan Jalan Desa"
+              fill
+              className="object-cover"
+              priority
+              sizes="(max-width: 1280px) 100vw, 1280px"
+            />
+            {/* Even Dark Gradient Overlay for Maximum Readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#123D25]/95 via-[#1F6F43]/88 to-black/50 backdrop-blur-[1px]" />
+          </div>
+
+          {/* Banner Content Container */}
+          <div className="relative z-10 p-6 sm:p-8 lg:p-10 text-white space-y-6">
+            {/* Top Grid: Left 7 Cols Text + Right 5 Cols Card */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              <div className="lg:col-span-7 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs border border-white/20 text-emerald-100 text-xs font-semibold">
+                  <HardHat className="w-3.5 h-3.5 text-[#F2B705]" />
+                  <span>Bursa Kerja Sayembara Swakelola Desa TA 2026</span>
+                </div>
+
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                  Bangun Desa Bersama Warga, Dari Warga, Untuk Warga
+                </h1>
+
+                <p className="text-xs sm:text-sm lg:text-base text-emerald-100/90 leading-relaxed font-normal">
+                  Pekerjaan fisik dan pemeliharaan infrastruktur desa dibuka terbuka bagi kelompok pertukangan warga, buruh tani, dan karang taruna lokal melalui skema Padat Karya Tunai Desa (PKTD) dengan serapan tenaga lokal minimal 70%.
+                </p>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <Link
+                    href="/proyek/panduan"
+                    className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-white text-[#1F6F43] hover:bg-emerald-50 text-xs sm:text-sm font-semibold transition-all shadow-xs"
+                  >
+                    <FileText className="w-4 h-4 text-[#1F6F43]" />
+                    <span>Panduan Pengajuan Proposal</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <div className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/10 backdrop-blur-xs text-xs text-emerald-100 border border-white/15">
+                    <Sparkles className="w-3.5 h-3.5 text-[#F2B705]" />
+                    <span>Penilaian Obyektif AI Scoring Board</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column (5 Cols): Feature Overview Card */}
+              <div className="lg:col-span-5 w-full">
+                <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md p-5 sm:p-6 space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-200">
+                    <Sparkles className="w-4 h-4 text-[#F2B705]" />
+                    <span>Peluang Kerja Padat Karya</span>
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-extrabold text-white">
+                    Prioritas Warga Karang Sari
+                  </h3>
+                  <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed">
+                    Kelompok masyarakat (Pokmas), rukun warga RT/RW, dan tukang lokal dapat langsung mendaftarkan proposal pengerjaan fisik secara mandiri tanpa perantara calo.
+                  </p>
+                  <div className="pt-2 border-t border-white/15 flex items-center justify-between text-xs text-emerald-200 font-medium">
+                    <span>Standar Upah Harian</span>
+                    <span className="text-[#F2B705] font-bold font-mono">Sesuai SK Kades 2026</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-              Sayembara Swakelola &amp; Proyek Desa
-            </h1>
+            {/* Bottom 3 Highlight Cards arranged neatly */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-white/15">
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-[#F2B705]" />
+                  <span>Tenaga Kerja Lokal</span>
+                </span>
+                <p className="text-xs sm:text-sm text-white font-medium leading-relaxed">
+                  Wajib ≥ 70% melibatkan warga ber-KTP Karang Sari secara nyata.
+                </p>
+              </div>
 
-            <p className="max-w-2xl text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Pekerjaan fisik dan pemeliharaan infrastruktur desa yang terbuka bagi kelompok pertukangan warga, buruh tani, dan karang taruna lokal melalui mekanisme Padat Karya Tunai Desa (PKTD).
-            </p>
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 flex items-center gap-1.5">
+                  <BrainCircuit className="w-4 h-4 text-[#F2B705]" />
+                  <span>Bebas Nepotisme</span>
+                </span>
+                <p className="text-xs sm:text-sm text-white font-medium leading-relaxed">
+                  Proposal dinilai transparan dengan formula scoring terbuka tanpa titipan.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 space-y-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-200 flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-[#F2B705]" />
+                  <span>Pencairan Tercatat</span>
+                </span>
+                <p className="text-xs sm:text-sm text-white font-medium leading-relaxed">
+                  Tiap termin masuk buku kas publik dengan bukti fisik &amp; rantai SHA-256.
+                </p>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0">
-            <Link
-              href="/proyek/panduan"
-              className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full bg-white border border-zinc-200 text-xs sm:text-sm font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-all shadow-2xs"
+          {/* Tombol Lanjut ke Bawah Helper */}
+          <div className="pt-2 flex justify-center">
+            <a
+              href="#proyek-frame-2"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
             >
-              <span>Panduan Pengajuan Proposal Kelompok Warga</span>
-              <ArrowRight className="h-3.5 w-3.5 text-[#1F6F43]" />
-            </Link>
+              <span>Lihat Daftar Proyek &amp; Sayembara Terbuka</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
           </div>
-        </div>
-
-        {/* Highlight Ringkas di Bawah Header */}
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          {/* Badge Hijau Prioritas Tenaga Kerja Lokal */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100 text-[#1F6F43] font-semibold border border-emerald-200">
-            <Users className="w-4 h-4 text-[#1F6F43]" />
-            <span>Prioritas Serapan Tenaga Kerja Lokal ≥ 70%</span>
-          </div>
-
-          {/* Badge Netral Seleksi Terbuka AI */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-zinc-700 font-medium border border-zinc-200/80 shadow-2xs">
-            <BrainCircuit className="w-4 h-4 text-[#8A5A2B]" />
-            <span>Penilaian Seleksi Terbuka via AI Scoring Board</span>
-          </div>
-
-          {/* Badge Mutasi Kas Transparan */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-zinc-600 font-medium border border-zinc-200/80 shadow-2xs">
-            <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
-            <span>Termin Pencairan Tercatat di Kas Publik</span>
-          </div>
-        </div>
+        </section>
 
         {/* ========================================================================= */}
-        {/* 2. DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                          */}
+        {/* FRAME 2: DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                    */}
         {/* ========================================================================= */}
-        <ProyekDirectoryList initialProyekList={proyekList} />
+        <section
+          id="proyek-frame-2"
+          aria-label="Daftar Proyek Desa"
+          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+        >
+          <ProyekDirectoryList initialProyekList={proyekList} />
+        </section>
+
+        {/* ========================================================================= */}
+        {/* FRAME 3: FOOTER                                                           */}
+        {/* ========================================================================= */}
+        <section id="proyek-frame-footer" aria-label="Informasi Footer" className="snap-end">
+          <Footer />
+        </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

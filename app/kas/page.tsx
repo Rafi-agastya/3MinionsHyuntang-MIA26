@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -6,13 +6,15 @@ import {
   Wallet,
   Coins,
   FileSpreadsheet,
-  Download,
   CheckCircle2,
   Lock,
+  ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
+import { KasActionButtons } from "@/components/kas/kas-action-buttons";
 import { KasMutasiTable, type KasTransaction } from "@/components/kas/kas-mutasi-table";
 import { Navbar } from "@/components/navbar";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { formatRupiah } from "@/lib/format";
 
 export const revalidate = 0;
@@ -167,35 +169,76 @@ export default async function KasPage() {
       ];
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-[#FAFAF7] text-zinc-900 font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
       <Navbar />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 sm:space-y-8 px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-        {/* ========================================================================= */}
-        {/* PAGE HEADER                                                               */}
-        {/* ========================================================================= */}
-        <div className="flex flex-col justify-between gap-4 border-b border-zinc-200/80 pb-6 md:flex-row md:items-end">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-xs font-semibold text-[#1F6F43]">
-              <ShieldCheck className="h-4 w-4 text-[#1F6F43]" />
-              <span>Transparansi Anggaran Publik APBDes 2026</span>
-            </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              Buku Kas Umum Publik
-            </h1>
-            <p className="max-w-2xl text-sm md:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Catatan mutasi realisasi anggaran pendapatan dan belanja {kasData.namaDesa} Tahun Anggaran 2026. Seluruh mutasi tersimpan dengan sistem ledger append-only berantai SHA-256 dan diverifikasi bersama Badan Permusyawaratan Desa (BPD).
-            </p>
-          </div>
+      <SlideIndicator
+        slides={[
+          { id: "kas-frame-1", label: "Ringkasan Kas" },
+          { id: "kas-frame-2", label: "Mutasi Kas" },
+          { id: "kas-frame-footer", label: "Transparansi" },
+        ]}
+      />
 
-          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0">
-            <Link
-              href="/data"
-              className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full bg-white border border-zinc-200 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition-all shadow-2xs"
-            >
-              <Download className="h-3.5 w-3.5 text-[#1F6F43]" />
-              <span>Unduh Rekap Kas (CSV/PDF)</span>
-            </Link>
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
+        {/* ========================================================================= */}
+        {/* FRAME 1: SPLIT HERO BANNER + INTEGRITY BADGE + BENTO SUMMARY CARDS        */}
+        {/* ========================================================================= */}
+        <section
+          id="kas-frame-1"
+          aria-label="Ringkasan Kas Desa"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-5"
+        >
+        {/* ========================================================================= */}
+        {/* PAGE HEADER: SPLIT HERO BANNER (12-COL CSS GRID)                          */}
+        {/* ========================================================================= */}
+        <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 lg:p-10 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left Column: Title, Description & Actions (7 Cols) */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/70 px-3.5 py-1 text-xs font-semibold text-[#1F6F43]">
+                <ShieldCheck className="h-4 w-4 text-[#1F6F43]" />
+                <span>Transparansi Anggaran Publik APBDes 2026</span>
+              </div>
+
+              <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl leading-tight">
+                Buku Kas Umum Publik
+              </h1>
+
+              <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
+                Catatan mutasi realisasi anggaran pendapatan dan belanja {kasData.namaDesa} Tahun Anggaran 2026. Seluruh mutasi tersimpan dengan sistem ledger append-only berantai SHA-256 dan diverifikasi bersama Badan Permusyawaratan Desa (BPD).
+              </p>
+
+              {/* Quick Actions & Meta */}
+              <KasActionButtons />
+            </div>
+
+            {/* Right Column: Visual Image Card with Explicit Dimensions (5 Cols) */}
+            <div className="lg:col-span-5 w-full">
+              <div className="relative w-full h-64 lg:h-80 rounded-2xl overflow-hidden shadow-md border border-zinc-200/80 group">
+                <Image
+                  src="/hero-desa-aerial.jpg"
+                  alt="Lanskap Udara Desa Karang Sari"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 450px"
+                  priority
+                />
+                {/* Soft Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                {/* Bottom Tag & Village Context */}
+                <div className="absolute bottom-3 left-4 right-4 text-white space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-600/90 backdrop-blur-xs text-[11px] font-semibold text-white">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Rantai Ledger Aktif</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-white drop-shadow-xs leading-snug">
+                    Transparansi Dana Desa Karang Sari — Diaudit Bersama BPD
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -343,17 +386,33 @@ export default async function KasPage() {
           </div>
         </div>
 
+          {/* Tombol Lanjut ke Bawah Helper */}
+          <div className="pt-2 flex justify-center">
+            <a
+              href="#kas-frame-2"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
+            >
+              <span>Lanjut ke Tabel Mutasi Kas</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
+          </div>
+        </section>
+
         {/* ========================================================================= */}
-        {/* 3. MUTASI TRANSAKSI TABLE SECTION                                         */}
+        {/* FRAME 2: MUTASI TRANSAKSI TABLE SECTION (SCROLLABLE & AMPLE READING ROOM) */}
         {/* ========================================================================= */}
-        <div className="space-y-4 pt-2">
+        <section
+          id="kas-frame-2"
+          aria-label="Tabel Mutasi Kas"
+          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-4"
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
                 Mutasi Buku Kas Umum
               </h2>
-              <p className="text-xs text-zinc-500 mt-0.5">
-                Riwayat transaksi kas masuk dan keluar yang tercatat secara permanen (*append-only*).
+              <p className="text-sm text-zinc-600 mt-0.5">
+                Riwayat transaksi kas masuk dan keluar yang tercatat secara permanen (<em>append-only</em>).
               </p>
             </div>
 
@@ -364,10 +423,15 @@ export default async function KasPage() {
           </div>
 
           <KasMutasiTable transaksiList={transaksiList} />
-        </div>
-      </main>
+        </section>
 
-      <Footer />
+        {/* ========================================================================= */}
+        {/* FRAME 3: FOOTER                                                           */}
+        {/* ========================================================================= */}
+        <section id="kas-frame-footer" aria-label="Informasi Footer" className="snap-end">
+          <Footer />
+        </section>
+      </main>
     </div>
   );
 }
