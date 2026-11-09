@@ -87,23 +87,23 @@ export default function MasukPage() {
       {/* KOLOM KIRI (DESKTOP): VISUAL AERIAL & KONTEKS DESA                         */}
       {/* ========================================================================= */}
       <aside className="lg:col-span-6 hidden lg:flex flex-col justify-between p-10 lg:p-14 relative overflow-hidden text-white">
-        {/* Background Foto Asli Desa */}
+        {/* Background Foto Asli Desa dengan Brightness Terkontrol */}
         <Image
           src="/hero-desa-aerial.jpg"
           alt="Panorama Hamparan Desa Karang Sari"
           fill
           priority
-          className="object-cover"
+          className="object-cover brightness-[0.60]"
           sizes="50vw"
         />
 
-        {/* Gradient Overlay Emerald Gelap (Anti-Slop & High Contrast) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#123D25]/98 via-[#1F6F43]/85 to-black/45 backdrop-blur-[1px]" />
+        {/* Gradient Overlay Gelap Merata (Tinggi Kontras & Anti-Silau) */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0B2416]/90 via-[#123D25]/85 to-[#0B2416]/95 backdrop-blur-[0.5px]" />
 
         {/* Top Header: Logo AKAR & Identitas Desa */}
-        <div className="relative z-10 flex items-center justify-between">
+        <div className="relative z-20 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md p-2 border border-white/20 shadow-md flex items-center justify-center group-hover:bg-white/20 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md p-2 border border-white/20 shadow-md flex items-center justify-center group-hover:bg-black/60 transition-all">
               <Image
                 src="/logo-akar.png"
                 alt="Logo AKAR"
@@ -113,77 +113,83 @@ export default function MasukPage() {
               />
             </div>
             <div>
-              <span className="font-extrabold text-2xl tracking-tight text-white block">
+              <span className="font-extrabold text-2xl tracking-tight text-white drop-shadow-sm block">
                 AKAR
               </span>
-              <span className="text-xs text-emerald-100 font-medium tracking-wide block">
+              <span className="text-xs text-emerald-100 font-medium tracking-wide drop-shadow-xs block">
                 Desa Karang Sari &bull; Kab. Wonosobo
               </span>
             </div>
           </Link>
 
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold text-emerald-100">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-xs font-semibold text-white drop-shadow-sm">
             <ShieldCheck className="w-3.5 h-3.5 text-[#F2B705]" />
             <span>Portal Resmi Desa</span>
           </span>
         </div>
 
         {/* Middle: 3 Nilai Utama Partisipasi Warga */}
-        <div className="relative z-10 space-y-6 my-auto py-8">
+        <div className="relative z-20 space-y-6 my-auto py-8">
           <div className="space-y-2">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight">
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight drop-shadow-md">
               Membangun Desa yang Terbuka, Bersih, dan Berdaya Bersama Warga
             </h2>
-            <p className="text-sm lg:text-base text-emerald-100/90 leading-relaxed font-normal max-w-xl">
+            <p className="text-sm lg:text-base text-emerald-100 leading-relaxed font-normal max-w-xl drop-shadow-sm">
               Platform transparansi keuangan kas APBDes dan bursa sayembara swakelola Padat Karya Tunai Desa (PKTD).
             </p>
           </div>
 
           <div className="space-y-3.5 text-sm">
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-8 h-8 rounded-xl bg-white/15 text-[#F2B705] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-black/35 backdrop-blur-sm border border-white/15 shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-white/15 text-[#F2B705] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
                 <HardHat className="w-4 h-4" />
               </div>
-              <div>
-                <strong className="text-white block font-semibold">Padat Karya Tunai Desa (PKTD)</strong>
-                <span className="text-xs text-emerald-100/85 leading-relaxed">
+              <div className="space-y-0.5">
+                <strong className="text-white block font-bold text-sm drop-shadow-xs">
+                  Padat Karya Tunai Desa (PKTD)
+                </strong>
+                <p className="text-xs text-zinc-100/90 leading-relaxed">
                   Pemberdayaan tukang dan buruh tani lokal dengan syarat serapan minimal 70% tenaga kerja warga.
-                </span>
+                </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-8 h-8 rounded-xl bg-white/15 text-[#F2B705] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-black/35 backdrop-blur-sm border border-white/15 shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-white/15 text-[#F2B705] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <div>
-                <strong className="text-white block font-semibold">Buku Kas Publik SHA-256</strong>
-                <span className="text-xs text-emerald-100/85 leading-relaxed">
+              <div className="space-y-0.5">
+                <strong className="text-white block font-bold text-sm drop-shadow-xs">
+                  Buku Kas Publik SHA-256
+                </strong>
+                <p className="text-xs text-zinc-100/90 leading-relaxed">
                   Setiap penerimaan dan pengeluaran kas diikat oleh rantai integritas digital yang tidak dapat dimanipulasi.
-                </span>
+                </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
-              <div className="w-8 h-8 rounded-xl bg-white/15 text-[#F2B705] flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start gap-3.5 p-4 rounded-2xl bg-black/35 backdrop-blur-sm border border-white/15 shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-white/15 text-[#F2B705] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
                 <Building2 className="w-4 h-4" />
               </div>
-              <div>
-                <strong className="text-white block font-semibold">Pengawasan Kolaboratif BPD</strong>
-                <span className="text-xs text-emerald-100/85 leading-relaxed">
+              <div className="space-y-0.5">
+                <strong className="text-white block font-bold text-sm drop-shadow-xs">
+                  Pengawasan Kolaboratif BPD
+                </strong>
+                <p className="text-xs text-zinc-100/90 leading-relaxed">
                   Badan Permusyawaratan Desa melakukan verifikasi lapangan sebelum termin pembayaran dicairkan.
-                </span>
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Quote & Integrity Note */}
-        <div className="relative z-10 pt-4 border-t border-white/20 flex items-center justify-between text-xs text-emerald-100/80">
-          <p className="leading-relaxed italic max-w-md">
+        <div className="relative z-20 pt-4 border-t border-white/20 flex items-center justify-between gap-4 text-xs">
+          <p className="leading-relaxed italic text-emerald-100/95 max-w-md drop-shadow-xs">
             &ldquo;Transparansi Dana Desa &amp; Swakelola Warga &mdash; Dikelola terbuka bersama Pemerintah Desa Karang Sari dan BPD.&rdquo;
           </p>
-          <span className="font-mono text-[11px] font-semibold text-emerald-200 shrink-0">
+          <span className="font-mono text-xs font-bold text-[#F2B705] shrink-0 bg-black/40 px-2.5 py-1 rounded-md border border-white/15">
             AKAR v1.0
           </span>
         </div>
