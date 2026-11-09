@@ -21,6 +21,7 @@ import {
   Lock,
   Sparkles,
   HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -697,16 +698,15 @@ export default function AspirasiPortalPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                   {/* Category Filter Pills */}
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-                    <span className="text-zinc-500 font-medium mr-1 shrink-0">Kategori:</span>
                     {["SEMUA", "Infrastruktur Rusak", "Usulan Program Desa", "Dugaan Penyimpangan Dana"].map(
                       (cat) => (
                         <button
                           key={cat}
                           type="button"
                           onClick={() => setFilterKategori(cat)}
-                          className={`px-3 py-1.5 rounded-full font-semibold transition-colors shrink-0 min-h-[36px] ${
+                          className={`px-3.5 py-1.5 rounded-full font-semibold transition-colors shrink-0 min-h-[36px] ${
                             filterKategori === cat
-                              ? "bg-[#1F6F43] text-white"
+                              ? "bg-[#1F6F43] text-white shadow-xs"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
                           }`}
                         >
@@ -717,12 +717,11 @@ export default function AspirasiPortalPage() {
                   </div>
 
                   {/* Status Filter Dropdown */}
-                  <div className="flex items-center gap-1.5 self-end sm:self-auto">
-                    <span className="text-zinc-500 font-medium shrink-0">Status:</span>
+                  <div className="relative inline-block self-end sm:self-auto">
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      className="px-3 py-1.5 rounded-lg border border-zinc-200 text-xs bg-white text-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[36px]"
+                      className="appearance-none bg-white border border-zinc-200 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-zinc-700 hover:border-zinc-300 focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 focus:border-[#1F6F43] cursor-pointer min-h-[38px]"
                     >
                       <option value="SEMUA">Semua Status</option>
                       <option value="Diterima">Diterima</option>
@@ -730,6 +729,7 @@ export default function AspirasiPortalPage() {
                       <option value="Masuk Musrenbangdes">Masuk Musrenbangdes</option>
                       <option value="Selesai">Selesai</option>
                     </select>
+                    <ChevronDown className="w-4 h-4 text-zinc-500 pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" />
                   </div>
                 </div>
               </div>

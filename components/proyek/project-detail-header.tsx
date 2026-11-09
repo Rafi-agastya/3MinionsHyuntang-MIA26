@@ -242,26 +242,20 @@ export function ProjectDetailHeader({
                   </Button>
                 )}
 
-                <Button
-                  variant="outline"
-                  size="default"
-                  asChild
-                  className="gap-2 min-h-[44px]"
+                <a
+                  href="#project-tabs-section"
+                  onClick={(e) => {
+                    const el = document.getElementById("project-tabs-section");
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="inline-flex flex-row items-center justify-center gap-2 whitespace-nowrap px-4 py-2.5 rounded-xl border border-zinc-200 bg-white text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors min-h-[44px]"
                 >
-                  <a
-                    href="#project-tabs-section"
-                    onClick={(e) => {
-                      const el = document.getElementById("project-tabs-section");
-                      if (el) {
-                        e.preventDefault();
-                        el.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
-                  >
-                    <Download className="w-4 h-4 text-akar-muted" />
-                    <span>Unduh KAK</span>
-                  </a>
-                </Button>
+                  <Download className="w-4 h-4 shrink-0 text-zinc-500" />
+                  <span>Unduh KAK</span>
+                </a>
 
                 <Button
                   variant="ghost"
