@@ -46,3 +46,4 @@ describe("Role Permissions Matrix", () => {
     expect(hasAdminAccess("PUBLIK")).toBe(false);
   });
 });
+
