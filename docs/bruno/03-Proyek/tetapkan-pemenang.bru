@@ -1,0 +1,24 @@
+meta {
+  name: Penetapan Pemenang Sayembara
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/pemenang
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "proposalId": "seed_prop_001",
+    "alasan": "Memperoleh skor tertinggi gabungan formula biaya, serapan tenaga lokal, dan kompetensi teknis.",
+    "alasanTambahan": null
+  }
+}
+

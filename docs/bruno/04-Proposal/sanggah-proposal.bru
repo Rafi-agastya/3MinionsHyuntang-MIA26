@@ -1,0 +1,22 @@
+meta {
+  name: Pengajuan Sanggahan Peserta
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/proposal/seed_prop_002/sanggah
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:json {
+  {
+    "isi": "Mohon klarifikasi evaluasi kewajaran harga dan rasionalitas jadwal pada penetapan hasil seleksi sayembara balai warga."
+  }
+}
+

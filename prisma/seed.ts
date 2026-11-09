@@ -1,138 +1,49 @@
-import { Prisma, KelasProyek, Jalur, StatusProyek, StatusAnalisis, JenisFlag, KeputusanFlag } from "@prisma/client";
+import {
+  KelasProyek,
+  Jalur,
+  StatusProyek,
+  StatusAnalisis,
+  JenisFlag,
+  KeputusanFlag,
+  Peran,
+  StatusAkun,
+  JenisEntri,
+  LevelAkun,
+  JenisBelanja,
+  StatusVerifikasi,
+} from "@prisma/client";
 import { hitungSkor } from "../lib/scoring";
 import { prisma } from "../lib/prisma";
+import { tambahEntri } from "../lib/kas-ledger";
 
 async function main() {
-  console.log("Memulai proses seeding data awal (T1 & Buku Kas)...");
+  console.log("Memulai proses seeding data awal (T1 & Buku Kas Siskeudes)...");
 
   // 1. Bersihkan data lama dengan urutan relasi aman
+  await prisma.verifikasiEntri.deleteMany();
+  await prisma.entriKas.deleteMany();
+  await prisma.termin.deleteMany();
   await prisma.flagKemiripan.deleteMany();
   await prisma.skor.deleteMany();
   await prisma.ringkasanAi.deleteMany();
+  await prisma.sanggahan.deleteMany();
+  await prisma.verifikasiKompetensi.deleteMany();
+  await prisma.keputusan.deleteMany();
   await prisma.proposal.deleteMany();
   await prisma.anggotaKelompok.deleteMany();
   await prisma.kelompok.deleteMany();
   await prisma.rabItem.deleteMany();
   await prisma.proyek.deleteMany();
+  await prisma.posAnggaran.deleteMany();
+  await prisma.refAkun.deleteMany();
+  await prisma.sumberDana.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.pengguna.deleteMany();
   await prisma.desa.deleteMany();
 
   console.log("Data lama berhasil dibersihkan.");
 
-  // ================= 2. DATA TRANSAKSI BUKU KAS DESA =================
-  const transaksiKasList = [
-    {
-      id: "kas_001",
-      tanggal: "2026-01-10T08:00:00.000Z",
-      jenis: "PEMASUKAN",
-      kategori: "Dana Desa",
-      uraian: "Penyaluran Dana Desa Tahap 1 dari RKUN ke RKD Karang Sari",
-      jumlah: 600_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_001.pdf",
-    },
-    {
-      id: "kas_002",
-      tanggal: "2026-01-25T10:30:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Siltap & Tunjangan",
-      uraian: "Pembayaran Penghasilan Tetap dan Tunjangan Perangkat & BPD Triwulan I",
-      jumlah: 280_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_002.pdf",
-    },
-    {
-      id: "kas_003",
-      tanggal: "2026-02-05T09:00:00.000Z",
-      jenis: "PEMASUKAN",
-      kategori: "Alokasi Dana Desa (ADD)",
-      uraian: "Penyaluran ADD Tahap 1 dari Rekening Kas Daerah Kabupaten",
-      jumlah: 250_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_003.pdf",
-    },
-    {
-      id: "kas_004",
-      tanggal: "2026-02-20T14:00:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Operasional Perkantoran",
-      uraian: "Biaya operasional kantor desa, listrik, internet, dan Musdes Khusus",
-      jumlah: 115_400_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_004.pdf",
-    },
-    {
-      id: "kas_005",
-      tanggal: "2026-03-01T11:00:00.000Z",
-      jenis: "PEMASUKAN",
-      kategori: "Pendapatan Asli Desa (PADes)",
-      uraian: "Bagi hasil dividen unit pengelolaan pasar desa BUMDes Karang Sari",
-      jumlah: 150_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_005.pdf",
-    },
-    {
-      id: "kas_006",
-      tanggal: "2026-03-10T13:30:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Termin Proyek",
-      uraian: "Pencairan Termin 0 (Uang Muka 30%) Renovasi Gedung Balai Warga",
-      jumlah: 41_400_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_006.pdf",
-    },
-    {
-      id: "kas_007",
-      tanggal: "2026-04-05T09:15:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Swakelola Penuh",
-      uraian: "Pembayaran 100% Pengerjaan Padat Karya Jalan Setapak Dusun Makmur",
-      jumlah: 58_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_007.pdf",
-    },
-    {
-      id: "kas_008",
-      tanggal: "2026-04-12T10:00:00.000Z",
-      jenis: "PEMASUKAN",
-      kategori: "Bagi Hasil Pajak & Retribusi",
-      uraian: "Penerimaan bagian daerah hasil pajak dan retribusi daerah kabupaten",
-      jumlah: 100_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_008.pdf",
-    },
-    {
-      id: "kas_009",
-      tanggal: "2026-05-18T15:00:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Termin Proyek",
-      uraian: "Pencairan Termin 50% Proyek Renovasi Balai Warga (Progres Terverifikasi)",
-      jumlah: 55_200_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_009.pdf",
-    },
-    {
-      id: "kas_010",
-      tanggal: "2026-06-02T10:30:00.000Z",
-      jenis: "PENGELUARAN",
-      kategori: "Ketahanan Pangan",
-      uraian: "Pengadaan bibit unggul padi dan alsintan kelompok tani desa",
-      jumlah: 300_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_010.pdf",
-    },
-    {
-      id: "kas_011",
-      tanggal: "2026-06-15T08:45:00.000Z",
-      jenis: "PEMASUKAN",
-      kategori: "Dana Desa",
-      uraian: "Penyaluran Dana Desa Tahap 2 Reguler dari RKUN ke RKD Karang Sari",
-      jumlah: 400_000_000,
-      buktiUrl: "https://akar-desa.id/bukti/kas_011.pdf",
-    },
-  ];
-
-  const totalPemasukan = transaksiKasList
-    .filter((t) => t.jenis === "PEMASUKAN")
-    .reduce((acc, curr) => acc + curr.jumlah, 0); // 1.500.000.000
-
-  const totalPengeluaran = transaksiKasList
-    .filter((t) => t.jenis === "PENGELUARAN")
-    .reduce((acc, curr) => acc + curr.jumlah, 0); // 850.000.000
-
-  const sisaSaldo = totalPemasukan - totalPengeluaran; // 650.000.000
-
-  // 3. Buat Desa dengan ID seed_desa_001
+  // ================= 2. DESA UTAMA =================
   const desa = await prisma.desa.create({
     data: {
       id: "seed_desa_001",
@@ -140,95 +51,407 @@ async function main() {
       kecamatan: "Kecamatan Harapan",
       kabupaten: "Kabupaten Contoh",
       tahun: 2026,
-      pagu: BigInt(1_000_000_000), // Rp1 Miliar
-      pagukdmp: BigInt(580_300_000), // Alokasi KDMP 58.03%
+      pagu: BigInt(1_000_000_000), // Pagu Dana Desa Rp1 Miliar
+      pagukdmp: BigInt(580_300_000), // Alokasi wajib KDMP 58,03%
       konfigurasi: {
-        targetSwakelolaPersen: 40,
-        masaSanggahHari: 3,
-        tenggatTanggapanHari: 14,
         bukuKas: {
           saldoAwal: 0,
-          totalPemasukan,
-          totalPengeluaran,
-          sisaSaldo,
-          transaksiTerakhir: transaksiKasList,
+          totalPemasukan: 850_000_000,
+          totalPengeluaran: 194_400_000,
+          sisaSaldo: 600_400_000,
         },
       },
     },
   });
   console.log(`Desa dibuat: ${desa.nama} (ID: ${desa.id})`);
 
-  // 4. Buat Pengguna (Minimal 4 peran)
+  // ================= 3. REFERENSI AKUN ALA SISKEUDES (BAGIAN 40) =================
+  // Bidang 1: Penyelenggaraan Pemerintahan Desa
+  const bidang1 = await prisma.refAkun.create({
+    data: {
+      kode: "01",
+      uraian: "Penyelenggaraan Pemerintahan Desa",
+      level: LevelAkun.BIDANG,
+    },
+  });
+  const subBidang11 = await prisma.refAkun.create({
+    data: {
+      kode: "01.01",
+      uraian: "Penghasilan Tetap dan Tunjangan",
+      level: LevelAkun.SUB_BIDANG,
+      parentId: bidang1.id,
+    },
+  });
+  const akunSiltap = await prisma.refAkun.create({
+    data: {
+      kode: "01.01.01",
+      uraian: "Pembayaran Penghasilan Tetap dan Tunjangan Perangkat Desa",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang11.id,
+      sensitif: true,
+    },
+  });
+  const subBidang12 = await prisma.refAkun.create({
+    data: {
+      kode: "01.02",
+      uraian: "Operasional Perkantoran",
+      level: LevelAkun.SUB_BIDANG,
+      parentId: bidang1.id,
+    },
+  });
+  const akunOperasional = await prisma.refAkun.create({
+    data: {
+      kode: "01.02.01",
+      uraian: "Operasional Kantor Desa dan Keperluan Musdes",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang12.id,
+    },
+  });
+  const akunBpd = await prisma.refAkun.create({
+    data: {
+      kode: "01.02.02",
+      uraian: "Operasional Badan Permusyawaratan Desa (BPD)",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang12.id,
+    },
+  });
+
+  // Bidang 2: Pelaksanaan Pembangunan Desa
+  const bidang2 = await prisma.refAkun.create({
+    data: {
+      kode: "02",
+      uraian: "Pelaksanaan Pembangunan Desa",
+      level: LevelAkun.BIDANG,
+    },
+  });
+  const subBidang21 = await prisma.refAkun.create({
+    data: {
+      kode: "02.01",
+      uraian: "Kawasan Permukiman dan Infrastruktur Dasar",
+      level: LevelAkun.SUB_BIDANG,
+      parentId: bidang2.id,
+    },
+  });
+  const akunDrainase = await prisma.refAkun.create({
+    data: {
+      kode: "02.01.01",
+      uraian: "Pembangunan Saluran Drainase Lingkungan",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang21.id,
+    },
+  });
+  const akunBalaiWarga = await prisma.refAkun.create({
+    data: {
+      kode: "02.01.02",
+      uraian: "Renovasi Gedung Pertemuan Balai Warga Serbaguna",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang21.id,
+    },
+  });
+  const akunJalanSetapak = await prisma.refAkun.create({
+    data: {
+      kode: "02.01.03",
+      uraian: "Pavingisasi Jalan Setapak Dusun Makmur",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang21.id,
+    },
+  });
+  const akunCadangan = await prisma.refAkun.create({
+    data: {
+      kode: "02.01.04",
+      uraian: "Pemeliharaan Sarana dan Cadangan Pembangunan",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang21.id,
+    },
+  });
+
+  // Bidang 4: Pemberdayaan Masyarakat Desa
+  const bidang4 = await prisma.refAkun.create({
+    data: {
+      kode: "04",
+      uraian: "Pemberdayaan Masyarakat Desa",
+      level: LevelAkun.BIDANG,
+    },
+  });
+  const subBidang41 = await prisma.refAkun.create({
+    data: {
+      kode: "04.01",
+      uraian: "Pengembangan Usaha Ekonomi & Koperasi",
+      level: LevelAkun.SUB_BIDANG,
+      parentId: bidang4.id,
+    },
+  });
+  const akunKdmp = await prisma.refAkun.create({
+    data: {
+      kode: "04.01.01",
+      uraian: "Alokasi Wajib Koperasi Desa Merah Putih (KDMP)",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang41.id,
+    },
+  });
+  const akunWisata = await prisma.refAkun.create({
+    data: {
+      kode: "04.01.02",
+      uraian: "Pengembangan Wisata Pemandian Air Panas Terpadu",
+      level: LevelAkun.KEGIATAN,
+      parentId: subBidang41.id,
+    },
+  });
+
+  // ================= 4. SUMBER DANA =================
+  const sdDanaDesa = await prisma.sumberDana.create({
+    data: {
+      desaId: desa.id,
+      nama: "Dana Desa",
+      tahun: 2026,
+      pagu: BigInt(1_000_000_000),
+    },
+  });
+
+  const sdAdd = await prisma.sumberDana.create({
+    data: {
+      desaId: desa.id,
+      nama: "Alokasi Dana Desa (ADD)",
+      tahun: 2026,
+      pagu: BigInt(250_000_000),
+    },
+  });
+
+  // ================= 5. POS ANGGARAN =================
+  // Pos Dana Desa Reguler & KDMP
+  const posKdmp = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunKdmp.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Alokasi Wajib Koperasi Desa Merah Putih (KDMP)",
+      anggaran: BigInt(580_300_000),
+    },
+  });
+
+  const posBalaiWarga = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunBalaiWarga.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Renovasi Gedung Pertemuan Balai Warga",
+      anggaran: BigInt(140_000_000),
+    },
+  });
+
+  const posJalanSetapak = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunJalanSetapak.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Pavingisasi Jalan Setapak Dusun",
+      anggaran: BigInt(60_000_000),
+    },
+  });
+
+  const posDrainase = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunDrainase.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Pembangunan Saluran Drainase RT 3",
+      anggaran: BigInt(100_000_000),
+    },
+  });
+
+  const posPemandian = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunWisata.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Pengembangan Kawasan Wisata Pemandian Air Panas",
+      anggaran: BigInt(80_000_000),
+    },
+  });
+
+  const posCadangan = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunCadangan.id,
+      sumberDanaId: sdDanaDesa.id,
+      jenisBelanja: JenisBelanja.MODAL,
+      uraian: "Pemeliharaan dan Cadangan Pembangunan",
+      anggaran: BigInt(39_700_000),
+    },
+  });
+
+  // Pos ADD
+  const posSiltap = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunSiltap.id,
+      sumberDanaId: sdAdd.id,
+      jenisBelanja: JenisBelanja.PEGAWAI,
+      uraian: "Penghasilan Tetap dan Tunjangan Perangkat Desa",
+      anggaran: BigInt(150_000_000),
+      sensitif: true,
+    },
+  });
+
+  const posOperasional = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunOperasional.id,
+      sumberDanaId: sdAdd.id,
+      jenisBelanja: JenisBelanja.BARANG_JASA,
+      uraian: "Operasional Perkantoran Desa",
+      anggaran: BigInt(60_000_000),
+    },
+  });
+
+  const posBpd = await prisma.posAnggaran.create({
+    data: {
+      desaId: desa.id,
+      tahun: 2026,
+      akunId: akunBpd.id,
+      sumberDanaId: sdAdd.id,
+      jenisBelanja: JenisBelanja.BARANG_JASA,
+      uraian: "Operasional Badan Permusyawaratan Desa (BPD)",
+      anggaran: BigInt(40_000_000),
+    },
+  });
+
+  console.log("Pos anggaran dan referensi akun berhasil dikonfigurasi.");
+
+  // ================= 6. PENGGUNA =================
   const kades = await prisma.pengguna.create({
-    data: { nama: "Pak Hendy (Kepala Desa / Perangkat)" },
+    data: {
+      authId: "seed_auth_kades",
+      email: "kades@karangsari.desa.id",
+      nama: "Pak Hendy (Kepala Desa / Perangkat)",
+      peran: Peran.PERANGKAT,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/01",
+      kontak: "081234567890",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
+
   const pengawas = await prisma.pengguna.create({
-    data: { nama: "Pak Bambang (Pengawas BPD)" },
+    data: {
+      authId: "seed_auth_pengawas",
+      email: "bpd@karangsari.desa.id",
+      nama: "Pak Bambang (Pengawas BPD)",
+      peran: Peran.PENGAWAS,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "02/01",
+      kontak: "081234567891",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
+
   const admin = await prisma.pengguna.create({
-    data: { nama: "Siti Rahma (Admin Desa)" },
+    data: {
+      authId: "seed_auth_admin",
+      email: "admin@karangsari.desa.id",
+      nama: "Siti Rahma (Admin Desa)",
+      peran: Peran.ADMIN,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/02",
+      kontak: "081234567892",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
+
   const ketuaA = await prisma.pengguna.create({
-    data: { nama: "Rudi Hermawan (Ketua Kelompok Tani Muda)" },
+    data: {
+      authId: "seed_auth_ketua_a",
+      email: "rudi@karangsari.desa.id",
+      nama: "Rudi Hermawan (Ketua Kelompok Tani Muda)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "01/02",
+      kontak: "081234567893",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
+
   const ketuaB = await prisma.pengguna.create({
-    data: { nama: "Joko Widodo (Ketua CV Karya Warga)" },
+    data: {
+      authId: "seed_auth_ketua_b",
+      email: "joko@karangsari.desa.id",
+      nama: "Joko Widodo (Ketua CV Karya Warga)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "02/03",
+      kontak: "081234567894",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
+
   const ketuaC = await prisma.pengguna.create({
-    data: { nama: "Budi Santoso (Ketua Kelompok Tukang RT 3)" },
+    data: {
+      authId: "seed_auth_ketua_c",
+      email: "budi@karangsari.desa.id",
+      nama: "Budi Santoso (Ketua Kelompok Tukang RT 3)",
+      peran: Peran.WARGA,
+      statusAkun: StatusAkun.AKTIF,
+      desaId: desa.id,
+      rtRw: "03/03",
+      kontak: "081234567895",
+      setujuSyaratPada: new Date("2026-01-01T00:00:00.000Z"),
+    },
   });
 
-  console.log("Pengguna (Perangkat, Pengawas, Admin, dan Warga) berhasil dibuat.");
-
-  // 5. Buat Kelompok Warga
+  // ================= 7. KELOMPOK DAN ANGGOTA =================
   const kelompokA = await prisma.kelompok.create({
-    data: {
-      nama: "Kelompok Tani Muda",
-      ketuaId: ketuaA.id,
-    },
+    data: { nama: "Kelompok Tani Muda", ketuaId: ketuaA.id },
   });
-
   const kelompokB = await prisma.kelompok.create({
-    data: {
-      nama: "CV Karya Warga",
-      ketuaId: ketuaB.id,
-    },
+    data: { nama: "CV Karya Warga", ketuaId: ketuaB.id },
   });
-
   const kelompokC = await prisma.kelompok.create({
-    data: {
-      nama: "Kelompok Tukang RT 3",
-      ketuaId: ketuaC.id,
-    },
+    data: { nama: "Kelompok Tukang RT 3", ketuaId: ketuaC.id },
   });
 
-  // 6. Tambahkan Anggota Kelompok (Wahyu Pratama ada di B dan C untuk trigger overlap)
   const wahyuHash = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
   await prisma.anggotaKelompok.createMany({
     data: [
-      // Kelompok A
       { kelompokId: kelompokA.id, nama: "Rudi Hermawan", rtRw: "01/02", ketua: true, nikHash: "hash_rudi_001" },
       { kelompokId: kelompokA.id, nama: "Slamet Riyadi", rtRw: "01/02", ketua: false, nikHash: "hash_slamet_002" },
       { kelompokId: kelompokA.id, nama: "Ahmad Dahlan", rtRw: "01/02", ketua: false, nikHash: "hash_ahmad_003" },
 
-      // Kelompok B
       { kelompokId: kelompokB.id, nama: "Joko Widodo", rtRw: "02/03", ketua: true, nikHash: "hash_joko_004" },
       { kelompokId: kelompokB.id, nama: "Hendra Gunawan", rtRw: "02/03", ketua: false, nikHash: "hash_hendra_005" },
       { kelompokId: kelompokB.id, nama: "Wahyu Pratama", rtRw: "02/03", ketua: false, nikHash: wahyuHash },
 
-      // Kelompok C
       { kelompokId: kelompokC.id, nama: "Budi Santoso", rtRw: "03/03", ketua: true, nikHash: "hash_budi_006" },
       { kelompokId: kelompokC.id, nama: "Agus Salim", rtRw: "03/03", ketua: false, nikHash: "hash_agus_007" },
       { kelompokId: kelompokC.id, nama: "Wahyu Pratama", rtRw: "03/03", ketua: false, nikHash: wahyuHash },
     ],
   });
 
-  // 7. Buat Proyek Drainase RT 3 (ID: seed_proyek_001)
+  // ================= 8. PROYEK-PROYEK =================
+  // Proyek 1: Drainase RT 3 (TENDER_DIBUKA, belum ada pemenang/komitmen)
   const proyekDrainase = await prisma.proyek.create({
     data: {
       id: "seed_proyek_001",
       desaId: desa.id,
+      posAnggaranId: posDrainase.id,
       judul: "Pembangunan Saluran Drainase RT 3",
       deskripsi: "Pembangunan saluran drainase lingkungan untuk mencegah genangan air saat musim hujan di RT 3 Dusun Krajan.",
       lokasi: "RT 03 Dusun Krajan",
@@ -244,7 +467,6 @@ async function main() {
     },
   });
 
-  // Micro-RAB Drainase RT 3 (Total = Pagu = Rp100.000.000)
   await prisma.rabItem.createMany({
     data: [
       { proyekId: proyekDrainase.id, uraian: "Pekerjaan Galian Tanah Saluran", volume: 250, satuan: "m3", hargaSatuan: BigInt(80_000) },
@@ -253,10 +475,12 @@ async function main() {
     ],
   });
 
-  // Proyek Balai Warga (PENGERJAAN)
-  await prisma.proyek.create({
+  // Proyek 2: Balai Warga (PENGERJAAN, progres 50%, termin 0 dan 50 terbuka)
+  const proyekBalaiWarga = await prisma.proyek.create({
     data: {
+      id: "seed_proyek_002",
       desaId: desa.id,
+      posAnggaranId: posBalaiWarga.id,
       judul: "Renovasi Gedung Pertemuan Balai Warga",
       deskripsi: "Renovasi atap dan lantai balai warga serbaguna.",
       lokasi: "Dusun Karang Anyar",
@@ -271,10 +495,38 @@ async function main() {
     },
   });
 
-  // Proyek Jalan Setapak Dusun (SELESAI)
-  await prisma.proyek.create({
+  // Termin Balai Warga (30% - 40% - 30%)
+  const terminBalai0 = await prisma.termin.create({
     data: {
+      proyekId: proyekBalaiWarga.id,
+      tahap: 0,
+      nilai: BigInt(41_400_000),
+      terbuka: true,
+    },
+  });
+  const terminBalai50 = await prisma.termin.create({
+    data: {
+      proyekId: proyekBalaiWarga.id,
+      tahap: 50,
+      nilai: BigInt(55_200_000),
+      terbuka: true,
+    },
+  });
+  const terminBalai100 = await prisma.termin.create({
+    data: {
+      proyekId: proyekBalaiWarga.id,
+      tahap: 100,
+      nilai: BigInt(41_400_000),
+      terbuka: false,
+    },
+  });
+
+  // Proyek 3: Jalan Setapak Dusun (SELESAI, 100% serah terima)
+  const proyekJalanSetapak = await prisma.proyek.create({
+    data: {
+      id: "seed_proyek_003",
       desaId: desa.id,
+      posAnggaranId: posJalanSetapak.id,
       judul: "Pavingisasi Jalan Setapak Dusun",
       deskripsi: "Pemasangan paving block jalan setapak pemukiman.",
       lokasi: "Dusun Tani Makmur",
@@ -289,10 +541,22 @@ async function main() {
     },
   });
 
-  // Proyek Pemandian Air Panas (PEMATANGAN)
+  const terminJalan1 = await prisma.termin.create({
+    data: { proyekId: proyekJalanSetapak.id, tahap: 1, nilai: BigInt(17_400_000), terbuka: true },
+  });
+  const terminJalan2 = await prisma.termin.create({
+    data: { proyekId: proyekJalanSetapak.id, tahap: 2, nilai: BigInt(23_200_000), terbuka: true },
+  });
+  const terminJalan3 = await prisma.termin.create({
+    data: { proyekId: proyekJalanSetapak.id, tahap: 3, nilai: BigInt(17_400_000), terbuka: true },
+  });
+
+  // Proyek 4: Pemandian Air Panas (PEMATANGAN)
   await prisma.proyek.create({
     data: {
+      id: "seed_proyek_004",
       desaId: desa.id,
+      posAnggaranId: posPemandian.id,
       judul: "Pengembangan Kawasan Wisata Pemandian Air Panas",
       deskripsi: "Proyek strategis desa untuk fasilitas pariwisata pemandian air panas terpadu.",
       lokasi: "Dusun Sumber Rejeki",
@@ -305,8 +569,7 @@ async function main() {
     },
   });
 
-  // ================= 8. PROPOSAL A, B, C =================
-  // Proposal A
+  // ================= 9. PROPOSAL, SKOR, RINGKASAN, DAN FLAG DRAINASE =================
   const propA = await prisma.proposal.create({
     data: {
       id: "seed_proposal_001",
@@ -367,11 +630,9 @@ async function main() {
     },
   });
 
-  // Teks narasi teknis serupa antara Proposal B dan Proposal C (disusun oleh penyusun yang sama)
   const templateSpesifikasiTeknis =
     "Pekerjaan dinding penahan dan saluran drainase menggunakan pasangan batu belah tipe 1:4 dengan sistem pengeringan air tanah dan plesteran kedap air ketebalan 15mm. Manajemen material batu belah dipasok dari kuari terdekat dengan kontrol mutu harian.";
 
-  // Proposal B
   const propB = await prisma.proposal.create({
     data: {
       id: "seed_proposal_002",
@@ -432,7 +693,6 @@ async function main() {
     },
   });
 
-  // Proposal C
   const propC = await prisma.proposal.create({
     data: {
       id: "seed_proposal_003",
@@ -493,8 +753,6 @@ async function main() {
     },
   });
 
-  // ================= 9. FLAG KEMIRIPAN (ANGGOTA & TEKS) =================
-  // 9.1 Flag Tumpang Tindih Anggota antara Proposal B dan Proposal C
   await prisma.flagKemiripan.create({
     data: {
       proyekId: proyekDrainase.id,
@@ -507,7 +765,6 @@ async function main() {
     },
   });
 
-  // 9.2 Flag Kemiripan Teks antara Proposal B dan Proposal C
   await prisma.flagKemiripan.create({
     data: {
       proyekId: proyekDrainase.id,
@@ -520,7 +777,263 @@ async function main() {
     },
   });
 
-  console.log("Seeding data awal dan buku kas desa berhasil diselesaikan!");
+  // ================= 10. PENULISAN BUKU KAS PUBLIK DENGAN TAMBAHENTRI (BAGIAN 48.1) =================
+  console.log("Menulis entri Buku Kas Publik menggunakan rantai hash tambahEntri...");
+
+  // Entri 1: Penyaluran Dana Desa Tahap 1 (Rp600.000.000)
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PENERIMAAN,
+    jumlah: BigInt(600_000_000),
+    tanggal: new Date("2026-01-10T08:00:00.000Z"),
+    sumberDanaId: sdDanaDesa.id,
+    uraian: "Penyaluran Dana Desa Tahap 1 dari RKUN ke RKD Karang Sari",
+    pencatatId: kades.id,
+    buktiUrls: ["https://akar-desa.id/bukti/kas_001.pdf"],
+    dibuatPada: new Date("2026-01-10T08:00:00.000Z"),
+  });
+
+  // Entri 2: Penyaluran ADD Tahap 1 (Rp250.000.000)
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PENERIMAAN,
+    jumlah: BigInt(250_000_000),
+    tanggal: new Date("2026-01-15T09:00:00.000Z"),
+    sumberDanaId: sdAdd.id,
+    uraian: "Penyaluran ADD Tahap 1 dari Rekening Kas Daerah Kabupaten",
+    pencatatId: kades.id,
+    buktiUrls: ["https://akar-desa.id/bukti/kas_002.pdf"],
+    dibuatPada: new Date("2026-01-15T09:00:00.000Z"),
+  });
+
+  // Entri 3: Komitmen Proyek Balai Warga (Rp138.000.000)
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.KOMITMEN,
+    jumlah: BigInt(138_000_000),
+    tanggal: new Date("2026-02-01T10:00:00.000Z"),
+    posId: posBalaiWarga.id,
+    proyekId: proyekBalaiWarga.id,
+    uraian: "Komitmen nilai kontrak penetapan pelaksana Renovasi Gedung Pertemuan Balai Warga",
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-01T10:00:00.000Z"),
+  });
+
+  // Entri 4: Pembayaran Termin 0% (30%) Balai Warga (Rp41.400.000) -> Terverifikasi DISETUJUI
+  const eBalaiT0 = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(41_400_000),
+    tanggal: new Date("2026-02-10T11:00:00.000Z"),
+    posId: posBalaiWarga.id,
+    proyekId: proyekBalaiWarga.id,
+    terminId: terminBalai0.id,
+    uraian: "Pencairan Termin 0% (Uang Muka 30%) Renovasi Gedung Balai Warga",
+    penerima: "Kelompok Pertukangan Balai Makmur",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/balai_t0.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-10T11:00:00.000Z"),
+  });
+
+  await prisma.verifikasiEntri.create({
+    data: {
+      entriId: eBalaiT0.id,
+      pengawasId: pengawas.id,
+      keputusan: StatusVerifikasi.DISETUJUI,
+      catatan: "Uang muka sesuai ketentuan RAB dan SPK kegiatan swakelola",
+      waktu: new Date("2026-02-11T09:00:00.000Z"),
+    },
+  });
+
+  // Entri 5: Pembayaran Termin 50% (40%) Balai Warga (Rp55.200.000) -> Menunggu Verifikasi
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(55_200_000),
+    tanggal: new Date("2026-03-05T14:30:00.000Z"),
+    posId: posBalaiWarga.id,
+    proyekId: proyekBalaiWarga.id,
+    terminId: terminBalai50.id,
+    uraian: "Pencairan Termin 50% (Tahap II 40%) Renovasi Gedung Balai Warga",
+    penerima: "Kelompok Pertukangan Balai Makmur",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/balai_t50.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-03-05T14:30:00.000Z"),
+  });
+  // (Tanpa catatan VerifikasiEntri = status turunan MENUNGGU)
+
+  // Entri 6: Komitmen Proyek Jalan Setapak (Rp58.000.000)
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.KOMITMEN,
+    jumlah: BigInt(58_000_000),
+    tanggal: new Date("2026-01-20T09:00:00.000Z"),
+    posId: posJalanSetapak.id,
+    proyekId: proyekJalanSetapak.id,
+    uraian: "Komitmen nilai kontrak penetapan swakelola Pavingisasi Jalan Setapak Dusun",
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-01-20T09:00:00.000Z"),
+  });
+
+  // Entri 7: Pembayaran Termin 1 Jalan Setapak (Rp17.400.000) -> Terverifikasi DISETUJUI
+  const eJalanT1 = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(17_400_000),
+    tanggal: new Date("2026-02-05T10:00:00.000Z"),
+    posId: posJalanSetapak.id,
+    proyekId: proyekJalanSetapak.id,
+    terminId: terminJalan1.id,
+    uraian: "Pembayaran Termin 1 (30%) Paving Jalan Setapak Dusun Makmur",
+    penerima: "Kelompok Swakelola RT 01",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/jalan_t1.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-05T10:00:00.000Z"),
+  });
+  await prisma.verifikasiEntri.create({
+    data: {
+      entriId: eJalanT1.id,
+      pengawasId: pengawas.id,
+      keputusan: StatusVerifikasi.DISETUJUI,
+      catatan: "Pekerjaan persiapan dan pemadatan tanah terverifikasi",
+      waktu: new Date("2026-02-06T08:00:00.000Z"),
+    },
+  });
+
+  // Entri 8: Pembayaran Termin 2 Jalan Setapak (Rp23.200.000) -> Terverifikasi DISETUJUI
+  const eJalanT2 = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(23_200_000),
+    tanggal: new Date("2026-02-25T13:00:00.000Z"),
+    posId: posJalanSetapak.id,
+    proyekId: proyekJalanSetapak.id,
+    terminId: terminJalan2.id,
+    uraian: "Pembayaran Termin 2 (40%) Paving Jalan Setapak Dusun Makmur",
+    penerima: "Kelompok Swakelola RT 01",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/jalan_t2.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-25T13:00:00.000Z"),
+  });
+  await prisma.verifikasiEntri.create({
+    data: {
+      entriId: eJalanT2.id,
+      pengawasId: pengawas.id,
+      keputusan: StatusVerifikasi.DISETUJUI,
+      catatan: "Pemasangan kanstin dan paving 50% terverifikasi baik",
+      waktu: new Date("2026-02-26T10:00:00.000Z"),
+    },
+  });
+
+  // Entri 9: Pembayaran Termin 3 Jalan Setapak (Rp17.400.000) -> Terverifikasi DISETUJUI (Total = 58jt)
+  const eJalanT3 = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(17_400_000),
+    tanggal: new Date("2026-03-20T15:00:00.000Z"),
+    posId: posJalanSetapak.id,
+    proyekId: proyekJalanSetapak.id,
+    terminId: terminJalan3.id,
+    uraian: "Pelunasan Termin 3 (30%) Paving Jalan Setapak Dusun Makmur 100% Selesai",
+    penerima: "Kelompok Swakelola RT 01",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/jalan_t3.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-03-20T15:00:00.000Z"),
+  });
+  await prisma.verifikasiEntri.create({
+    data: {
+      entriId: eJalanT3.id,
+      pengawasId: pengawas.id,
+      keputusan: StatusVerifikasi.DISETUJUI,
+      catatan: "Serah terima fisik 100% selesai dan diuji fungsi",
+      waktu: new Date("2026-03-21T09:00:00.000Z"),
+    },
+  });
+
+  // Entri 10-12: Tiga Entri Penghasilan Tetap (Sensitif / Disamarkan)
+  for (let bulan = 1; bulan <= 3; bulan++) {
+    const eSiltap = await tambahEntri(prisma, {
+      desaId: desa.id,
+      jenis: JenisEntri.PEMBAYARAN,
+      jumlah: BigInt(50_000_000),
+      tanggal: new Date(`2026-0${bulan}-28T10:00:00.000Z`),
+      posId: posSiltap.id,
+      uraian: `Penyaluran Penghasilan Tetap dan Tunjangan Aparatur Desa Bulan ${bulan}`,
+      penerima: "Penerima Perorangan Aparatur Desa",
+      penerimaDisamarkan: true,
+      buktiUrls: [`https://akar-desa.id/bukti/siltap_bln_${bulan}.pdf`],
+      pencatatId: kades.id,
+      dibuatPada: new Date(`2026-0${bulan}-28T10:00:00.000Z`),
+    });
+    await prisma.verifikasiEntri.create({
+      data: {
+        entriId: eSiltap.id,
+        pengawasId: pengawas.id,
+        keputusan: StatusVerifikasi.DISETUJUI,
+        catatan: `Slip payroll dan daftar tanda terima Siltap bulan ${bulan} lengkap`,
+        waktu: new Date(`2026-0${bulan}-28T16:00:00.000Z`),
+      },
+    });
+  }
+
+  // Entri 13: Entri Operasional dengan Kesalahan Jumlah
+  const eOpsSalah = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(25_000_000),
+    tanggal: new Date("2026-02-15T11:00:00.000Z"),
+    posId: posOperasional.id,
+    uraian: "Belanja ATK dan konsumsi Musyawarah Perencanaan Desa (salah rekap kuitansi)",
+    penerima: "Toko ATK Berkah Mandiri",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/ops_salah.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-15T11:00:00.000Z"),
+  });
+
+  // Entri 14: KOREKSI atas Entri 13
+  await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.KOREKSI,
+    jumlah: BigInt(25_000_000),
+    tanggal: new Date("2026-02-16T09:00:00.000Z"),
+    posId: posOperasional.id,
+    koreksiDariId: eOpsSalah.id,
+    uraian: "KOREKSI: Pembatalan entri operasional nomor 13 karena duplikasi nota belanja konsumsi",
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-16T09:00:00.000Z"),
+  });
+
+  // Entri 15: Entri Operasional Pengganti dengan Jumlah Benar (Rp20.000.000)
+  const eOpsBenar = await tambahEntri(prisma, {
+    desaId: desa.id,
+    jenis: JenisEntri.PEMBAYARAN,
+    jumlah: BigInt(20_000_000),
+    tanggal: new Date("2026-02-16T10:00:00.000Z"),
+    posId: posOperasional.id,
+    uraian: "Belanja ATK dan konsumsi Musyawarah Perencanaan Desa (nilai rekonsiliasi faktur)",
+    penerima: "Toko ATK Berkah Mandiri",
+    penerimaDisamarkan: false,
+    buktiUrls: ["https://akar-desa.id/bukti/ops_benar.pdf"],
+    pencatatId: kades.id,
+    dibuatPada: new Date("2026-02-16T10:00:00.000Z"),
+  });
+  await prisma.verifikasiEntri.create({
+    data: {
+      entriId: eOpsBenar.id,
+      pengawasId: pengawas.id,
+      keputusan: StatusVerifikasi.DISETUJUI,
+      catatan: "Koreksi faktur telah diperiksa dan disetujui",
+      waktu: new Date("2026-02-16T14:00:00.000Z"),
+    },
+  });
+
+  console.log("Seeding data awal dan Buku Kas Publik berhasil diselesaikan dengan rantai hash valid!");
 }
 
 main()

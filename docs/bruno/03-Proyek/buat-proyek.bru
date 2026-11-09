@@ -1,0 +1,50 @@
+meta {
+  name: Pembuatan / Pematangan Proyek Baru
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/proyek
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "judul": "Pembangunan Saluran Drainase RT 03 Dusun Krajan",
+    "deskripsi": "Pembangunan saluran drainase permanen untuk mengantisipasi luapan air hujan dan genangan pada pemukiman padat warga.",
+    "lokasi": "RT 03 RW 01 Dusun Krajan",
+    "desaId": "desa_karangsari",
+    "pagu": 100000000,
+    "kelas": "KECIL",
+    "syaratLokalMin": 70,
+    "durasiMin": 30,
+    "durasiMax": 60,
+    "rab": [
+      {
+        "uraian": "Galian tanah dan pembuangan sisa galian",
+        "volume": 120,
+        "satuan": "m3",
+        "hargaSatuan": 150000
+      },
+      {
+        "uraian": "Pengadaan dan pemasangan box culvert/u-ditch",
+        "volume": 200,
+        "satuan": "m",
+        "hargaSatuan": 350000
+      },
+      {
+        "uraian": "Pekerjaan finishing dan plesteran bibir drainase",
+        "volume": 1,
+        "satuan": "ls",
+        "hargaSatuan": 12000000
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,31 @@
+meta {
+  name: Tambah Pos Anggaran APBDes
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/desa/desa_karangsari/pos-anggaran
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "sumberDanaId": "sumber_dana_dds_001",
+    "tahun": 2026,
+    "kodeBidang": "02",
+    "namaBidang": "Pelaksanaan Pembangunan Desa",
+    "kodeSubBidang": "02.02",
+    "namaSubBidang": "Kawasan Pemukiman",
+    "kodeKegiatan": "02.02.01",
+    "namaKegiatan": "Pembangunan Saluran Drainase Lingkungan Pemukiman",
+    "jenisBelanja": "MODAL",
+    "jumlah": 100000000
+  }
+}
+

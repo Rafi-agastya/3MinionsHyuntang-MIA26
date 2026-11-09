@@ -1,0 +1,26 @@
+meta {
+  name: Kirim Tiket Aduan Warga
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/tiket
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenWarga}}
+}
+
+body:json {
+  {
+    "desaId": "desa_karangsari",
+    "kategori": "KAS",
+    "judul": "Indikasi Keterlambatan Pembayaran Upah Pekerja Saluran",
+    "isi": "Pekerja proyek saluran drainase RT 03 menyampaikan upah minggu lalu belum dibayarkan oleh bendahara pokmas.",
+    "anonim": true
+  }
+}
+

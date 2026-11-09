@@ -1,0 +1,16 @@
+meta {
+  name: Daftar Flag Anomali Proyek
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/flag
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+

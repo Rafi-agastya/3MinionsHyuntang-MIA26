@@ -1,0 +1,12 @@
+meta {
+  name: Daftar Entri Buku Kas Desa
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/desa/desa_karangsari/kas/entri?tipe=PEMBAYARAN&limit=20
+  body: none
+  auth: none
+}
+

@@ -1,0 +1,22 @@
+meta {
+  name: Pencatatan Entri Koreksi Pembalik
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/kas/entri/entri_seed_002/koreksi
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "alasan": "Koreksi salah input nominal pembayaran material pasir pasang sesuai kwitansi revisi vendor."
+  }
+}
+

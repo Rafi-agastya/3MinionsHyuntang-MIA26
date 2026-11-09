@@ -1,0 +1,16 @@
+meta {
+  name: Detail Tiket Internal (Perangkat / Admin)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/tiket/tiket_seed_001
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+

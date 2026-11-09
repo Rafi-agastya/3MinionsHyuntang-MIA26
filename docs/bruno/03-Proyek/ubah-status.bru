@@ -1,0 +1,25 @@
+meta {
+  name: Transisi Status Proyek (State Machine)
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "status": "TENDER_DIBUKA",
+    "jalur": "SAYEMBARA",
+    "alasanJalur": "Pekerjaan konstruksi sederhana dapat dilaksanakan secara swakelola padat karya oleh kelompok masyarakat setempat.",
+    "catatan": "Tender sayembara swakelola resmi dibuka selama 14 hari kalender."
+  }
+}
+

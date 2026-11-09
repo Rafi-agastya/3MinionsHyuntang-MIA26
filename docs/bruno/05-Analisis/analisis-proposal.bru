@@ -1,0 +1,22 @@
+meta {
+  name: Jalankan Analisis Terpadu Proposal (Skor, Flag, AI)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/proposal/seed_prop_001/analisis
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "ulang": false
+  }
+}
+

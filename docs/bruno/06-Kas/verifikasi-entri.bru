@@ -1,0 +1,23 @@
+meta {
+  name: Verifikasi Entri Kas oleh Pengawas (Pemisahan Wewenang)
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/kas/entri/entri_seed_001/verifikasi
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPengawas}}
+}
+
+body:json {
+  {
+    "status": "TERVERIFIKASI",
+    "catatan": "Kesesuaian bukti transfer bank dan kuitansi pembayaran fisik telah divalidasi oleh BPD."
+  }
+}
+

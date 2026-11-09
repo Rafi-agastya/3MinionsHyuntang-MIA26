@@ -1,0 +1,28 @@
+meta {
+  name: Evaluasi Kompetensi Peserta
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/proyek/seed_proyek_001/kompetensi
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "proposalId": "seed_prop_001",
+    "nilaiRubrik": {
+      "pemahamanTeknis": 90,
+      "kapasitasPeralatan": 85,
+      "kesiapanSDM": 90
+    },
+    "catatan": "Kelompok memiliki rekam jejak pekerjaan serupa dan penguasaan metode yang matang."
+  }
+}
+

@@ -1,0 +1,23 @@
+meta {
+  name: Beri Tanggapan / Tindak Lanjut Tiket
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/api/tiket/tiket_seed_001
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "status": "DIPROSES",
+    "tanggapan": "Pemerintah Desa telah memanggil ketua pokmas dan memastikan upah pekerja dibayarkan paling lambat besok siang."
+  }
+}
+

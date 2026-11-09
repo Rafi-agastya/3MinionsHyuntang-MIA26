@@ -1,0 +1,23 @@
+meta {
+  name: Verifikasi Akun Pengguna
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/pengguna/usr_warga_001/verifikasi
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{tokenPerangkat}}
+}
+
+body:json {
+  {
+    "setujui": true,
+    "alasan": "Data identitas kependudukan dan domisili RT/RW telah sesuai dengan buku induk desa."
+  }
+}
+
