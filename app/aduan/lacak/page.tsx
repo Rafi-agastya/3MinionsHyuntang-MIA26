@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -260,9 +261,20 @@ function LacakTiketContent() {
         <span className="text-zinc-900 font-semibold">Lacak Tiket</span>
       </nav>
 
-      {/* Search Header Container */}
-      <div className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-sm space-y-4">
-        <div className="space-y-1">
+      {/* Search Header Container with Watermark */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50/80 via-white to-white rounded-2xl border border-emerald-200/80 p-6 sm:p-8 shadow-sm space-y-4">
+        {/* Subtle Watermark Logo */}
+        <div className="absolute -right-6 -bottom-6 w-44 h-44 opacity-10 pointer-events-none select-none">
+          <Image
+            src="/logo-akar.png"
+            alt=""
+            width={176}
+            height={176}
+            className="w-full h-full object-contain"
+          />
+        </div>
+
+        <div className="relative z-10 space-y-1">
           <Badge variant="default" className="text-xs font-semibold">
             Pelacakan Status Transparan
           </Badge>
@@ -276,7 +288,7 @@ function LacakTiketContent() {
         </div>
 
         {/* Search input form */}
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2 pt-2">
+        <form onSubmit={handleSearch} className="relative z-10 flex flex-col sm:flex-row gap-2 pt-2">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -478,7 +490,7 @@ function LacakTiketContent() {
 
 export default function LacakTiketPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
       <Navbar />
       <main className="flex-1 pt-24 pb-16">
         <React.Suspense

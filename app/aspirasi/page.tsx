@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   MessageSquarePlus,
@@ -271,11 +272,11 @@ export default function AspirasiPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Header Banner */}
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm space-y-3">
             <div className="flex flex-wrap items-center gap-2">
@@ -368,8 +369,9 @@ export default function AspirasiPortalPage() {
 
           {/* TAB 1: KIRIM ASPIRASI / ADUAN BARU */}
           {activeTab === "kirim" && (
-            <div className="space-y-6">
-              {generatedTicket ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-8 space-y-6">
+                {generatedTicket ? (
                 /* Ticket Success Banner */
                 <div className="bg-white rounded-2xl border border-emerald-200 p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in zoom-in-95 duration-200 text-center sm:text-left">
                   <div className="inline-flex p-3 rounded-full bg-emerald-100 text-[#1F6F43] mb-1">
@@ -610,6 +612,69 @@ export default function AspirasiPortalPage() {
                   </div>
                 </form>
               )}
+              </div>
+
+              {/* Sidebar Guide: 4 cols */}
+              <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+                {/* Card 1: Visual Hero Desa Aerial */}
+                <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
+                  <div className="relative h-44 w-full">
+                    <Image
+                      src="/hero-desa-aerial.jpg"
+                      alt="Suara Warga Membangun Desa"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 380px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
+                    <div className="absolute bottom-3 left-4 right-4 text-white">
+                      <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
+                        Partisipasi Aktif
+                      </span>
+                      <h4 className="text-sm font-bold leading-tight">Suara Warga Membangun Desa</h4>
+                      <p className="text-xs text-zinc-300 mt-0.5">Musrenbangdes berbasis kebutuhan riil</p>
+                    </div>
+                  </div>
+                  <div className="p-4 space-y-2.5 text-xs text-zinc-600">
+                    <p className="leading-relaxed">
+                      Setiap aspirasi yang terverifikasi akan direkap secara berkala oleh BPD untuk diagendakan dalam Rencana Kerja Pemerintah Desa (RKPDes).
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card 2: Panduan Penyampaian Aspirasi */}
+                <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
+                  <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                    <Clock className="w-4 h-4 text-[#1F6F43]" />
+                    <span>Panduan Penyampaian Aspirasi</span>
+                  </div>
+                  <ul className="space-y-2.5 text-xs text-zinc-700">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                      <span><strong>Tenggat 14 Hari:</strong> BPD wajib memberikan tanggapan resmi maksimal 14 hari kalender.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                      <span><strong>Sertakan RT/RW:</strong> Tuliskan nama dusun dan nomor RT/RW secara spesifik agar mudah ditinjau.</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                      <span><strong>Lampirkan Bukti:</strong> Foto jalan rusak, gorong-gorong tersumbat, atau bukti fisik mempercepat tindak lanjut.</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Card 3: Kerahasiaan Terjamin */}
+                <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
+                  <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                    <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
+                    <span>Kerahasiaan Terjamin</span>
+                  </div>
+                  <p className="text-xs text-zinc-600 leading-relaxed">
+                    Khusus kategori dugaan penyimpangan dana, Anda dapat mengaktifkan opsi <strong>Laporan Anonim</strong>. Identitas pelapor dilindungi sepenuhnya oleh perundang-undangan keterbukaan informasi.
+                  </p>
+                </div>
+              </aside>
             </div>
           )}
 

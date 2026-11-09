@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -21,6 +22,8 @@ import {
   Building2,
   FileCheck2,
   Copy,
+  ShieldCheck,
+  HardHat,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -179,11 +182,11 @@ export default function FormAjukanProposalPage() {
   const totalEstimasiSkor = scoreBiaya + scoreLokal + scoreJadwal + scoreDokumen;
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Breadcrumb Navigation */}
           <nav
             aria-label="Breadcrumb"
@@ -209,7 +212,7 @@ export default function FormAjukanProposalPage() {
 
           {/* SUCCESS CONFIRMATION MODAL / VIEW */}
           {isSuccess ? (
-            <div className="bg-white rounded-2xl border border-emerald-200/90 shadow-sm p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
+            <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-emerald-200/90 shadow-sm p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <div className="text-center space-y-3">
                 <div className="inline-flex p-3 rounded-full bg-emerald-100 text-[#1F6F43] border border-emerald-200">
                   <CheckCircle2 className="w-10 h-10" />
@@ -316,9 +319,12 @@ export default function FormAjukanProposalPage() {
             </div>
           ) : (
             /* FORM SUBMISSION VIEW */
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Header Card */}
-              <div className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm space-y-2">
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                {/* Main Form Fields: 8 cols */}
+                <div className="lg:col-span-8 space-y-6">
+                  {/* Header Card */}
+                  <div className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="default" className="text-xs font-semibold">
                     Sayembara Swakelola Terbuka
@@ -844,6 +850,74 @@ export default function FormAjukanProposalPage() {
                     </span>
                   )}
                 </Button>
+              </div>
+                </div>
+
+                {/* Sidebar Sticky Guide: 4 cols */}
+                <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+                  {/* Card 1: Visual Gotong Royong /drainase.jpg */}
+                  <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
+                    <div className="relative h-44 w-full">
+                      <Image
+                        src="/proyek/drainase.jpg"
+                        alt="Suasana Kerja Bakti Swakelola"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 380px"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
+                      <div className="absolute bottom-3 left-4 right-4 text-white">
+                        <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
+                          PKTD Karang Sari
+                        </span>
+                        <h4 className="text-sm font-bold leading-tight">Gotong Royong Swakelola</h4>
+                        <p className="text-xs text-zinc-300 mt-0.5">Prioritas upah harian bagi warga sekitar</p>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-2.5 text-xs text-zinc-600">
+                      <p className="leading-relaxed">
+                        Sayembara swakelola memberi kesempatan warga mengelola anggaran pembangunan desa sendiri secara transparan dan akuntabel.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Card 2: 3 Syarat Wajib Lolos Verifikasi */}
+                  <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
+                    <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                      <HardHat className="w-4 h-4 text-[#1F6F43]" />
+                      <span>3 Syarat Wajib Verifikasi</span>
+                    </div>
+                    <ul className="space-y-2.5 text-xs text-zinc-700">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                        <span><strong>Serapan Lokal &ge; 70%:</strong> Minimal 7 dari 10 pekerja ber-KTP Desa Karang Sari.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                        <span><strong>Penawaran &le; Pagu:</strong> Total RAB tidak melebihi alokasi anggaran proyek.</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                        <span><strong>Legalitas Pokmas:</strong> Dilengkapi susunan pengurus RT/RW atau kelompok tukang.</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Card 3: Jaminan Integritas & Anti Pungli */}
+                  <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
+                    <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                      <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
+                      <span>Jaminan Integritas Seleksi</span>
+                    </div>
+                    <p className="text-xs text-zinc-600 leading-relaxed">
+                      Penilaian seleksi menggunakan algoritma matematis terbuka. Tidak ada biaya pendaftaran, titipan, atau pungli dalam penetapan pelaksana.
+                    </p>
+                    <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 font-mono">
+                      <span>Protokol Audit</span>
+                      <span className="text-[#1F6F43] font-semibold">AKAR v1.0 SHA-256</span>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </form>
           )}

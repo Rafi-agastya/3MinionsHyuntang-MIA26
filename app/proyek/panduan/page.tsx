@@ -1,4 +1,5 @@
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
 import {
@@ -14,6 +15,10 @@ import {
   BrainCircuit,
   Scale,
   ClipboardList,
+  Phone,
+  Building2,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -26,10 +31,10 @@ export const metadata: Metadata = {
 
 export default function PanduanProposalPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col justify-between font-sans relative">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-12 sm:space-y-16">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-10 sm:space-y-12">
         {/* ========================================================================= */}
         {/* BREADCRUMB & HEADER                                                       */}
         {/* ========================================================================= */}
@@ -84,6 +89,11 @@ export default function PanduanProposalPage() {
             </div>
           </div>
         </div>
+
+        {/* 2-COLUMN LAYOUT: MAIN CONTENT + VILLAGE SIDEBAR */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* MAIN COLUMN (8 COLS) */}
+          <div className="lg:col-span-8 space-y-12">
 
         {/* ========================================================================= */}
         {/* SECTION 1: 4 SYARAT POKOK KELOMPOK PENGUSUL                               */}
@@ -442,6 +452,104 @@ export default function PanduanProposalPage() {
             </div>
           </div>
         </section>
+      </div>
+
+      {/* SIDEBAR: PUSAT BANTUAN & FOTO BALAI WARGA (4 COLS) */}
+      <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+        {/* Card 1: Visual Balai Warga */}
+        <div className="rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm space-y-0 group">
+          <div className="relative aspect-[16/10] overflow-hidden">
+            <Image
+              src="/proyek/balai-warga.jpg"
+              alt="Balai Pertemuan Warga Desa Karang Sari"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 1024px) 100vw, 384px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-3 left-3 right-3 text-white">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-600/90 text-[11px] font-semibold">
+                <Building2 className="w-3 h-3" />
+                <span>Balai Pertemuan Desa</span>
+              </span>
+              <p className="text-xs sm:text-sm font-bold text-white drop-shadow-xs mt-1">
+                Pusat Konsultasi &amp; Pengesahan Pokmas
+              </p>
+            </div>
+          </div>
+          <div className="p-4 sm:p-5 space-y-2 text-xs text-zinc-600">
+            <p className="leading-relaxed">
+              Balai Warga Karang Sari terbuka bagi kelompok pertukangan yang ingin berkonsultasi mengenai penyusunan Micro-RAB dan pembentukan struktur tim gotong royong.
+            </p>
+          </div>
+        </div>
+
+        {/* Card 2: Kontak Bantuan Perangkat Desa */}
+        <div className="rounded-3xl border border-zinc-200/80 bg-white p-5 sm:p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+            <div className="p-2 rounded-xl bg-emerald-50 text-[#1F6F43]">
+              <Phone className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900">
+                Butuh Bantuan Pengisian?
+              </h3>
+              <span className="text-[11px] text-zinc-500 block">
+                Pendampingan teknis gratis tanpa biaya
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3 text-xs">
+            <div className="flex items-start gap-2.5">
+              <Users className="w-4 h-4 text-[#8A5A2B] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-zinc-800 block">Kaur Pembangunan Desa:</strong>
+                <span className="text-zinc-600">Bpk. Sugeng Hariyanto (Pamong Desa)</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5">
+              <Clock className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-zinc-800 block">Jam Pelayanan Tatap Muka:</strong>
+                <span className="text-zinc-600">Senin – Jumat (08:00 – 15:00 WIB)</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-2.5">
+              <MapPin className="w-4 h-4 text-[#8A5A2B] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-zinc-800 block">Lokasi Meja Konsultasi:</strong>
+                <span className="text-zinc-600">Kantor Pelayanan Terpadu Desa Karang Sari</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-zinc-100">
+            <a
+              href="/template-proposal-rab-akar.zip"
+              download
+              className="w-full inline-flex items-center justify-center gap-2 min-h-[44px] px-4 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-700 font-semibold text-xs border border-zinc-200 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5 text-[#1F6F43]" />
+              <span>Unduh Blanko Formulir (Word &amp; Excel)</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Card 3: Jaminan Integritas & Anti-Pungli */}
+        <div className="rounded-3xl border border-emerald-200 bg-emerald-50/50 p-5 space-y-2.5 text-xs text-zinc-700">
+          <div className="flex items-center gap-2 font-bold text-[#1F6F43]">
+            <ShieldCheck className="w-4 h-4 shrink-0" />
+            <span>Jaminan Bebas Pungutan Liar</span>
+          </div>
+          <p className="leading-relaxed text-zinc-600">
+            Seluruh tahapan pendaftaran sayembara swakelola 100% bebas biaya. Skor dihitung secara otomatis oleh algoritma terbuka tanpa intervensi pihak luar.
+          </p>
+        </div>
+      </aside>
+    </div>
 
         {/* ========================================================================= */}
         {/* CALL TO ACTION BANNER                                                     */}

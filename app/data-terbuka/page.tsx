@@ -195,7 +195,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
@@ -238,10 +238,10 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
           </div>
 
           {/* SECTION 1: VERIFIKASI HASH SHA-256 MANDIRI */}
-          <div className="rounded-2xl border border-emerald-200/90 bg-gradient-to-br from-emerald-50/70 via-white to-white p-6 sm:p-8 shadow-sm space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-emerald-200/60 pb-4">
+          <div className="rounded-2xl border border-[#8A5A2B]/30 bg-gradient-to-br from-[#8A5A2B]/10 via-[#FAFAF7] to-white p-6 sm:p-8 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-[#8A5A2B]/20 pb-4">
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#1F6F43] uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#8A5A2B] uppercase tracking-wider">
                   <Hash className="w-4 h-4" />
                   <span>Alat Verifikasi Integritas Mandiri</span>
                 </div>
@@ -255,7 +255,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
                 </p>
               </div>
 
-              <div className="p-2 rounded-xl bg-white border border-emerald-200 text-[#1F6F43] shrink-0 self-start">
+              <div className="p-2.5 rounded-xl bg-white border border-[#8A5A2B]/30 text-[#8A5A2B] shadow-xs shrink-0 self-start">
                 <ShieldCheck className="w-6 h-6" />
               </div>
             </div>
@@ -272,11 +272,11 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
                   value={inputHash}
                   onChange={(e) => setInputHash(e.target.value)}
                   placeholder="sha256:7f83b1c9402a4e21a8d56b3e..."
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-zinc-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#1F6F43] bg-white min-h-[44px]"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-zinc-200 text-xs sm:text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#8A5A2B] bg-white min-h-[44px]"
                 />
                 <Button
                   type="submit"
-                  className="bg-[#1F6F43] hover:bg-[#185935] text-white text-xs sm:text-sm font-semibold px-6 min-h-[44px]"
+                  className="bg-[#8A5A2B] hover:bg-[#6e4620] text-white text-xs sm:text-sm font-semibold px-6 min-h-[44px] shadow-sm"
                 >
                   <span>Verifikasi Hash</span>
                 </Button>
@@ -430,7 +430,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
                             "application/json"
                           )
                         }
-                        className="text-xs font-semibold gap-1.5 min-h-[44px] hover:bg-zinc-50"
+                        className="text-xs font-semibold gap-1.5 min-h-[44px] hover:bg-amber-50 hover:text-[#8A5A2B] hover:border-amber-300"
                       >
                         <FileCode className="w-4 h-4 text-[#8A5A2B]" />
                         <span>Unduh JSON</span>
