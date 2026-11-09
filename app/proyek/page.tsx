@@ -8,9 +8,11 @@ import {
   HardHat,
   Sparkles,
   FileText,
+  ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { ProyekDirectoryList } from "@/components/proyek/proyek-directory-list";
 import { getProyekList, type ProyekListItem } from "@/lib/proyek-api";
 
@@ -77,13 +79,26 @@ export default async function ProyekIndexPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col justify-between font-sans relative">
+    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-6 sm:space-y-8">
+      <SlideIndicator
+        slides={[
+          { id: "proyek-frame-1", label: "Sayembara PKTD" },
+          { id: "proyek-frame-2", label: "Daftar Proyek" },
+          { id: "proyek-frame-footer", label: "Transparansi" },
+        ]}
+      />
+
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
-        {/* 1. BANNER SOROTAN SAYEMBARA (12-COL CSS GRID WITH EVEN OVERLAY)           */}
+        {/* FRAME 1: BANNER SOROTAN SAYEMBARA (12-COL CSS GRID WITH EVEN OVERLAY)    */}
         {/* ========================================================================= */}
+        <section
+          id="proyek-frame-1"
+          aria-label="Bursa Sayembara Proyek"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6"
+        >
         <div className="relative rounded-3xl overflow-hidden border border-emerald-800/20 shadow-md">
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -191,13 +206,36 @@ export default async function ProyekIndexPage() {
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 2. DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                          */}
-        {/* ========================================================================= */}
-        <ProyekDirectoryList initialProyekList={proyekList} />
-      </main>
+          {/* Tombol Lanjut ke Bawah Helper */}
+          <div className="pt-2 flex justify-center">
+            <a
+              href="#proyek-frame-2"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
+            >
+              <span>Lihat Daftar Proyek &amp; Sayembara Terbuka</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
+          </div>
+        </section>
 
-      <Footer />
+        {/* ========================================================================= */}
+        {/* FRAME 2: DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                    */}
+        {/* ========================================================================= */}
+        <section
+          id="proyek-frame-2"
+          aria-label="Daftar Proyek Desa"
+          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+        >
+          <ProyekDirectoryList initialProyekList={proyekList} />
+        </section>
+
+        {/* ========================================================================= */}
+        {/* FRAME 3: FOOTER                                                           */}
+        {/* ========================================================================= */}
+        <section id="proyek-frame-footer" aria-label="Informasi Footer" className="snap-end">
+          <Footer />
+        </section>
+      </main>
     </div>
   );
 }

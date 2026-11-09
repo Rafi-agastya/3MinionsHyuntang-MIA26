@@ -24,13 +24,21 @@ import {
   Copy,
   ShieldCheck,
   HardHat,
+  ArrowDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/components/proyek/types";
 import { getMockProjectById } from "@/components/proyek/mock-detail-data";
+
+const ajukanSlides = [
+  { id: "ajukan-frame-1", label: "Identitas & PKTD" },
+  { id: "ajukan-frame-2", label: "Micro-RAB & Berkas" },
+  { id: "ajukan-frame-footer", label: "Transparansi" },
+];
 
 interface RabRow {
   id: string;
@@ -181,38 +189,48 @@ export default function FormAjukanProposalPage() {
   const scoreDokumen = files.length >= 2 ? 10 : 6;
   const totalEstimasiSkor = scoreBiaya + scoreLokal + scoreJadwal + scoreDokumen;
 
-  return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
-      <Navbar />
+  if (isSuccess) {
+    return (
+      <>
+        <Navbar />
 
-      <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          {/* Breadcrumb Navigation */}
-          <nav
-            aria-label="Breadcrumb"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 flex-wrap"
+        <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+          <SlideIndicator
+            slides={[
+              { id: "ajukan-frame-1", label: "Proposal Terkirim" },
+              { id: "ajukan-frame-footer", label: "Transparansi" },
+            ]}
+          />
+
+          <section
+            id="ajukan-frame-1"
+            aria-label="Konfirmasi Pengajuan Proposal"
+            className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full"
           >
-            <Link
-              href="/proyek"
-              className="flex items-center gap-1 hover:text-[#1F6F43] transition-colors"
+            {/* Breadcrumb Navigation */}
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 flex-wrap mb-6"
             >
-              <Home className="w-3.5 h-3.5" />
-              <span>Proyek</span>
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-            <Link
-              href={`/proyek/${projectId}`}
-              className="hover:text-[#1F6F43] transition-colors truncate max-w-[180px] sm:max-w-xs"
-            >
-              <span>{project.judul}</span>
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-            <span className="text-zinc-900 font-semibold">Ajukan Proposal</span>
-          </nav>
+              <Link
+                href="/proyek"
+                className="flex items-center gap-1 hover:text-[#1F6F43] transition-colors"
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span>Proyek</span>
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <Link
+                href={`/proyek/${projectId}`}
+                className="hover:text-[#1F6F43] transition-colors truncate max-w-[180px] sm:max-w-xs"
+              >
+                <span>{project.judul}</span>
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <span className="text-zinc-900 font-semibold">Tanda Terima</span>
+            </nav>
 
-          {/* SUCCESS CONFIRMATION MODAL / VIEW */}
-          {isSuccess ? (
-            <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-emerald-200/90 shadow-sm p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
+            <div className="bg-white rounded-3xl border border-emerald-200/90 shadow-sm p-6 sm:p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
               <div className="text-center space-y-3">
                 <div className="inline-flex p-3 rounded-full bg-emerald-100 text-[#1F6F43] border border-emerald-200">
                   <CheckCircle2 className="w-10 h-10" />
@@ -317,14 +335,62 @@ export default function FormAjukanProposalPage() {
                 </Link>
               </div>
             </div>
-          ) : (
-            /* FORM SUBMISSION VIEW */
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Main Form Fields: 8 cols */}
-                <div className="lg:col-span-8 space-y-6">
-                  {/* Header Card */}
-                  <div className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm space-y-2">
+          </section>
+
+          <section
+            id="ajukan-frame-footer"
+            aria-label="Informasi Footer"
+            className="snap-end w-full"
+          >
+            <Footer />
+          </section>
+        </main>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+        <SlideIndicator slides={ajukanSlides} />
+
+        <form onSubmit={handleSubmit} className="w-full">
+          {/* FRAME 1: Identitas & Syarat PKTD */}
+          <section
+            id="ajukan-frame-1"
+            aria-label="Identitas Kelompok dan Serapan Tenaga Kerja PKTD"
+            className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-4"
+          >
+            {/* Breadcrumb Navigation */}
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 flex-wrap"
+            >
+              <Link
+                href="/proyek"
+                className="flex items-center gap-1 hover:text-[#1F6F43] transition-colors"
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span>Proyek</span>
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <Link
+                href={`/proyek/${projectId}`}
+                className="hover:text-[#1F6F43] transition-colors truncate max-w-[180px] sm:max-w-xs"
+              >
+                <span>{project.judul}</span>
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <span className="text-zinc-900 font-semibold">Ajukan Proposal</span>
+            </nav>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+              {/* Kolom Kiri: 8 cols */}
+              <div className="lg:col-span-8 space-y-5">
+                {/* Header Card */}
+                <div className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="default" className="text-xs font-semibold">
                     Sayembara Swakelola Terbuka
@@ -538,6 +604,80 @@ export default function FormAjukanProposalPage() {
                 </div>
               </div>
 
+              {/* Helper Jump Action Button */}
+              <div className="pt-2 flex justify-start">
+                <a
+                  href="#ajukan-frame-2"
+                  className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+                >
+                  <span>Lanjut ke Pengisian Micro-RAB &amp; Berkas</span>
+                  <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+                </a>
+              </div>
+            </div>
+
+            {/* Kolom Kanan: 4 cols */}
+            <aside className="lg:col-span-4 space-y-5">
+              {/* Card 1: Visual Gotong Royong /drainase.jpg */}
+              <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
+                <div className="relative h-44 w-full">
+                  <Image
+                    src="/proyek/drainase.jpg"
+                    alt="Suasana Kerja Bakti Swakelola"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 380px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
+                      PKTD Karang Sari
+                    </span>
+                    <h4 className="text-sm font-bold leading-tight">Gotong Royong Swakelola</h4>
+                    <p className="text-xs text-zinc-300 mt-0.5">Prioritas upah harian bagi warga sekitar</p>
+                  </div>
+                </div>
+                <div className="p-4 space-y-2.5 text-xs text-zinc-600">
+                  <p className="leading-relaxed">
+                    Sayembara swakelola memberi kesempatan warga mengelola anggaran pembangunan desa sendiri secara transparan dan akuntabel.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: 3 Syarat Wajib Lolos Verifikasi */}
+              <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
+                <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                  <HardHat className="w-4 h-4 text-[#1F6F43]" />
+                  <span>3 Syarat Wajib Verifikasi</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-zinc-700">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Serapan Lokal ≥ 70%:</strong> Minimal 7 dari 10 pekerja ber-KTP Desa Karang Sari.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Penawaran ≤ Pagu:</strong> Total RAB tidak melebihi alokasi anggaran proyek.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Legalitas Pokmas:</strong> Dilengkapi susunan pengurus RT/RW atau kelompok tukang.</span>
+                  </li>
+                </ul>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        {/* FRAME 2: Micro-RAB, Berkas & Submit */}
+        <section
+          id="ajukan-frame-2"
+          aria-label="Rincian Anggaran Micro-RAB dan Berkas Pendukung"
+          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            {/* Kolom Kiri: 8 cols */}
+            <div className="lg:col-span-8 space-y-6">
               {/* SECTION 3: INPUT MICRO-RAB DINAMIS */}
               <div className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-zinc-100 pb-3 flex-wrap gap-2">
@@ -851,80 +991,64 @@ export default function FormAjukanProposalPage() {
                   )}
                 </Button>
               </div>
+            </div>
+
+            {/* Kolom Kanan: 4 cols */}
+            <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-4">
+              {/* Card 3: Jaminan Integritas & Anti Pungli */}
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
+                <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                  <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
+                  <span>Jaminan Integritas Seleksi</span>
                 </div>
-
-                {/* Sidebar Sticky Guide: 4 cols */}
-                <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
-                  {/* Card 1: Visual Gotong Royong /drainase.jpg */}
-                  <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
-                    <div className="relative h-44 w-full">
-                      <Image
-                        src="/proyek/drainase.jpg"
-                        alt="Suasana Kerja Bakti Swakelola"
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 380px"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
-                      <div className="absolute bottom-3 left-4 right-4 text-white">
-                        <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
-                          PKTD Karang Sari
-                        </span>
-                        <h4 className="text-sm font-bold leading-tight">Gotong Royong Swakelola</h4>
-                        <p className="text-xs text-zinc-300 mt-0.5">Prioritas upah harian bagi warga sekitar</p>
-                      </div>
-                    </div>
-                    <div className="p-4 space-y-2.5 text-xs text-zinc-600">
-                      <p className="leading-relaxed">
-                        Sayembara swakelola memberi kesempatan warga mengelola anggaran pembangunan desa sendiri secara transparan dan akuntabel.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Card 2: 3 Syarat Wajib Lolos Verifikasi */}
-                  <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
-                    <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
-                      <HardHat className="w-4 h-4 text-[#1F6F43]" />
-                      <span>3 Syarat Wajib Verifikasi</span>
-                    </div>
-                    <ul className="space-y-2.5 text-xs text-zinc-700">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                        <span><strong>Serapan Lokal ≥ 70%:</strong> Minimal 7 dari 10 pekerja ber-KTP Desa Karang Sari.</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                        <span><strong>Penawaran ≤ Pagu:</strong> Total RAB tidak melebihi alokasi anggaran proyek.</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                        <span><strong>Legalitas Pokmas:</strong> Dilengkapi susunan pengurus RT/RW atau kelompok tukang.</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* Card 3: Jaminan Integritas & Anti Pungli */}
-                  <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
-                    <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
-                      <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
-                      <span>Jaminan Integritas Seleksi</span>
-                    </div>
-                    <p className="text-xs text-zinc-600 leading-relaxed">
-                      Penilaian seleksi menggunakan algoritma matematis terbuka. Tidak ada biaya pendaftaran, titipan, atau pungli dalam penetapan pelaksana.
-                    </p>
-                    <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-                      <span>Protokol Audit</span>
-                      <span className="text-[#1F6F43] font-semibold">AKAR v1.0 SHA-256</span>
-                    </div>
-                  </div>
-                </aside>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Penilaian seleksi menggunakan algoritma matematis terbuka. Tidak ada biaya pendaftaran, titipan, atau pungli dalam penetapan pelaksana.
+                </p>
+                <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-500 font-mono">
+                  <span>Protokol Audit</span>
+                  <span className="text-[#1F6F43] font-semibold">AKAR v1.0 SHA-256</span>
+                </div>
               </div>
-            </form>
-          )}
-        </div>
-      </main>
 
-      <Footer />
-    </div>
-  );
+              {/* Card 4: Estimasi Bobot Penilaian AI */}
+              <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/40 p-5 space-y-3 shadow-sm">
+                <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                  <Sparkles className="w-4 h-4 text-[#1F6F43]" />
+                  <span>Bobot Evaluasi Algoritma</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between items-center py-1 border-b border-emerald-100">
+                    <span className="text-zinc-600">Efisiensi Biaya (Micro-RAB)</span>
+                    <span className="font-mono font-bold text-zinc-900">40%</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1 border-b border-emerald-100">
+                    <span className="text-zinc-600">Tenaga Kerja Lokal (PKTD)</span>
+                    <span className="font-mono font-bold text-zinc-900">30%</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1 border-b border-emerald-100">
+                    <span className="text-zinc-600">Rasionalitas Jadwal Kerja</span>
+                    <span className="font-mono font-bold text-zinc-900">20%</span>
+                  </div>
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-zinc-600">Kelengkapan Berkas Pokmas</span>
+                    <span className="font-mono font-bold text-zinc-900">10%</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        {/* FRAME 3: Footer Snap End */}
+        <section
+          id="ajukan-frame-footer"
+          aria-label="Informasi Footer"
+          className="snap-end w-full"
+        >
+          <Footer />
+        </section>
+      </form>
+    </main>
+  </>
+);
 }

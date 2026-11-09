@@ -22,11 +22,19 @@ import {
   Sparkles,
   HelpCircle,
   ChevronDown,
+  ArrowDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+const aspirasiSlides = [
+  { id: "aspirasi-frame-1", label: "Kirim Aspirasi" },
+  { id: "aspirasi-frame-2", label: "Daftar Aspirasi" },
+  { id: "aspirasi-frame-footer", label: "Transparansi" },
+];
 
 interface AspirasiItem {
   id: string;
@@ -44,8 +52,6 @@ interface AspirasiItem {
 }
 
 export default function AspirasiPortalPage() {
-  const [activeTab, setActiveTab] = React.useState<"daftar" | "kirim">("daftar");
-
   // Form State
   const [judul, setJudul] = React.useState("");
   const [kategori, setKategori] = React.useState<AspirasiItem["kategori"]>("Infrastruktur Rusak");
@@ -273,13 +279,21 @@ export default function AspirasiPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <>
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+        {/* Desktop Dot Pagination */}
+        <SlideIndicator slides={aspirasiSlides} />
+
+        {/* FRAME 1: Header & Form Kirim Aspirasi */}
+        <section
+          id="aspirasi-frame-1"
+          aria-label="Kirim Aspirasi dan Aduan Warga"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-4"
+        >
           {/* Header Banner */}
-          <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm space-y-3">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 sm:p-7 shadow-sm space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="default" className="text-xs font-semibold">
                 Saluran Aspirasi Warga Berbukti
@@ -289,10 +303,10 @@ export default function AspirasiPortalPage() {
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
               Portal Ide, Aspirasi &amp; Aduan Warga
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-zinc-600 max-w-2xl leading-relaxed">
               Sampaikan usulan pembangunan desa, laporan infrastruktur rusak, atau
               pengawasan realisasi dana desa secara transparan dengan nomor tiket yang bisa
               dilacak hingga tuntas.
@@ -300,79 +314,55 @@ export default function AspirasiPortalPage() {
 
             {/* Quick stats row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-zinc-100 text-xs">
-              <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
                 <span className="text-zinc-500 block">Total Aspirasi Masuk</span>
-                <span className="text-base sm:text-lg font-bold text-zinc-900 block mt-0.5">
+                <span className="text-base font-bold text-zinc-900 block mt-0.5">
                   142 Usulan
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
                 <span className="text-zinc-500 block">Diverifikasi BPD</span>
-                <span className="text-base sm:text-lg font-bold text-[#8A5A2B] block mt-0.5">
+                <span className="text-base font-bold text-[#8A5A2B] block mt-0.5">
                   36 Ditinjau
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
                 <span className="text-zinc-500 block">Masuk APBDes 2026</span>
-                <span className="text-base sm:text-lg font-bold text-[#1F6F43] block mt-0.5">
+                <span className="text-base font-bold text-[#1F6F43] block mt-0.5">
                   18 Proyek
                 </span>
               </div>
-              <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-100">
+              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
                 <span className="text-zinc-500 block">Tingkat Tindak Lanjut</span>
-                <span className="text-base sm:text-lg font-bold text-emerald-700 block mt-0.5">
+                <span className="text-base font-bold text-emerald-700 block mt-0.5">
                   94.2% Tepat Waktu
                 </span>
               </div>
             </div>
           </div>
 
-          {/* TAB CONTROLLER PILLS */}
+          {/* Quick Anchor Navigation */}
           <div className="flex border border-zinc-200/80 bg-white p-1.5 rounded-2xl shadow-sm gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("daftar");
-                setGeneratedTicket(null);
-              }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] ${
-                activeTab === "daftar"
-                  ? "bg-[#1F6F43] text-white shadow-xs"
-                  : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-              }`}
-            >
-              <ListFilter className="w-4 h-4" />
-              <span>Daftar Aspirasi Publik Terkini</span>
-              <span
-                className={`text-[11px] px-2 py-0.5 rounded-full font-bold ${
-                  activeTab === "daftar"
-                    ? "bg-white/20 text-white"
-                    : "bg-zinc-100 text-zinc-700"
-                }`}
-              >
-                {aspirasiList.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab("kirim")}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] ${
-                activeTab === "kirim"
-                  ? "bg-[#1F6F43] text-white shadow-xs"
-                  : "text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-              }`}
+            <a
+              href="#aspirasi-frame-1"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] bg-[#1F6F43] text-white shadow-xs"
             >
               <MessageSquarePlus className="w-4 h-4" />
-              <span>Kirim Aspirasi / Aduan Baru</span>
-            </button>
+              <span>Formulir Kirim Aspirasi</span>
+            </a>
+            <a
+              href="#aspirasi-frame-2"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
+            >
+              <ListFilter className="w-4 h-4" />
+              <span>Daftar Aspirasi Publik ({aspirasiList.length})</span>
+            </a>
           </div>
 
-          {/* TAB 1: KIRIM ASPIRASI / ADUAN BARU */}
-          {activeTab === "kirim" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              <div className="lg:col-span-8 space-y-6">
-                {generatedTicket ? (
+          {/* Main 12-col Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            <div className="lg:col-span-8 space-y-6">
+              {generatedTicket ? (
                 /* Ticket Success Banner */
                 <div className="bg-white rounded-2xl border border-emerald-200 p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in zoom-in-95 duration-200 text-center sm:text-left">
                   <div className="inline-flex p-3 rounded-full bg-emerald-100 text-[#1F6F43] mb-1">
@@ -677,11 +667,38 @@ export default function AspirasiPortalPage() {
                 </div>
               </aside>
             </div>
-          )}
 
-          {/* TAB 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
-          {activeTab === "daftar" && (
-            <div className="space-y-5">
+            {/* Helper Jump Action Button */}
+            <div className="pt-2 flex justify-start">
+              <a
+                href="#aspirasi-frame-2"
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+              >
+                <span>Lihat Daftar Aspirasi Warga Lainnya</span>
+                <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+              </a>
+            </div>
+          </section>
+
+          {/* FRAME 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
+          <section
+            id="aspirasi-frame-2"
+            aria-label="Daftar Aspirasi Publik Terkini"
+            className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
+                  Daftar Aspirasi &amp; Aduan Publik Terkini
+                </h2>
+                <p className="text-xs sm:text-sm text-zinc-600">
+                  Transparansi seluruh usulan dan laporan warga Desa Karang Sari yang diawasi BPD.
+                </p>
+              </div>
+              <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-[#1F6F43] border border-emerald-200/80 self-start sm:self-auto">
+                {filteredAspirasi.length} Aspirasi Ditemukan
+              </span>
+            </div>
               {/* Filter & Search Bar */}
               <div className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-5 shadow-sm space-y-4">
                 <div className="relative">
@@ -857,12 +874,27 @@ export default function AspirasiPortalPage() {
                   })
                 )}
               </div>
-            </div>
-          )}
-        </div>
-      </main>
 
-      <Footer />
-    </div>
-  );
-}
+            {/* Jump to Top Button */}
+            <div className="pt-2 flex justify-start">
+              <a
+                href="#aspirasi-frame-1"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
+              >
+                <span>&uarr; Kembali ke Formulir Kirim Aspirasi</span>
+              </a>
+            </div>
+          </section>
+
+          {/* FRAME 3: Footer Snap End */}
+          <section
+            id="aspirasi-frame-footer"
+            aria-label="Informasi Footer"
+            className="snap-end w-full"
+          >
+            <Footer />
+          </section>
+        </main>
+      </>
+    );
+  }

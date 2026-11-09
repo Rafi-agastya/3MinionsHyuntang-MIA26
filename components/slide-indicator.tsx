@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-const slides = [
+const defaultSlides = [
   { id: "slide-hero", label: "Beranda" },
   { id: "slide-metrik", label: "Dampak" },
   { id: "slide-filosofi", label: "Cara Kerja" },
@@ -10,14 +10,24 @@ const slides = [
   { id: "slide-footer", label: "Transparansi" },
 ];
 
-export function SlideIndicator() {
+export interface SlideItem {
+  id: string;
+  label: string;
+}
+
+interface SlideIndicatorProps {
+  slides?: SlideItem[];
+  className?: string;
+}
+
+export function SlideIndicator({ slides = defaultSlides, className = "" }: SlideIndicatorProps) {
   const [activeSlide, setActiveSlide] = React.useState(0);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
             const index = slides.findIndex((s) => s.id === entry.target.id);
             if (index !== -1) {
               setActiveSlide(index);
@@ -25,7 +35,7 @@ export function SlideIndicator() {
           }
         });
       },
-      { threshold: 0.45 }
+      { threshold: 0.35 }
     );
 
     slides.forEach((slide) => {
@@ -34,7 +44,7 @@ export function SlideIndicator() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [slides]);
 
   const scrollToSlide = (id: string) => {
     const el = document.getElementById(id);
@@ -46,7 +56,7 @@ export function SlideIndicator() {
   return (
     <nav
       aria-label="Navigasi Halaman Slide"
-      className="fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col items-center gap-3 bg-white/80 backdrop-blur-md p-2.5 rounded-full border border-akar-border/80 shadow-md ring-1 ring-black/5"
+      className={`fixed right-6 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col items-center gap-3 bg-white/90 backdrop-blur-md p-2.5 rounded-full border border-zinc-200/90 shadow-md ring-1 ring-black/5 ${className}`}
     >
       {slides.map((slide, idx) => {
         const isActive = activeSlide === idx;

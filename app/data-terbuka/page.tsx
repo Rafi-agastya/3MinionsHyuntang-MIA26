@@ -13,11 +13,19 @@ import {
   Calendar,
   ArrowRight,
   Hash,
+  ArrowDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+const dataSlides = [
+  { id: "data-frame-1", label: "Data & Cek Hash" },
+  { id: "data-frame-2", label: "Katalog Dataset" },
+  { id: "data-frame-footer", label: "Transparansi" },
+];
 
 interface DatasetItem {
   id: string;
@@ -196,11 +204,19 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <>
       <Navbar />
 
-      <main className="flex-1 pt-24 pb-16">
-        <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+        {/* Desktop Dot Pagination */}
+        <SlideIndicator slides={dataSlides} />
+
+        {/* FRAME 1: Data & Cek Hash */}
+        <section
+          id="data-frame-1"
+          aria-label="Verifikasi Kriptografis dan Data Terbuka"
+          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full space-y-6"
+        >
           {/* Hero Header with Watermark & Emerald Accent */}
           <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50/70 via-white to-white rounded-3xl border border-emerald-200/80 p-6 sm:p-8 lg:p-10 shadow-sm space-y-4">
             {/* Subtle Watermark Logo */}
@@ -369,6 +385,24 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
             )}
           </div>
 
+          {/* Helper Jump Action Button */}
+          <div className="pt-2 flex justify-start">
+            <a
+              href="#data-frame-2"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+            >
+              <span>Lihat Katalog Dataset Siap Unduh</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
+          </div>
+        </section>
+
+        {/* FRAME 2: Katalog Dataset Terbuka */}
+        <section
+          id="data-frame-2"
+          aria-label="Katalog Dataset Terbuka APBDes 2026"
+          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full flex flex-col justify-start space-y-6"
+        >
           {/* SECTION 2: DAFTAR DATASET PUBLIK SIAP UNDUH */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
@@ -488,10 +522,27 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
               </Button>
             </Link>
           </div>
-        </div>
-      </main>
 
-      <Footer />
-    </div>
+          {/* Jump to Top Button */}
+          <div className="pt-2 flex justify-start">
+            <a
+              href="#data-frame-1"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
+            >
+              <span>&uarr; Kembali ke Cek Hash SHA-256</span>
+            </a>
+          </div>
+        </section>
+
+        {/* FRAME 3: Footer Snap End */}
+        <section
+          id="data-frame-footer"
+          aria-label="Informasi Footer"
+          className="snap-end w-full"
+        >
+          <Footer />
+        </section>
+      </main>
+    </>
   );
 }
