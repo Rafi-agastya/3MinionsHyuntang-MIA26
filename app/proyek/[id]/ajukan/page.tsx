@@ -182,7 +182,7 @@ export default function FormAjukanProposalPage() {
   const totalEstimasiSkor = scoreBiaya + scoreLokal + scoreJadwal + scoreDokumen;
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
@@ -890,11 +890,11 @@ export default function FormAjukanProposalPage() {
                     <ul className="space-y-2.5 text-xs text-zinc-700">
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                        <span><strong>Serapan Lokal &ge; 70%:</strong> Minimal 7 dari 10 pekerja ber-KTP Desa Karang Sari.</span>
+                        <span><strong>Serapan Lokal ≥ 70%:</strong> Minimal 7 dari 10 pekerja ber-KTP Desa Karang Sari.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                        <span><strong>Penawaran &le; Pagu:</strong> Total RAB tidak melebihi alokasi anggaran proyek.</span>
+                        <span><strong>Penawaran ≤ Pagu:</strong> Total RAB tidak melebihi alokasi anggaran proyek.</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />

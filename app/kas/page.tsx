@@ -169,68 +169,72 @@ export default async function KasPage() {
       ];
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 font-sans relative">
+    <div className="flex min-h-screen flex-col justify-between bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 font-sans relative">
       <Navbar />
 
       <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 sm:space-y-8 px-4 pb-16 pt-24 sm:px-6 lg:px-8">
         {/* ========================================================================= */}
-        {/* PAGE HEADER: SPLIT HERO BANNER                                            */}
+        {/* PAGE HEADER: SPLIT HERO BANNER (12-COL CSS GRID)                          */}
         {/* ========================================================================= */}
-        <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-8 overflow-hidden">
-          {/* Left Column: Title & Description */}
-          <div className="space-y-3.5 flex-1 max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/70 px-3.5 py-1 text-xs font-semibold text-[#1F6F43]">
-              <ShieldCheck className="h-4 w-4 text-[#1F6F43]" />
-              <span>Transparansi Anggaran Publik APBDes 2026</span>
-            </div>
-
-            <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              Buku Kas Umum Publik
-            </h1>
-
-            <p className="max-w-xl text-sm sm:text-base text-zinc-600 leading-relaxed">
-              Catatan mutasi realisasi anggaran pendapatan dan belanja {kasData.namaDesa} Tahun Anggaran 2026. Seluruh mutasi tersimpan dengan sistem ledger append-only berantai SHA-256 dan diverifikasi bersama Badan Permusyawaratan Desa (BPD).
-            </p>
-
-            {/* Quick Actions & Meta */}
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              <Link
-                href="/data"
-                className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-[#1F6F43] hover:bg-[#185935] text-xs sm:text-sm font-semibold text-white transition-all shadow-xs"
-              >
-                <Download className="h-4 w-4" />
-                <span>Unduh Rekap Kas (CSV/PDF)</span>
-              </Link>
-
-              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-zinc-100 text-xs text-zinc-700 font-medium">
-                <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-                <span>TA 2026 • Mutasi Berjalan</span>
+        <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 lg:p-10 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left Column: Title, Description & Actions (7 Cols) */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/70 px-3.5 py-1 text-xs font-semibold text-[#1F6F43]">
+                <ShieldCheck className="h-4 w-4 text-[#1F6F43]" />
+                <span>Transparansi Anggaran Publik APBDes 2026</span>
               </div>
-            </div>
-          </div>
 
-          {/* Right Column (Desktop) / Top (Mobile): Visual Image Card */}
-          <div className="w-full lg:w-96 shrink-0 rounded-2xl overflow-hidden border border-zinc-200/80 shadow-md relative group aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3]">
-            <Image
-              src="/hero-desa-aerial.jpg"
-              alt="Lanskap Udara Desa Karang Sari"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 1024px) 100vw, 384px"
-              priority
-            />
-            {/* Subtle Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+              <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl lg:text-5xl leading-tight">
+                Buku Kas Umum Publik
+              </h1>
 
-            {/* Bottom Tag & Village Context */}
-            <div className="absolute bottom-3 left-3 right-3 text-white space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-600/90 backdrop-blur-xs text-[11px] font-semibold text-white">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Rantai Ledger Aktif</span>
-              </div>
-              <p className="text-xs sm:text-sm font-bold text-white drop-shadow-xs leading-snug">
-                Transparansi Dana Desa Karang Sari — Diaudit Bersama BPD
+              <p className="text-sm sm:text-base text-zinc-600 leading-relaxed">
+                Catatan mutasi realisasi anggaran pendapatan dan belanja {kasData.namaDesa} Tahun Anggaran 2026. Seluruh mutasi tersimpan dengan sistem ledger append-only berantai SHA-256 dan diverifikasi bersama Badan Permusyawaratan Desa (BPD).
               </p>
+
+              {/* Quick Actions & Meta */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                <Link
+                  href="/data"
+                  className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-[#1F6F43] hover:bg-[#185935] text-xs sm:text-sm font-semibold text-white transition-all shadow-xs"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Unduh Rekap Kas (CSV/PDF)</span>
+                </Link>
+
+                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-zinc-100 text-xs text-zinc-700 font-medium">
+                  <Calendar className="w-3.5 h-3.5 text-zinc-500" />
+                  <span>TA 2026 • Mutasi Berjalan</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Visual Image Card with Explicit Dimensions (5 Cols) */}
+            <div className="lg:col-span-5 w-full">
+              <div className="relative w-full h-64 lg:h-80 rounded-2xl overflow-hidden shadow-md border border-zinc-200/80 group">
+                <Image
+                  src="/hero-desa-aerial.jpg"
+                  alt="Lanskap Udara Desa Karang Sari"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 450px"
+                  priority
+                />
+                {/* Soft Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+                {/* Bottom Tag & Village Context */}
+                <div className="absolute bottom-3 left-4 right-4 text-white space-y-1">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-600/90 backdrop-blur-xs text-[11px] font-semibold text-white">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Rantai Ledger Aktif</span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-bold text-white drop-shadow-xs leading-snug">
+                    Transparansi Dana Desa Karang Sari — Diaudit Bersama BPD
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

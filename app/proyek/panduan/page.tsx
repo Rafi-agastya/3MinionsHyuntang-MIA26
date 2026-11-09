@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function PanduanProposalPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col justify-between font-sans relative">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 flex flex-col justify-between font-sans relative">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 space-y-10 sm:space-y-12">

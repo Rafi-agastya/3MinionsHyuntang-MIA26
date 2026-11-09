@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   FileSpreadsheet,
@@ -195,45 +196,58 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.5px,transparent_0.5px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
       <Navbar />
 
       <main className="flex-1 pt-24 pb-16">
         <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          {/* Hero Header */}
-          <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="default" className="text-xs font-semibold">
-                Open Government Data Desa
-              </Badge>
-              <span className="text-xs text-zinc-500">
-                Lisensi Data: <strong>Creative Commons CC BY 4.0</strong>
-              </span>
+          {/* Hero Header with Watermark & Emerald Accent */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50/70 via-white to-white rounded-3xl border border-emerald-200/80 p-6 sm:p-8 lg:p-10 shadow-sm space-y-4">
+            {/* Subtle Watermark Logo */}
+            <div className="absolute -right-8 -bottom-8 w-56 h-56 opacity-10 pointer-events-none select-none">
+              <Image
+                src="/logo-akar.png"
+                alt=""
+                width={224}
+                height={224}
+                className="w-full h-full object-contain"
+              />
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
-              Portal Data Terbuka &amp; Verifikasi Kriptografis
-            </h1>
-            <p className="text-sm sm:text-base text-zinc-600 max-w-2xl leading-relaxed">
-              Unduh dataset resmi penggunaan dana desa, realisasi proyek swakelola, dan
-              verifikasi keaslian catatan transaksi kas publik secara mandiri tanpa
-              perantara.
-            </p>
+            <div className="relative z-10 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="default" className="text-xs font-semibold">
+                  Open Government Data Desa
+                </Badge>
+                <span className="text-xs text-zinc-500">
+                  Lisensi Data: <strong>Creative Commons CC BY 4.0</strong>
+                </span>
+              </div>
 
-            {/* Quick summary badges */}
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[#1F6F43] font-semibold border border-emerald-200">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Rantai Hash SHA-256 Aktif</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
-                <Database className="w-4 h-4" />
-                <span>Format Standar CSV &amp; JSON</span>
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-[#8A5A2B] font-semibold border border-amber-200">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Diperbarui Setiap Hari</span>
-              </span>
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight">
+                Portal Data Terbuka &amp; Verifikasi Kriptografis
+              </h1>
+              <p className="text-sm sm:text-base text-zinc-600 max-w-2xl leading-relaxed">
+                Unduh dataset resmi penggunaan dana desa, realisasi proyek swakelola, dan
+                verifikasi keaslian catatan transaksi kas publik secara mandiri tanpa
+                perantara.
+              </p>
+
+              {/* Quick summary badges */}
+              <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-[#1F6F43] font-semibold border border-emerald-200">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Rantai Hash SHA-256 Aktif</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-100 text-zinc-700 font-semibold border border-zinc-200">
+                  <Database className="w-4 h-4" />
+                  <span>Format Standar CSV &amp; JSON</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-[#8A5A2B] font-semibold border border-amber-200">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Diperbarui Setiap Hari</span>
+                </span>
+              </div>
             </div>
           </div>
 

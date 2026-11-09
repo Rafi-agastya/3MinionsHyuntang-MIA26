@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ChevronRight,
@@ -139,6 +140,21 @@ export function ProjectDetailHeader({
     }
   };
 
+  const getProjectImage = () => {
+    if (proyek.id.includes("002") || proyek.judul.toLowerCase().includes("balai")) {
+      return "/proyek/balai-warga.jpg";
+    }
+    if (
+      proyek.id.includes("003") ||
+      proyek.judul.toLowerCase().includes("jalan") ||
+      proyek.judul.toLowerCase().includes("paving")
+    ) {
+      return "/proyek/jalan-desa.jpg";
+    }
+    return "/proyek/drainase.jpg";
+  };
+  const projectImage = getProjectImage();
+
   return (
     <>
       <div className="space-y-4">
@@ -170,97 +186,123 @@ export function ProjectDetailHeader({
           </span>
         </nav>
 
-        {/* Main Header Container */}
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-3 max-w-3xl">
-            {/* Badges Row */}
-            <div className="flex flex-wrap items-center gap-2">
-              {getStatusBadge()}
-              {getJalurBadge()}
-              <Badge variant="outline" className="text-xs">
-                {getKelasLabel()}
-              </Badge>
-              <Badge variant="neutral" className="text-xs">
-                {proyek.sumberDana}
-              </Badge>
-            </div>
-
-            {/* Project Title */}
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-akar-ink tracking-tight leading-tight">
-              {proyek.judul}
-            </h1>
-
-            {/* Project Metadata */}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-akar-muted pt-1">
-              <div className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-akar-earth shrink-0" />
-                <span>{proyek.lokasi}</span>
+        {/* Main Header Container with Project Thumbnail */}
+        <div className="rounded-3xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Left 8 Cols: Badges, Title, Metadata & Actions */}
+            <div className="lg:col-span-8 space-y-4">
+              {/* Badges Row */}
+              <div className="flex flex-wrap items-center gap-2">
+                {getStatusBadge()}
+                {getJalurBadge()}
+                <Badge variant="outline" className="text-xs">
+                  {getKelasLabel()}
+                </Badge>
+                <Badge variant="neutral" className="text-xs">
+                  {proyek.sumberDana}
+                </Badge>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-stone-400 shrink-0" />
-                <span>Diumumkan: {proyek.tanggalPublikasi}</span>
-              </div>
-              {proyek.status === "TENDER_DIBUKA" && (
-                <div className="flex items-center gap-1.5 text-akar-primary font-medium">
-                  <Clock className="w-4 h-4 text-akar-primary shrink-0" />
-                  <span>
-                    Batas Proposal: {proyek.tenggatProposal} ({proyek.tenggatHari} hari tersisa)
-                  </span>
+
+              {/* Project Title */}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-akar-ink tracking-tight leading-tight">
+                {proyek.judul}
+              </h1>
+
+              {/* Project Metadata */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-akar-muted pt-1">
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-akar-earth shrink-0" />
+                  <span>{proyek.lokasi}</span>
                 </div>
-              )}
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-stone-400 shrink-0" />
+                  <span>Diumumkan: {proyek.tanggalPublikasi}</span>
+                </div>
+                {proyek.status === "TENDER_DIBUKA" && (
+                  <div className="flex items-center gap-1.5 text-akar-primary font-medium">
+                    <Clock className="w-4 h-4 text-akar-primary shrink-0" />
+                    <span>
+                      Batas Proposal: {proyek.tenggatProposal} ({proyek.tenggatHari} hari tersisa)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {proyek.status === "TENDER_DIBUKA" && (
+                  <Button
+                    variant="default"
+                    size="default"
+                    onClick={handleOpenModal}
+                    className="gap-2 shadow-sm font-semibold min-h-[44px]"
+                  >
+                    <FilePlus className="w-4 h-4" />
+                    <span>Ajukan Proposal Warga</span>
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline"
+                  size="default"
+                  asChild
+                  className="gap-2 min-h-[44px]"
+                >
+                  <a
+                    href="#project-tabs-section"
+                    onClick={(e) => {
+                      const el = document.getElementById("project-tabs-section");
+                      if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  >
+                    <Download className="w-4 h-4 text-akar-muted" />
+                    <span>Unduh KAK</span>
+                  </a>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleShare}
+                  aria-label="Bagikan Tautan Proyek"
+                  className="relative min-h-[44px] min-w-[44px]"
+                  title="Salin tautan proyek"
+                >
+                  <Share2 className="w-4 h-4 text-akar-muted" />
+                  {copied && (
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-akar-ink text-white text-[10px] px-2 py-0.5 rounded shadow whitespace-nowrap">
+                      Tersalin!
+                    </span>
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 pt-2 lg:pt-0 shrink-0">
-            {proyek.status === "TENDER_DIBUKA" && (
-              <Button
-                variant="default"
-                size="default"
-                onClick={handleOpenModal}
-                className="gap-2 shadow-sm font-semibold w-full sm:w-auto"
-              >
-                <FilePlus className="w-4 h-4" />
-                <span>Ajukan Proposal Warga</span>
-              </Button>
-            )}
-
-            <Button
-              variant="outline"
-              size="default"
-              asChild
-              className="gap-2 w-full sm:w-auto"
-            >
-              <a
-                href="#project-tabs-section"
-                onClick={(e) => {
-                  const el = document.getElementById("project-tabs-section");
-                  if (el) {
-                    e.preventDefault();
-                    el.scrollIntoView({ behavior: "smooth" });
-                  }
-                }}
-              >
-                <Download className="w-4 h-4 text-akar-muted" />
-                <span>Unduh KAK</span>
-              </a>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleShare}
-              aria-label="Bagikan Tautan Proyek"
-              className="relative"
-              title="Salin tautan proyek"
-            >
-              <Share2 className="w-4 h-4 text-akar-muted" />
-              {copied && (
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-akar-ink text-white text-[10px] px-2 py-0.5 rounded shadow whitespace-nowrap">
-                  Tersalin!
-                </span>
-              )}
-            </Button>
+            {/* Right 4 Cols: Project Photo Thumbnail */}
+            <div className="lg:col-span-4 w-full">
+              <div className="relative w-full h-52 sm:h-60 lg:h-64 rounded-2xl overflow-hidden border border-zinc-200/80 shadow-xs group">
+                <Image
+                  src={projectImage}
+                  alt={proyek.judul}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 360px"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold uppercase tracking-wider mb-1">
+                    Dokumentasi Lapangan
+                  </span>
+                  <p className="text-xs font-semibold text-white/95 truncate">
+                    {proyek.lokasi}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
