@@ -490,7 +490,7 @@ function LacakTiketContent() {
 
 export default function LacakTiketPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
+    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 flex flex-col antialiased selection:bg-[#1F6F43] selection:text-white font-sans">
       <Navbar />
       <main className="flex-1 pt-24 pb-16">
         <React.Suspense

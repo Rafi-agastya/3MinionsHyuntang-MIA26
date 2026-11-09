@@ -169,7 +169,7 @@ export default async function KasPage() {
       ];
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-[#FAFAF7] bg-[radial-gradient(#1F6F43_0.6px,transparent_0.6px)] [background-size:24px_24px] text-zinc-900 font-sans relative">
+    <div className="flex min-h-screen flex-col justify-between bg-[#FAFAF7] text-zinc-900 font-sans relative">
       <Navbar />
 
       <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 sm:space-y-8 px-4 pb-16 pt-24 sm:px-6 lg:px-8">
