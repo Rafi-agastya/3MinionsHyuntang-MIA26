@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -7,13 +6,12 @@ import {
   Wallet,
   Coins,
   FileSpreadsheet,
-  Download,
   CheckCircle2,
   Lock,
-  Calendar,
   ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
+import { KasActionButtons } from "@/components/kas/kas-action-buttons";
 import { KasMutasiTable, type KasTransaction } from "@/components/kas/kas-mutasi-table";
 import { Navbar } from "@/components/navbar";
 import { SlideIndicator } from "@/components/slide-indicator";
@@ -212,20 +210,7 @@ export default async function KasPage() {
               </p>
 
               {/* Quick Actions & Meta */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <Link
-                  href="/data"
-                  className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-full bg-[#1F6F43] hover:bg-[#185935] text-xs sm:text-sm font-semibold text-white transition-all shadow-xs"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Unduh Rekap Kas (CSV/PDF)</span>
-                </Link>
-
-                <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-zinc-100 text-xs text-zinc-700 font-medium">
-                  <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>TA 2026 • Mutasi Berjalan</span>
-                </div>
-              </div>
+              <KasActionButtons />
             </div>
 
             {/* Right Column: Visual Image Card with Explicit Dimensions (5 Cols) */}

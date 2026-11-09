@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-type UserRole = "WARGA" | "ADMIN" | "PENGAWAS";
+import { useCurrentRole, UserRole } from "@/lib/use-current-role";
 
 interface RolePreset {
   id: UserRole;
@@ -31,6 +30,13 @@ interface RolePreset {
 
 const ROLE_PRESETS: RolePreset[] = [
   {
+    id: "PERANGKAT_DESA",
+    label: "Perangkat Desa",
+    roleName: "Pemerintah Desa (Kaur Keuangan & TPK)",
+    email: "kaur.keuangan@karangsari.desa.id",
+    description: "Pencatatan mutasi kas APBDes, verifikasi berkas sayembara, kelola proyek, dan balas tiket warga.",
+  },
+  {
     id: "WARGA",
     label: "Warga / Pokmas",
     roleName: "Ketua Pokmas Makmur Jaya",
@@ -38,23 +44,26 @@ const ROLE_PRESETS: RolePreset[] = [
     description: "Pengajuan proposal sayembara fisik, estimasi Micro-RAB, dan pantau status seleksi.",
   },
   {
-    id: "ADMIN",
-    label: "Admin Desa",
-    roleName: "Pemerintah Desa (Kaur Keuangan)",
-    email: "admin.desa@karangsari.desa.id",
-    description: "Pencatatan mutasi kas APBDes, verifikasi berkas sayembara, dan pencairan termin.",
-  },
-  {
     id: "PENGAWAS",
     label: "Pengawas BPD",
     roleName: "Badan Permusyawaratan Desa (BPD)",
     email: "pengawas.bpd@karangsari.desa.id",
-    description: "Pengawasan independen, validasi lapangan fisik, dan audit keterbukaan dana desa.",
+    description: "Pengawasan independen, validasi lapangan fisik, pembukaan termin, dan audit keterbukaan dana desa.",
+  },
+  {
+    id: "ADMIN",
+    label: "Admin Desa",
+    roleName: "Administrator Sistem & Keuangan Desa",
+    email: "admin.desa@karangsari.desa.id",
+    description: "Akses penuh konfigurasi sistem, kelola peran pengguna, audit log, dan semua modul.",
   },
 ];
 
 export default function MasukPage() {
-  const [selectedRole, setSelectedRole] = React.useState<UserRole>("WARGA");
+  const { role: currentGlobalRole, setRole } = useCurrentRole();
+  const [selectedRole, setSelectedRole] = React.useState<UserRole>(
+    currentGlobalRole === "PUBLIK" ? "PERANGKAT_DESA" : currentGlobalRole
+  );
   const [email, setEmail] = React.useState(ROLE_PRESETS[0].email);
   const [password, setPassword] = React.useState("KarangSari2026!");
   const [showPassword, setShowPassword] = React.useState(false);
@@ -65,6 +74,7 @@ export default function MasukPage() {
 
   const handleSelectRole = (role: UserRole) => {
     setSelectedRole(role);
+    setRole(role);
     const preset = ROLE_PRESETS.find((r) => r.id === role);
     if (preset) {
       setEmail(preset.email);
@@ -75,6 +85,7 @@ export default function MasukPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
+    setRole(selectedRole);
     setTimeout(() => {
       setIsLoggingIn(false);
       setIsSuccess(true);
@@ -286,8 +297,24 @@ export default function MasukPage() {
               </div>
 
               <div className="pt-2 flex flex-col gap-2">
+                {(selectedRole === "PERANGKAT_DESA" || selectedRole === "ADMIN") && (
+                  <Link href="/admin">
+                    <Button className="w-full bg-[#1F6F43] hover:bg-[#185935] text-white font-semibold text-sm min-h-[48px] shadow-sm">
+                      <Building2 className="w-4 h-4 mr-1.5" />
+                      <span>Buka Panel Kerja Admin Desa</span>
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/proyek">
-                  <Button className="w-full bg-[#1F6F43] hover:bg-[#185935] text-white font-semibold text-sm min-h-[48px] shadow-sm">
+                  <Button
+                    variant={selectedRole === "PERANGKAT_DESA" || selectedRole === "ADMIN" ? "outline" : "default"}
+                    className={`w-full font-semibold text-sm min-h-[48px] shadow-sm ${
+                      selectedRole !== "PERANGKAT_DESA" && selectedRole !== "ADMIN"
+                        ? "bg-[#1F6F43] hover:bg-[#185935] text-white"
+                        : "border-zinc-300"
+                    }`}
+                  >
                     <span>Lanjut ke Sayembara &amp; Papan Proyek</span>
                     <ArrowRight className="w-4 h-4 ml-1.5" />
                   </Button>

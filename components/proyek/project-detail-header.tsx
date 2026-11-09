@@ -17,10 +17,13 @@ import {
   X,
   AlertCircle,
   FileText,
+  ShieldCheck,
+  SlidersHorizontal,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProjectDetailData } from "./types";
+import { useCurrentRole } from "@/lib/use-current-role";
 
 interface ProjectDetailHeaderProps {
   proyek: ProjectDetailData;
@@ -33,6 +36,7 @@ export function ProjectDetailHeader({
 }: ProjectDetailHeaderProps) {
   const [copied, setCopied] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { role, permissions } = useCurrentRole();
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -230,16 +234,45 @@ export function ProjectDetailHeader({
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
+                {/* Warga or Admin can submit proposal when tender is open */}
                 {proyek.status === "TENDER_DIBUKA" && (
                   <Button
                     variant="default"
                     size="default"
                     onClick={handleOpenModal}
-                    className="gap-2 shadow-sm font-semibold min-h-[44px]"
+                    className="gap-2 shadow-sm font-semibold min-h-[44px] bg-[#1F6F43] hover:bg-[#185935] text-white"
                   >
                     <FilePlus className="w-4 h-4" />
                     <span>Ajukan Proposal Warga</span>
                   </Button>
+                )}
+
+                {/* Perangkat Desa / Admin Manage Project Shortcut */}
+                {permissions.canManageProjects && (
+                  <Link href="/admin">
+                    <Button
+                      variant="outline"
+                      size="default"
+                      className="gap-2 border-emerald-300 bg-emerald-50/70 text-[#1F6F43] hover:bg-emerald-100 font-semibold min-h-[44px]"
+                    >
+                      <SlidersHorizontal className="w-4 h-4 text-[#1F6F43]" />
+                      <span>Kelola di Panel Admin</span>
+                    </Button>
+                  </Link>
+                )}
+
+                {/* Pengawas BPD Shortcut */}
+                {role === "PENGAWAS" && (
+                  <Link href="/kas">
+                    <Button
+                      variant="outline"
+                      size="default"
+                      className="gap-2 border-amber-300 bg-amber-50/70 text-amber-900 hover:bg-amber-100 font-semibold min-h-[44px]"
+                    >
+                      <ShieldCheck className="w-4 h-4 text-amber-700" />
+                      <span>Audit Kas &amp; Opname Proyek</span>
+                    </Button>
+                  </Link>
                 )}
 
                 <a
