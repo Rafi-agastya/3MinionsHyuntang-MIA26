@@ -394,7 +394,7 @@ export default function PanduanProposalPage() {
               Bobot Penilaian AI Scoring Board (Fungsi Murni)
             </h2>
             <p className="text-xs sm:text-sm text-zinc-500 max-w-2xl leading-relaxed">
-              Sesuai PRD Sistem AKAR, kalkulasi skor dihitung secara matematis dan murni oleh algoritma independen tanpa intervensi subyektif.
+              Sesuai sistem tata kelola AKAR, kalkulasi skor dihitung secara matematis dan terbuka oleh formula independen tanpa intervensi subyektif.
             </p>
           </div>
 

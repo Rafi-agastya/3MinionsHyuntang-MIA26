@@ -23,12 +23,18 @@ import {
   HelpCircle,
   ChevronDown,
   ArrowDown,
+  AlertCircle,
+  LogIn,
+  UserPlus,
+  X,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useCurrentRole } from "@/lib/use-current-role";
+import { apiClient } from "@/lib/api-client";
 
 const aspirasiSlides = [
   { id: "aspirasi-frame-1", label: "Kirim Aspirasi" },
@@ -49,9 +55,13 @@ interface AspirasiItem {
   dukungan: number;
   uraian: string;
   tanggapanTerakhir?: string;
+  isDbRecord?: boolean;
 }
 
 export default function AspirasiPortalPage() {
+  const { role } = useCurrentRole();
+  const isPublik = role === "PUBLIK";
+
   // Form State
   const [judul, setJudul] = React.useState("");
   const [kategori, setKategori] = React.useState<AspirasiItem["kategori"]>("Infrastruktur Rusak");
@@ -62,8 +72,12 @@ export default function AspirasiPortalPage() {
     "Foto_Bukti_Jalan_Rusak.jpg",
   ]);
 
-  // Submission result state
+  // Auth restriction modal state for PUBLIK role
+  const [showAuthModal, setShowAuthModal] = React.useState(false);
+
+  // Submission result & error state
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [generatedTicket, setGeneratedTicket] = React.useState<string | null>(null);
   const [copiedTicket, setCopiedTicket] = React.useState(false);
 
@@ -72,10 +86,11 @@ export default function AspirasiPortalPage() {
   const [filterKategori, setFilterKategori] = React.useState<string>("SEMUA");
   const [filterStatus, setFilterStatus] = React.useState<string>("SEMUA");
 
-  // Upvoted IDs state
+  // Upvoted IDs state & feedback
   const [upvotedIds, setUpvotedIds] = React.useState<Record<string, boolean>>({});
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
-  // Aspirations list state
+  // Default seed aspirations list
   const [aspirasiList, setAspirasiList] = React.useState<AspirasiItem[]>([
     {
       id: "asp-1",
@@ -159,49 +174,224 @@ export default function AspirasiPortalPage() {
     },
   ]);
 
-  // Handle Form Submission
-  const handleSubmitAspirasi = (e: React.FormEvent) => {
+  // Load existing ideas from database on mount
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadDbIdeas() {
+      try {
+        const res = await apiClient.get<Array<{
+          id: string;
+          nomor: string;
+          judul: string;
+          deskripsi: string;
+          kategori: string;
+          lokasi: string | null;
+          status: string;
+          anonim: boolean;
+          sumber: string;
+          jumlahDukungan: number;
+          createdAt: string;
+          pengaju?: { nama: string };
+        }>>("/api/ide");
+
+        if (isMounted && res.data && Array.isArray(res.data)) {
+          const dbItems: AspirasiItem[] = res.data.map((item) => {
+            let mappedStatus: AspirasiItem["status"] = "Diterima";
+            if (item.status === "VERIFIKASI") mappedStatus = "Diverifikasi BPD";
+            if (item.status === "DITERIMA" || item.status === "JADI_PROYEK") mappedStatus = "Masuk Musrenbangdes";
+
+            return {
+              id: item.id,
+              nomorTiket: item.nomor,
+              judul: item.judul,
+              kategori: "Usulan Program Desa",
+              lokasi: item.lokasi || "Desa Karang Sari",
+              tanggal: new Date(item.createdAt).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              }),
+              status: mappedStatus,
+              pengusul: item.anonim ? "Anonim (Warga Terverifikasi)" : (item.pengaju?.nama || "Warga Desa"),
+              isAnonim: item.anonim,
+              dukungan: item.jumlahDukungan || 0,
+              uraian: item.deskripsi,
+              isDbRecord: true,
+            };
+          });
+
+          if (dbItems.length > 0) {
+            setAspirasiList((prev) => {
+              const existingIds = new Set(prev.map((p) => p.nomorTiket));
+              const fresh = dbItems.filter((d) => !existingIds.has(d.nomorTiket));
+              return [...fresh, ...prev];
+            });
+          }
+        }
+      } catch {
+        // Fallback gracefully to default items
+      }
+    }
+    loadDbIdeas();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Handle Form Submission with Real Backend Integration & Auth Gatekeeping
+  const handleSubmitAspirasi = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!judul.trim() || !uraian.trim()) return;
+    setSubmitError(null);
+
+    // 1. Gatekeeping RBAC (PRD Bagian 8)
+    if (isPublik) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    if (!judul.trim() || !uraian.trim()) {
+      setSubmitError("Judul dan uraian aspirasi wajib diisi.");
+      return;
+    }
+
+    if (judul.trim().length < 10) {
+      setSubmitError("Judul aspirasi minimal 10 karakter.");
+      return;
+    }
+
+    if (uraian.trim().length < 30) {
+      setSubmitError("Uraian masalah minimal 30 karakter agar dapat ditinjau BPD.");
+      return;
+    }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const newTicketCode = `ADU-2026-0${Math.floor(100 + Math.random() * 900)}`;
-      const newAspirasi: AspirasiItem = {
-        id: `asp-${Date.now()}`,
-        nomorTiket: newTicketCode,
-        judul,
-        kategori,
-        lokasi,
-        tanggal: "Hari ini",
-        status: "Diterima",
-        pengusul: isAnonim ? "Anonim (Warga Terverifikasi)" : "Warga Desa Karang Sari",
-        isAnonim,
-        dukungan: 1,
-        uraian,
-        tanggapanTerakhir: "Aspirasi berhasil diterima sistem, menunggu verifikasi BPD.",
-      };
 
-      setAspirasiList((prev) => [newAspirasi, ...prev]);
-      setGeneratedTicket(newTicketCode);
+    try {
+      if (kategori === "Usulan Program Desa") {
+        // Kirim ke POST /api/ide (PRD 33.2 #7)
+        const res = await apiClient.post<{ id: string; nomor: string; status: string }>("/api/ide", {
+          judul: judul.trim(),
+          deskripsi: uraian.trim(),
+          lokasi: lokasi.trim() || undefined,
+          kategori: "Infrastruktur",
+          anonim: isAnonim,
+          sumber: "WARGA",
+        });
+
+        if (res.error) {
+          setSubmitError(res.error.message || "Gagal mengirimkan ide ke sistem.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const ticketCode = res.data?.nomor || `IDE-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        setGeneratedTicket(ticketCode);
+
+        const newAspirasi: AspirasiItem = {
+          id: res.data?.id || `asp-${Date.now()}`,
+          nomorTiket: ticketCode,
+          judul: judul.trim(),
+          kategori,
+          lokasi: lokasi.trim(),
+          tanggal: "Hari ini",
+          status: "Diterima",
+          pengusul: isAnonim ? "Anonim (Warga Terverifikasi)" : "Warga Desa Karang Sari",
+          isAnonim,
+          dukungan: 1,
+          uraian: uraian.trim(),
+          tanggapanTerakhir: "Ide berhasil tercatat di ledger aspirasi desa, menunggu verifikasi BPD.",
+          isDbRecord: true,
+        };
+
+        setAspirasiList((prev) => [newAspirasi, ...prev]);
+        setJudul("");
+        setUraian("");
+      } else {
+        // Kirim ke POST /api/tiket (PRD 33.2 #25)
+        let kategoriTiket = "LAINNYA";
+        if (kategori === "Dugaan Penyimpangan Dana") kategoriTiket = "DUGAAN_PENYIMPANGAN";
+        if (kategori === "Infrastruktur Rusak") kategoriTiket = "KERUSAKAN";
+
+        const res = await apiClient.post<{ id: string; nomor: string; status: string }>("/api/tiket", {
+          kategori: kategoriTiket,
+          isi: `[${judul.trim()}] Lokasi: ${lokasi.trim()}. ${uraian.trim()}`,
+          anonim: isAnonim,
+        });
+
+        if (res.error) {
+          setSubmitError(res.error.message || "Gagal mengirimkan tiket aduan ke sistem.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const ticketCode = res.data?.nomor || `TKT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        setGeneratedTicket(ticketCode);
+
+        const newAspirasi: AspirasiItem = {
+          id: res.data?.id || `asp-${Date.now()}`,
+          nomorTiket: ticketCode,
+          judul: judul.trim(),
+          kategori,
+          lokasi: lokasi.trim(),
+          tanggal: "Hari ini",
+          status: "Diterima",
+          pengusul: isAnonim ? "Anonim (Warga Terverifikasi)" : "Warga Desa Karang Sari",
+          isAnonim,
+          dukungan: 1,
+          uraian: uraian.trim(),
+          tanggapanTerakhir: "Aduan resmi diterima. BPD wajib merespons dalam maksimal 14 hari kalender.",
+          isDbRecord: true,
+        };
+
+        setAspirasiList((prev) => [newAspirasi, ...prev]);
+        setJudul("");
+        setUraian("");
+      }
+    } catch {
+      setSubmitError("Terjadi gangguan koneksi saat mengirimkan aspirasi. Silakan coba kembali.");
+    } finally {
       setIsSubmitting(false);
-      // Reset form
-      setJudul("");
-      setUraian("");
-    }, 700);
+    }
   };
 
-  // Toggle upvote
-  const handleToggleUpvote = (id: string) => {
+  // Toggle upvote with real API support
+  const handleToggleUpvote = async (id: string) => {
+    if (isPublik) {
+      setShowAuthModal(true);
+      return;
+    }
+
     const isUpvoted = !!upvotedIds[id];
     setUpvotedIds((prev) => ({ ...prev, [id]: !isUpvoted }));
+
+    // Optimistic UI update
     setAspirasiList((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, dukungan: isUpvoted ? item.dukungan - 1 : item.dukungan + 1 }
+          ? { ...item, dukungan: isUpvoted ? Math.max(0, item.dukungan - 1) : item.dukungan + 1 }
           : item
       )
     );
+
+    // Call backend API if it's a real database record
+    const targetItem = aspirasiList.find((a) => a.id === id);
+    if (targetItem?.isDbRecord && !isUpvoted) {
+      try {
+        const res = await apiClient.post<{ jumlahDukungan: number }>(`/api/ide/${id}/dukung`);
+        if (res.error && res.error.code === "CONFLICT") {
+          setToastMessage("Anda sudah pernah memberikan dukungan untuk usulan ini.");
+          setTimeout(() => setToastMessage(null), 3000);
+        } else if (res.data?.jumlahDukungan) {
+          setAspirasiList((prev) =>
+            prev.map((item) =>
+              item.id === id ? { ...item, dukungan: res.data!.jumlahDukungan } : item
+            )
+          );
+        }
+      } catch {
+        // Fallback gracefully
+      }
+    }
   };
 
   // Filtered Aspirations
@@ -220,30 +410,30 @@ export default function AspirasiPortalPage() {
     switch (status) {
       case "Diterima":
         return (
-          <Badge variant="outline" className="text-xs bg-sky-50 text-sky-700 border-sky-200">
-            <Clock className="w-3 h-3 mr-1" />
-            <span>Diterima</span>
+          <Badge variant="outline" className="text-zinc-600 gap-1 py-0.5 px-2.5">
+            <Clock className="w-3 h-3 text-zinc-400" />
+            <span>Menunggu BPD</span>
           </Badge>
         );
       case "Diverifikasi BPD":
         return (
-          <Badge variant="earth" className="text-xs">
-            <ShieldCheck className="w-3 h-3 mr-1" />
+          <Badge variant="accent" className="gap-1 py-0.5 px-2.5">
+            <CheckCircle2 className="w-3 h-3" />
             <span>Diverifikasi BPD</span>
           </Badge>
         );
       case "Masuk Musrenbangdes":
         return (
-          <Badge variant="accent" className="text-xs">
-            <Sparkles className="w-3 h-3 mr-1" />
-            <span>Masuk Musrenbangdes</span>
+          <Badge variant="default" className="gap-1 py-0.5 px-2.5">
+            <Sparkles className="w-3 h-3 text-white" />
+            <span>Masuk APBDes</span>
           </Badge>
         );
       case "Selesai":
         return (
-          <Badge variant="default" className="text-xs">
-            <CheckCircle2 className="w-3 h-3 mr-1" />
-            <span>Selesai Ditindaklanjuti</span>
+          <Badge variant="earth" className="gap-1 py-0.5 px-2.5">
+            <CheckCircle2 className="w-3 h-3 text-white" />
+            <span>Telah Direalisasi</span>
           </Badge>
         );
     }
@@ -285,6 +475,14 @@ export default function AspirasiPortalPage() {
       <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         {/* Desktop Dot Pagination */}
         <SlideIndicator slides={aspirasiSlides} />
+
+        {/* Toast Notification */}
+        {toastMessage && (
+          <div className="fixed bottom-6 right-6 z-50 bg-zinc-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </div>
+        )}
 
         {/* FRAME 1: Header & Form Kirim Aspirasi */}
         <section
@@ -382,7 +580,7 @@ export default function AspirasiPortalPage() {
                   <div className="rounded-xl bg-zinc-50 border border-zinc-200/80 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div>
                       <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider block">
-                        Kode Tiket Pelacakan
+                        Kode Tiket Pelacakan Resmi
                       </span>
                       <span className="font-mono text-2xl font-extrabold text-[#1F6F43] block mt-0.5">
                         {generatedTicket}
@@ -430,8 +628,46 @@ export default function AspirasiPortalPage() {
                 /* Submission Form */
                 <form
                   onSubmit={handleSubmitAspirasi}
-                  className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-sm space-y-6"
+                  className="bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 shadow-sm space-y-6 relative"
                 >
+                  {/* Informative Banner for PUBLIK Role (PRD Bagian 8) */}
+                  {isPublik && (
+                    <div className="rounded-xl border border-amber-300 bg-amber-50/80 p-4 flex items-start gap-3 text-xs text-amber-900">
+                      <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <span className="font-bold block">
+                          Hak Kirim Dibatasi untuk Warga Terverifikasi
+                        </span>
+                        <p className="leading-relaxed">
+                          Anda sedang mengakses sistem sebagai <strong>Publik</strong>. Anda dapat membaca seluruh anggaran dan proyek, namun untuk mengirim ide, aduan, atau memberi dukungan, Anda wajib masuk sebagai <strong>Warga Desa Terverifikasi</strong>.
+                        </p>
+                        <div className="pt-1.5 flex flex-wrap gap-2">
+                          <Link href="/masuk">
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="h-8 text-xs bg-[#1F6F43] hover:bg-[#185935] text-white gap-1.5"
+                            >
+                              <LogIn className="w-3.5 h-3.5" />
+                              <span>Masuk Sekarang</span>
+                            </Button>
+                          </Link>
+                          <Link href="/masuk">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-8 text-xs border-amber-300 bg-white hover:bg-amber-100 gap-1.5 text-amber-900"
+                            >
+                              <UserPlus className="w-3.5 h-3.5" />
+                              <span>Ganti Peran Demo</span>
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="border-b border-zinc-100 pb-4">
                     <h2 className="text-lg font-bold text-zinc-900">
                       Formulir Penyampaian Aspirasi &amp; Aduan Lapangan
@@ -441,6 +677,13 @@ export default function AspirasiPortalPage() {
                       lapangan.
                     </p>
                   </div>
+
+                  {submitError && (
+                    <div className="rounded-xl border border-red-300 bg-red-50 p-3.5 text-xs text-red-800 flex items-start gap-2">
+                      <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                      <span>{submitError}</span>
+                    </div>
+                  )}
 
                   <div className="space-y-4 text-xs sm:text-sm">
                     {/* Category Selection */}
@@ -486,7 +729,7 @@ export default function AspirasiPortalPage() {
                         required
                         value={judul}
                         onChange={(e) => setJudul(e.target.value)}
-                        placeholder="Contoh: Saluran drainase amblas dekat jembatan timur RT 02"
+                        placeholder="Contoh: Saluran drainase amblas dekat jembatan timur RT 02 (Min. 10 karakter)"
                         className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[44px]"
                       />
                     </div>
@@ -516,7 +759,7 @@ export default function AspirasiPortalPage() {
                         required
                         value={uraian}
                         onChange={(e) => setUraian(e.target.value)}
-                        placeholder="Uraikan kronologi, dampak terhadap warga, dan saran penanganan..."
+                        placeholder="Uraikan kronologi, dampak terhadap warga, dan saran penanganan (Min. 30 karakter)..."
                         className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[100px]"
                       />
                     </div>
@@ -540,6 +783,14 @@ export default function AspirasiPortalPage() {
                           oleh Badan Permusyawaratan Desa (BPD) guna mencegah intimidasi.
                         </span>
                       </label>
+                    </div>
+
+                    {/* Mandatory Legal Disclaimer */}
+                    <div className="rounded-xl bg-blue-50/60 border border-blue-200/70 p-3 text-xs text-blue-900 flex items-start gap-2">
+                      <ShieldCheck className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
+                      <p className="leading-relaxed">
+                        <strong>Ketentuan Privasi:</strong> Jangan menulis data pribadi orang lain. Aduan anonim: identitas Anda tidak tampil di publik.
+                      </p>
                     </div>
 
                     {/* Upload Photo Proof */}
@@ -591,7 +842,7 @@ export default function AspirasiPortalPage() {
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">
                           <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                          <span>Mengirim Laporan...</span>
+                          <span>Mengirim ke Sistem Desa...</span>
                         </span>
                       ) : (
                         <span className="flex items-center gap-2">
@@ -603,298 +854,358 @@ export default function AspirasiPortalPage() {
                   </div>
                 </form>
               )}
-              </div>
+            </div>
 
-              {/* Sidebar Guide: 4 cols */}
-              <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
-                {/* Card 1: Visual Hero Desa Aerial */}
-                <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
-                  <div className="relative h-44 w-full">
-                    <Image
-                      src="/hero-desa-aerial.jpg"
-                      alt="Suara Warga Membangun Desa"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 380px"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
-                    <div className="absolute bottom-3 left-4 right-4 text-white">
-                      <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
-                        Partisipasi Aktif
-                      </span>
-                      <h4 className="text-sm font-bold leading-tight">Suara Warga Membangun Desa</h4>
-                      <p className="text-xs text-zinc-300 mt-0.5">Musrenbangdes berbasis kebutuhan riil</p>
-                    </div>
-                  </div>
-                  <div className="p-4 space-y-2.5 text-xs text-zinc-600">
-                    <p className="leading-relaxed">
-                      Setiap aspirasi yang terverifikasi akan direkap secara berkala oleh BPD untuk diagendakan dalam Rencana Kerja Pemerintah Desa (RKPDes).
-                    </p>
+            {/* Sidebar Guide: 4 cols */}
+            <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+              {/* Card 1: Visual Hero Desa Aerial */}
+              <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
+                <div className="relative h-44 w-full">
+                  <Image
+                    src="/hero-desa-aerial.jpg"
+                    alt="Suara Warga Membangun Desa"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 380px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4 text-white">
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-[#1F6F43] text-[10px] font-bold tracking-wider uppercase mb-1">
+                      Partisipasi Aktif
+                    </span>
+                    <h4 className="text-sm font-bold leading-tight">Suara Warga Membangun Desa</h4>
+                    <p className="text-xs text-zinc-300 mt-0.5">Musrenbangdes berbasis kebutuhan riil</p>
                   </div>
                 </div>
-
-                {/* Card 2: Panduan Penyampaian Aspirasi */}
-                <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
-                  <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
-                    <Clock className="w-4 h-4 text-[#1F6F43]" />
-                    <span>Panduan Penyampaian Aspirasi</span>
-                  </div>
-                  <ul className="space-y-2.5 text-xs text-zinc-700">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                      <span><strong>Tenggat 14 Hari:</strong> BPD wajib memberikan tanggapan resmi maksimal 14 hari kalender.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                      <span><strong>Sertakan RT/RW:</strong> Tuliskan nama dusun dan nomor RT/RW secara spesifik agar mudah ditinjau.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
-                      <span><strong>Lampirkan Bukti:</strong> Foto jalan rusak, gorong-gorong tersumbat, atau bukti fisik mempercepat tindak lanjut.</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Card 3: Kerahasiaan Terjamin */}
-                <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
-                  <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
-                    <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
-                    <span>Kerahasiaan Terjamin</span>
-                  </div>
-                  <p className="text-xs text-zinc-600 leading-relaxed">
-                    Khusus kategori dugaan penyimpangan dana, Anda dapat mengaktifkan opsi <strong>Laporan Anonim</strong>. Identitas pelapor dilindungi sepenuhnya oleh perundang-undangan keterbukaan informasi.
+                <div className="p-4 space-y-2.5 text-xs text-zinc-600">
+                  <p className="leading-relaxed">
+                    Setiap aspirasi yang terverifikasi akan direkap secara berkala oleh BPD untuk diagendakan dalam Rencana Kerja Pemerintah Desa (RKPDes).
                   </p>
                 </div>
-              </aside>
-            </div>
+              </div>
 
-            {/* Helper Jump Action Button */}
-            <div className="pt-2 flex justify-start">
-              <a
-                href="#aspirasi-frame-2"
-                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
-              >
-                <span>Lihat Daftar Aspirasi Warga Lainnya</span>
-                <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-              </a>
-            </div>
-          </section>
+              {/* Card 2: Panduan Penyampaian Aspirasi */}
+              <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/50 p-5 space-y-3.5 shadow-sm">
+                <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                  <Clock className="w-4 h-4 text-[#1F6F43]" />
+                  <span>Panduan Penyampaian Aspirasi</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-zinc-700">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Tenggat 14 Hari:</strong> BPD wajib memberikan tanggapan resmi maksimal 14 hari kalender.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Sertakan RT/RW:</strong> Tuliskan nama dusun dan nomor RT/RW secara spesifik agar mudah ditinjau.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#1F6F43] shrink-0 mt-0.5" />
+                    <span><strong>Lampirkan Bukti:</strong> Foto jalan rusak, gorong-gorong tersumbat, atau bukti fisik mempercepat tindak lanjut.</span>
+                  </li>
+                </ul>
+              </div>
 
-          {/* FRAME 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
-          <section
-            id="aspirasi-frame-2"
-            aria-label="Daftar Aspirasi Publik Terkini"
-            className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
-                  Daftar Aspirasi &amp; Aduan Publik Terkini
-                </h2>
-                <p className="text-xs sm:text-sm text-zinc-600">
-                  Transparansi seluruh usulan dan laporan warga Desa Karang Sari yang diawasi BPD.
+              {/* Card 3: Kerahasiaan Terjamin */}
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 space-y-3 shadow-sm">
+                <div className="flex items-center gap-2 text-zinc-900 font-bold text-sm">
+                  <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
+                  <span>Kerahasiaan Terjamin</span>
+                </div>
+                <p className="text-xs text-zinc-600 leading-relaxed">
+                  Khusus kategori dugaan penyimpangan dana, Anda dapat mengaktifkan opsi <strong>Laporan Anonim</strong>. Identitas pelapor dilindungi sepenuhnya oleh perundang-undangan keterbukaan informasi.
                 </p>
               </div>
-              <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-[#1F6F43] border border-emerald-200/80 self-start sm:self-auto">
-                {filteredAspirasi.length} Aspirasi Ditemukan
-              </span>
+            </aside>
+          </div>
+
+          {/* Helper Jump Action Button */}
+          <div className="pt-2 flex justify-start">
+            <a
+              href="#aspirasi-frame-2"
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+            >
+              <span>Lihat Daftar Aspirasi Warga Lainnya</span>
+              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+            </a>
+          </div>
+        </section>
+
+        {/* FRAME 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
+        <section
+          id="aspirasi-frame-2"
+          aria-label="Daftar Aspirasi Publik Terkini"
+          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
+                Daftar Aspirasi &amp; Aduan Publik Terkini
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-600">
+                Transparansi seluruh usulan dan laporan warga Desa Karang Sari yang diawasi BPD.
+              </p>
             </div>
-              {/* Filter & Search Bar */}
-              <div className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="relative">
-                  <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari aspirasi berdasarkan nomor tiket, judul, atau nama dusun..."
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[44px]"
-                  />
-                </div>
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-[#1F6F43] border border-emerald-200/80 self-start sm:self-auto">
+              {filteredAspirasi.length} Aspirasi Ditemukan
+            </span>
+          </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  {/* Category Filter Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-                    {["SEMUA", "Infrastruktur Rusak", "Usulan Program Desa", "Dugaan Penyimpangan Dana"].map(
-                      (cat) => (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => setFilterKategori(cat)}
-                          className={`px-3.5 py-1.5 rounded-full font-semibold transition-colors shrink-0 min-h-[36px] ${
-                            filterKategori === cat
-                              ? "bg-[#1F6F43] text-white shadow-xs"
-                              : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
-                          }`}
-                        >
-                          {cat === "SEMUA" ? "Semua Kategori" : cat}
-                        </button>
-                      )
-                    )}
-                  </div>
+          {/* Filter & Search Bar */}
+          <div className="bg-white rounded-2xl border border-zinc-200/80 p-4 sm:p-5 shadow-sm space-y-4">
+            <div className="relative">
+              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari aspirasi berdasarkan nomor tiket, judul, atau nama dusun..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[44px]"
+              />
+            </div>
 
-                  {/* Status Filter Dropdown */}
-                  <div className="relative inline-block self-end sm:self-auto">
-                    <select
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="appearance-none bg-white border border-zinc-200 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-zinc-700 hover:border-zinc-300 focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 focus:border-[#1F6F43] cursor-pointer min-h-[38px]"
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              {/* Category Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+                {["SEMUA", "Infrastruktur Rusak", "Usulan Program Desa", "Dugaan Penyimpangan Dana"].map(
+                  (cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setFilterKategori(cat)}
+                      className={`px-3.5 py-1.5 rounded-full font-semibold transition-colors shrink-0 min-h-[36px] ${
+                        filterKategori === cat
+                          ? "bg-[#1F6F43] text-white shadow-xs"
+                          : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+                      }`}
                     >
-                      <option value="SEMUA">Semua Status</option>
-                      <option value="Diterima">Diterima</option>
-                      <option value="Diverifikasi BPD">Diverifikasi BPD</option>
-                      <option value="Masuk Musrenbangdes">Masuk Musrenbangdes</option>
-                      <option value="Selesai">Selesai</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-zinc-500 pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Aspirations List */}
-              <div className="space-y-4">
-                {filteredAspirasi.length === 0 ? (
-                  <div className="rounded-2xl border border-zinc-200/80 bg-white p-12 text-center space-y-3">
-                    <HelpCircle className="w-10 h-10 text-zinc-400 mx-auto" />
-                    <h3 className="text-base font-bold text-zinc-900">
-                      Tidak Ada Aspirasi yang Cocok
-                    </h3>
-                    <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-                      Coba ubah kata kunci pencarian atau reset filter kategori untuk melihat
-                      seluruh usulan.
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setFilterKategori("SEMUA");
-                        setFilterStatus("SEMUA");
-                      }}
-                      className="text-xs min-h-[44px]"
-                    >
-                      Reset Filter
-                    </Button>
-                  </div>
-                ) : (
-                  filteredAspirasi.map((asp) => {
-                    const isUpvoted = !!upvotedIds[asp.id];
-                    return (
-                      <div
-                        key={asp.id}
-                        className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm hover:border-zinc-300 transition-all space-y-4"
-                      >
-                        {/* Header: Ticket + Category + Status */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-zinc-100">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Link
-                              href={`/aduan/lacak?kode=${asp.nomorTiket}`}
-                              className="font-mono text-xs font-bold text-[#1F6F43] hover:underline bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/60 inline-flex items-center gap-1"
-                            >
-                              <span>{asp.nomorTiket}</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </Link>
-                            {getKategoriBadge(asp.kategori)}
-                            <span className="text-xs text-zinc-400 flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>{asp.tanggal}</span>
-                            </span>
-                          </div>
-
-                          <div>{getStatusBadge(asp.status)}</div>
-                        </div>
-
-                        {/* Title & Description */}
-                        <div className="space-y-2">
-                          <h3 className="text-base sm:text-lg font-bold text-zinc-900 leading-snug">
-                            {asp.judul}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                            {asp.uraian}
-                          </p>
-                        </div>
-
-                        {/* Tanggapan Terakhir BPD if present */}
-                        {asp.tanggapanTerakhir && (
-                          <div className="rounded-xl bg-zinc-50 border border-zinc-200/60 p-3.5 text-xs space-y-1">
-                            <span className="font-bold text-zinc-700 flex items-center gap-1">
-                              <ShieldCheck className="w-3.5 h-3.5 text-[#1F6F43]" />
-                              <span>Catatan Tindak Lanjut BPD:</span>
-                            </span>
-                            <p className="text-zinc-600 leading-relaxed italic">
-                              &ldquo;{asp.tanggapanTerakhir}&rdquo;
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Footer: Location, Author, Upvote */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
-                          <div className="flex flex-wrap items-center gap-3 text-zinc-500">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3.5 h-3.5 text-[#8A5A2B]" />
-                              <span>{asp.lokasi}</span>
-                            </span>
-                            <span>•</span>
-                            <span className="font-medium text-zinc-700">
-                              Oleh: {asp.pengusul}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleToggleUpvote(asp.id)}
-                              className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${
-                                isUpvoted
-                                  ? "bg-[#1F6F43] text-white shadow-xs"
-                                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
-                              }`}
-                              title="Beri dukungan terhadap aspirasi ini"
-                            >
-                              <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? "fill-white" : ""}`} />
-                              <span>
-                                {isUpvoted ? "Didukung" : "Dukung Usulan"} ({asp.dukungan})
-                              </span>
-                            </button>
-
-                            <Link href={`/aduan/lacak?kode=${asp.nomorTiket}`}>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-xs min-h-[44px] text-zinc-600 hover:text-zinc-900"
-                              >
-                                <span>Lacak Alur</span>
-                                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                              </Button>
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
+                      {cat === "SEMUA" ? "Semua Kategori" : cat}
+                    </button>
+                  )
                 )}
               </div>
 
-            {/* Jump to Top Button */}
-            <div className="pt-2 flex justify-start">
-              <a
-                href="#aspirasi-frame-1"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
-              >
-                <span>&uarr; Kembali ke Formulir Kirim Aspirasi</span>
-              </a>
+              {/* Status Filter Dropdown */}
+              <div className="relative inline-block self-end sm:self-auto">
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="appearance-none bg-white border border-zinc-200 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-zinc-700 hover:border-zinc-300 focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 focus:border-[#1F6F43] cursor-pointer min-h-[38px]"
+                >
+                  <option value="SEMUA">Semua Status</option>
+                  <option value="Diterima">Diterima</option>
+                  <option value="Diverifikasi BPD">Diverifikasi BPD</option>
+                  <option value="Masuk Musrenbangdes">Masuk Musrenbangdes</option>
+                  <option value="Selesai">Selesai</option>
+                </select>
+                <ChevronDown className="w-4 h-4 text-zinc-500 pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" />
+              </div>
             </div>
-          </section>
+          </div>
 
-          {/* FRAME 3: Footer Snap End */}
-          <section
-            id="aspirasi-frame-footer"
-            aria-label="Informasi Footer"
-            className="snap-end w-full"
-          >
-            <Footer />
-          </section>
-        </main>
-      </>
-    );
-  }
+          {/* Aspirations List */}
+          <div className="space-y-4">
+            {filteredAspirasi.length === 0 ? (
+              <div className="rounded-2xl border border-zinc-200/80 bg-white p-12 text-center space-y-3">
+                <HelpCircle className="w-10 h-10 text-zinc-400 mx-auto" />
+                <h3 className="text-base font-bold text-zinc-900">
+                  Tidak Ada Aspirasi yang Cocok
+                </h3>
+                <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+                  Coba ubah kata kunci pencarian atau reset filter kategori untuk melihat
+                  seluruh usulan.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFilterKategori("SEMUA");
+                    setFilterStatus("SEMUA");
+                  }}
+                  className="text-xs min-h-[44px]"
+                >
+                  Reset Filter
+                </Button>
+              </div>
+            ) : (
+              filteredAspirasi.map((asp) => {
+                const isUpvoted = !!upvotedIds[asp.id];
+                return (
+                  <div
+                    key={asp.id}
+                    className="bg-white rounded-2xl border border-zinc-200/80 p-5 sm:p-6 shadow-sm hover:border-zinc-300 transition-all space-y-4"
+                  >
+                    {/* Header: Ticket + Category + Status */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-zinc-100">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Link
+                          href={`/aduan/lacak?kode=${asp.nomorTiket}`}
+                          className="font-mono text-xs font-bold text-[#1F6F43] hover:underline bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/60 inline-flex items-center gap-1"
+                        >
+                          <span>{asp.nomorTiket}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                        {getKategoriBadge(asp.kategori)}
+                        <span className="text-xs text-zinc-400 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>{asp.tanggal}</span>
+                        </span>
+                      </div>
+
+                      <div>{getStatusBadge(asp.status)}</div>
+                    </div>
+
+                    {/* Title & Description */}
+                    <div className="space-y-2">
+                      <h3 className="text-base sm:text-lg font-bold text-zinc-900 leading-snug">
+                        {asp.judul}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                        {asp.uraian}
+                      </p>
+                    </div>
+
+                    {/* Tanggapan Terakhir BPD if present */}
+                    {asp.tanggapanTerakhir && (
+                      <div className="rounded-xl bg-zinc-50 border border-zinc-200/60 p-3.5 text-xs space-y-1">
+                        <span className="font-bold text-zinc-700 flex items-center gap-1">
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#1F6F43]" />
+                          <span>Catatan Tindak Lanjut BPD:</span>
+                        </span>
+                        <p className="text-zinc-600 leading-relaxed italic">
+                          &ldquo;{asp.tanggapanTerakhir}&rdquo;
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Footer: Location, Author, Upvote */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
+                      <div className="flex flex-wrap items-center gap-3 text-zinc-500">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5 text-[#8A5A2B]" />
+                          <span>{asp.lokasi}</span>
+                        </span>
+                        <span>•</span>
+                        <span className="font-medium text-zinc-700">
+                          Oleh: {asp.pengusul}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleUpvote(asp.id)}
+                          className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all min-h-[44px] ${
+                            isUpvoted
+                              ? "bg-[#1F6F43] text-white shadow-xs"
+                              : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
+                          }`}
+                          title="Beri dukungan terhadap aspirasi ini"
+                        >
+                          <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? "fill-white" : ""}`} />
+                          <span>
+                            {isUpvoted ? "Didukung" : "Dukung Usulan"} ({asp.dukungan})
+                          </span>
+                        </button>
+
+                        <Link href={`/aduan/lacak?kode=${asp.nomorTiket}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs min-h-[44px] text-zinc-600 hover:text-zinc-900"
+                          >
+                            <span>Lacak Alur</span>
+                            <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Jump to Top Button */}
+          <div className="pt-2 flex justify-start">
+            <a
+              href="#aspirasi-frame-1"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
+            >
+              <span>&uarr; Kembali ke Formulir Kirim Aspirasi</span>
+            </a>
+          </div>
+        </section>
+
+        {/* FRAME 3: Footer Snap End */}
+        <section
+          id="aspirasi-frame-footer"
+          aria-label="Informasi Footer"
+          className="snap-end w-full"
+        >
+          <Footer />
+        </section>
+      </main>
+
+      {/* Auth Restriction Modal for PUBLIK Role (PRD Bagian 8) */}
+      {showAuthModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+        >
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-zinc-200 space-y-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2 text-amber-600">
+                <AlertCircle className="w-6 h-6" />
+                <h3 className="text-lg font-bold text-zinc-900">
+                  Warga Terverifikasi Saja
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(false)}
+                className="rounded-lg p-1 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100"
+                aria-label="Tutup"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+              <p>
+                Sesuai <strong>ketentuan transparansi desa</strong>, seluruh pengunjung publik dapat memantau transparansi anggaran, proyek, dan laporan.
+              </p>
+              <p>
+                Namun untuk <strong>mengirim ide/aduan</strong> atau <strong>memberi dukungan</strong>, Anda wajib memiliki akun sebagai <strong>Warga Desa Terverifikasi</strong> guna mencegah manipulasi dan fitnah.
+              </p>
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAuthModal(false)}
+                className="text-xs"
+              >
+                Nanti Saja
+              </Button>
+              <Link href="/masuk" className="w-full sm:w-auto">
+                <Button
+                  type="button"
+                  size="sm"
+                  className="w-full sm:w-auto bg-[#1F6F43] hover:bg-[#185935] text-white text-xs gap-1.5"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Masuk sebagai Warga</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

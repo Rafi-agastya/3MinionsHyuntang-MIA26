@@ -15,6 +15,8 @@ import {
   Lock,
   Mail,
   HelpCircle,
+  X,
+  KeyRound,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -69,6 +71,7 @@ export default function MasukPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = React.useState(false);
 
   const activePreset = ROLE_PRESETS.find((r) => r.id === selectedRole) || ROLE_PRESETS[0];
 
@@ -355,11 +358,7 @@ export default function MasukPage() {
                   </label>
                   <button
                     type="button"
-                    onClick={() =>
-                      alert(
-                        "Untuk reset kata sandi akun perangkat/pokmas, silakan hubungi Sekretaris Desa di Kantor Balai Desa Karang Sari pada jam kerja (08.00 - 15.00 WIB)."
-                      )
-                    }
+                    onClick={() => setIsForgotPasswordOpen(true)}
                     className="text-xs font-semibold text-[#1F6F43] hover:underline cursor-pointer"
                   >
                     Lupa sandi?
@@ -412,17 +411,25 @@ export default function MasukPage() {
           )}
 
           {/* Alternative Citizen Action */}
-          <div className="pt-3 border-t border-zinc-200/80 text-center text-xs sm:text-sm text-zinc-600 space-y-1.5">
+          <div className="pt-3 border-t border-zinc-200/80 text-center text-xs sm:text-sm text-zinc-600 space-y-2">
             <p>
-              Warga umum yang ingin mengirim aspirasi atau aduan tidak wajib memiliki akun.
+              Belum memiliki akun warga terdaftar?{" "}
+              <Link
+                href="/daftar"
+                className="font-semibold text-[#1F6F43] hover:underline"
+              >
+                Daftar Akun Warga Baru
+              </Link>
             </p>
-            <Link
-              href="/aspirasi"
-              className="inline-flex items-center gap-1 font-semibold text-[#1F6F43] hover:underline"
-            >
-              <span>Kirim Aspirasi / Aduan Anonim</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <div className="pt-0.5">
+              <Link
+                href="/aspirasi"
+                className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-[#1F6F43] transition-colors"
+              >
+                <span>Kirim Aspirasi / Aduan Warga Anonim</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -436,6 +443,71 @@ export default function MasukPage() {
             <span>Bantuan Teknis: (0286) 321-789</span>
           </div>
         </div>
+
+        {/* Modal Bantuan Lupa Sandi & Pemulihan Akun */}
+        {isForgotPasswordOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in"
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-zinc-200 p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-emerald-50 text-[#1F6F43]">
+                    <KeyRound className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-zinc-900 text-base">
+                      Bantuan Pemulihan Kata Sandi
+                    </h3>
+                    <p className="text-xs text-zinc-500">
+                      Standar Keamanan Sistem Informasi AKAR
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotPasswordOpen(false)}
+                  className="p-1.5 text-zinc-400 hover:text-zinc-700 rounded-lg hover:bg-zinc-100"
+                  aria-label="Tutup"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 space-y-1.5">
+                  <span className="font-bold text-zinc-800 block text-xs uppercase tracking-wider">
+                    1. Akun Perangkat Desa / Tim Pelaksana:
+                  </span>
+                  <p>
+                    Demi integritas tata kelola anggaran desa, reset kata sandi akun resmi dilayani langsung oleh <strong>Sekretaris Desa</strong> di Kantor Balai Desa Karang Sari pada hari kerja (Senin &ndash; Jumat, 08.00 &ndash; 15.00 WIB).
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-zinc-50 border border-zinc-200 space-y-1.5">
+                  <span className="font-bold text-zinc-800 block text-xs uppercase tracking-wider">
+                    2. Akun Warga Terdaftar:
+                  </span>
+                  <p>
+                    Warga dapat mendatangi loket pelayanan desa membawa KTP asli untuk verifikasi ulang identitas, atau membuat akun baru melalui halaman pendaftaran warga.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <Button
+                  type="button"
+                  onClick={() => setIsForgotPasswordOpen(false)}
+                  className="bg-[#1F6F43] hover:bg-[#185935] text-white text-xs font-semibold px-4 min-h-[40px]"
+                >
+                  Saya Mengerti
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

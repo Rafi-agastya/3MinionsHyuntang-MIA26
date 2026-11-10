@@ -165,11 +165,7 @@ export function ProjectTabs({
                     Papan Skor AI Proposal Sayembara Warga
                   </h3>
                   <p className="text-xs sm:text-sm text-zinc-600 mt-0.5">
-                    Evaluasi matematis transparan sesuai formula fungsi murni (
-                    <code className="text-[#1F6F43] font-mono font-semibold">
-                      lib/scoring.ts
-                    </code>
-                    ) tanpa bias subyektif.
+                    Evaluasi matematis transparan sesuai formula standar terbuka tanpa bias subyektif.
                   </p>
                 </div>
               </div>
@@ -521,6 +517,11 @@ export function ProjectTabs({
                               <strong className="text-zinc-800">Catatan Rekomendasi untuk BPD:</strong>{" "}
                               {prop.ringkasanAi.rekomendasiCatatan}
                             </div>
+
+                            {/* Teks Wajib PRD 36.5 */}
+                            <p className="text-[11px] text-zinc-500 italic pt-2 border-t border-emerald-200/50 leading-relaxed">
+                              Ringkasan otomatis. Rujuk dokumen asli. Skor dihitung dengan aturan yang bisa diperiksa; keputusan akhir ada pada pemerintah desa.
+                            </p>
                           </div>
                         )}
 
@@ -765,7 +766,7 @@ export function ProjectTabs({
                 1. Penawaran harga total dari kelompok swakelola <strong>tidak boleh melampaui Pagu Anggaran {formatRupiah(proyek.pagu)}</strong>.
               </p>
               <p>
-                2. Efisiensi penawaran harga dinilai dengan formula PRD Bagian 25 (bobot 40%), namun penawaran yang terlalu rendah di bawah ambang wajar (&lt; 70% pagu) akan dievaluasi ketat untuk mencegah penurunan mutu material.
+                2. Efisiensi penawaran harga dinilai dengan formula standar terbuka (bobot 40%), namun penawaran yang terlalu rendah di bawah ambang wajar (&lt; 70% pagu) akan dievaluasi ketat untuk mencegah penurunan mutu material.
               </p>
             </div>
           </div>
@@ -793,6 +794,11 @@ export function ProjectTabs({
                 <Lock className="w-3.5 h-3.5" />
                 <span>SHA-256 Verified Ledger</span>
               </span>
+            </div>
+
+            {/* Klausul Pencairan Dana */}
+            <div className="p-3.5 rounded-xl border border-zinc-200 bg-zinc-50/70 text-xs text-zinc-600 leading-relaxed">
+              <strong>Klausul Pencairan Dana:</strong> &ldquo;AKAR mencatat dan menampilkan status termin. AKAR tidak mencairkan dana; pencairan mengikuti prosedur resmi pemerintah desa.&rdquo;
             </div>
 
             {/* Stepper Pencairan Dana Bertahap */}

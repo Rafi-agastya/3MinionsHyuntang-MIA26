@@ -154,6 +154,11 @@ export function Footer() {
             </Link>
           </div>
         </div>
+
+        {/* Teks Wajib PRD 36.5 */}
+        <div className="w-full text-center text-[11px] text-zinc-400 border-t border-zinc-100 pt-3">
+          Data pada tampilan ini adalah data contoh (fiktif) untuk keperluan lomba.
+        </div>
       </div>
     </footer>
   );

@@ -16,9 +16,10 @@ import {
   Sparkles,
   X,
   AlertCircle,
-  FileText,
   ShieldCheck,
   SlidersHorizontal,
+  Scale,
+  LogIn,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -236,15 +237,42 @@ export function ProjectDetailHeader({
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 {/* Warga or Admin can submit proposal when tender is open */}
                 {proyek.status === "TENDER_DIBUKA" && (
-                  <Button
-                    variant="default"
-                    size="default"
-                    onClick={handleOpenModal}
-                    className="gap-2 shadow-sm font-semibold min-h-[44px] bg-[#1F6F43] hover:bg-[#185935] text-white"
-                  >
-                    <FilePlus className="w-4 h-4" />
-                    <span>Ajukan Proposal Warga</span>
-                  </Button>
+                  role === "PUBLIK" ? (
+                    <Button
+                      variant="default"
+                      size="default"
+                      onClick={handleOpenModal}
+                      className="gap-2 shadow-sm font-semibold min-h-[44px] bg-[#1F6F43] hover:bg-[#185935] text-white"
+                    >
+                      <FilePlus className="w-4 h-4" />
+                      <span>Ikut Sayembara Swakelola</span>
+                    </Button>
+                  ) : (
+                    <Link href={`/proyek/${proyek.id}/ajukan`}>
+                      <Button
+                        variant="default"
+                        size="default"
+                        className="gap-2 shadow-sm font-semibold min-h-[44px] bg-[#1F6F43] hover:bg-[#185935] text-white"
+                      >
+                        <FilePlus className="w-4 h-4" />
+                        <span>Ajukan Proposal Warga</span>
+                      </Button>
+                    </Link>
+                  )
+                )}
+
+                {/* Perangkat Desa / Admin: Perbandingan Proposal Berdampingan (PRD Bagian 10 P1) */}
+                {permissions.canManageProjects && (
+                  <Link href={`/proyek/${proyek.id}/bandingkan`}>
+                    <Button
+                      variant="outline"
+                      size="default"
+                      className="gap-2 border-emerald-300 bg-white hover:bg-emerald-50 text-[#1F6F43] font-semibold min-h-[44px]"
+                    >
+                      <Scale className="w-4 h-4 text-[#1F6F43]" />
+                      <span>Bandingkan Proposal</span>
+                    </Button>
+                  </Link>
                 )}
 
                 {/* Perangkat Desa / Admin Manage Project Shortcut */}
@@ -389,7 +417,7 @@ export function ProjectDetailHeader({
               </div>
 
               <p>
-                Silakan siapkan dokumen proposal teknis dan rincian penawaran biaya Anda. Anda dapat menyerahkan berkas langsung ke Sekretariat TPK di Balai Desa Karang Sari sebelum <strong>{proyek.tenggatProposal}</strong>.
+                Anda saat ini mengakses sistem sebagai <strong>Publik</strong>. Sesuai ketentuan sayembara desa, pengajuan proposal sayembara swakelola hanya dapat dikirim oleh akun <strong>Warga Terverifikasi</strong> yang mewakili Pokmas terdaftar sebelum batas waktu <strong>{proyek.tenggatProposal}</strong>.
               </p>
             </div>
 
@@ -401,19 +429,16 @@ export function ProjectDetailHeader({
               >
                 Tutup
               </Button>
-              <Button
-                variant="default"
-                size="sm"
-                className="gap-1.5"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  const el = document.getElementById("project-tabs-section");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>Pelajari Micro-RAB & Ketentuan</span>
-              </Button>
+              <Link href="/masuk">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="gap-1.5 bg-[#1F6F43] hover:bg-[#185935] text-white"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Masuk sebagai Pokmas</span>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

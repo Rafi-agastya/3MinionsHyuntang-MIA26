@@ -16,6 +16,8 @@ import { KasMutasiTable, type KasTransaction } from "@/components/kas/kas-mutasi
 import { Navbar } from "@/components/navbar";
 import { SlideIndicator } from "@/components/slide-indicator";
 import { formatRupiah } from "@/lib/format";
+import { prisma } from "@/lib/prisma";
+import { hitungRingkasanKas } from "@/lib/kas-ringkasan";
 
 export const revalidate = 0;
 
@@ -43,37 +45,77 @@ const KAS_MASUK_PENCAIRAN = 420_000_000; // Rp 420.000.000 (42% Terserap)
 const BELANJA_OPERASIONAL = 315_000_000; // Rp 315.000.000
 const SISA_KAS_DESA = 105_000_000; // Rp 105.000.000
 
-function isKasRingkasan(value: unknown): value is KasRingkasan {
-  if (!value || typeof value !== "object") return false;
-  const data = value as Record<string, unknown>;
-
-  return (
-    typeof data.desaId === "string" &&
-    typeof data.namaDesa === "string" &&
-    typeof data.totalPemasukan === "number" &&
-    typeof data.totalPengeluaran === "number" &&
-    typeof data.sisaSaldo === "number" &&
-    Array.isArray(data.transaksiTerakhir)
-  );
-}
-
 async function getKasRingkasan(): Promise<KasRingkasan> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/desa/seed_desa_001/kas/ringkasan`, {
-      cache: "no-store",
+    let desa = await prisma.desa.findUnique({
+      where: { id: "seed_desa_001" },
     });
 
-    if (!res.ok) throw new Error("Gagal mengambil data buku kas");
-
-    const json: unknown = await res.json();
-    if (!json || typeof json !== "object" || !isKasRingkasan((json as { data?: unknown }).data)) {
-      throw new Error("Format data buku kas tidak valid");
+    if (!desa) {
+      desa = await prisma.desa.findFirst();
     }
 
-    return (json as { data: KasRingkasan }).data;
-  } catch (error) {
-    console.error("Error fetching kas ringkasan:", error);
+    if (!desa) {
+      return fallbackKasData;
+    }
+
+    const [sumberDanaList, posList, entriList, bidangList] = await Promise.all([
+      prisma.sumberDana.findMany({ where: { desaId: desa.id } }),
+      prisma.posAnggaran.findMany({
+        where: { desaId: desa.id },
+        include: {
+          akun: {
+            include: {
+              parent: {
+                include: { parent: true },
+              },
+            },
+          },
+        },
+      }),
+      prisma.entriKas.findMany({
+        where: { desaId: desa.id },
+        include: { verifikasi: true },
+        orderBy: { nomorUrut: "asc" },
+      }),
+      prisma.refAkun.findMany({
+        where: { level: "BIDANG" },
+        orderBy: { kode: "asc" },
+      }),
+    ]);
+
+    const ringkasan = hitungRingkasanKas({
+      sumberDanaList,
+      posList,
+      entriList,
+      bidangList,
+    });
+
+    const transaksiTerakhir: KasTransaction[] = entriList
+      .slice(-10)
+      .reverse()
+      .map((e) => ({
+        id: e.id,
+        nomorBukti: `KAS-${String(e.nomorUrut).padStart(4, "0")}`,
+        tanggal: e.tanggal.toISOString(),
+        jenis: (e.jenis === "PENERIMAAN" ? "PEMASUKAN" : "PENGELUARAN") as KasTransaction["jenis"],
+        kategori: e.jenis === "PENERIMAAN" ? "Penerimaan Kas" : "Pengeluaran Kas",
+        uraian: e.uraian,
+        jumlah: Number(e.jumlah),
+        buktiUrl: e.buktiUrls && e.buktiUrls.length > 0 ? e.buktiUrls[0] : "https://akar-desa.id/bukti/kas_001.pdf",
+        hashSha256: e.hash,
+      }));
+
+    return {
+      desaId: desa.id,
+      namaDesa: desa.nama,
+      totalPemasukan: ringkasan.total.diterima,
+      totalPengeluaran: ringkasan.total.terealisasi,
+      sisaSaldo: ringkasan.total.kasTersediaUntukDibayar,
+      transaksiTerakhir,
+    };
+  } catch (err) {
+    console.warn("[KasPage] Tidak dapat memuat ringkasan kas dari database, menggunakan data cadangan:", err);
     return fallbackKasData;
   }
 }

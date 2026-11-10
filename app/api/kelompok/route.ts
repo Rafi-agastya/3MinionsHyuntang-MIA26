@@ -90,8 +90,65 @@ export const POST = apiHandler(async (req: Request) => {
   return ok(
     {
       id: kelompok.id,
+      nama: kelompok.nama,
     },
     undefined,
     201
   );
 });
+
+// ================= GET: DAFTAR KELOMPOK PENGGUNA (PRD Modul E & FR-E2) =================
+export const GET = apiHandler(async (req: Request) => {
+  const user = await requireAuth(req);
+  requireRole(user, Peran.WARGA, Peran.PERANGKAT, Peran.PENGAWAS, Peran.ADMIN);
+
+  // Perangkat Desa, Pengawas, dan Admin dapat melihat seluruh kelompok untuk verifikasi;
+  // Warga melihat kelompok yang diketuai atau di mana ia terdaftar sebagai anggota.
+  const isInternal =
+    user.peran === Peran.PERANGKAT ||
+    user.peran === Peran.PENGAWAS ||
+    user.peran === Peran.ADMIN;
+
+  const whereClause = isInternal
+    ? {}
+    : {
+        OR: [
+          { ketuaId: user.id },
+          { anggota: { some: { penggunaId: user.id } } },
+        ],
+      };
+
+  const kelompokList = await prisma.kelompok.findMany({
+    where: whereClause,
+    include: {
+      ketua: {
+        select: {
+          id: true,
+          nama: true,
+          email: true,
+        },
+      },
+      anggota: {
+        select: {
+          id: true,
+          nama: true,
+          rtRw: true,
+          ketua: true,
+          // NIK mentah dan nikHash SENGAJA TIDAK DISERTAKAN demi privasi (FR-ID1)
+        },
+      },
+      _count: {
+        select: {
+          anggota: true,
+          proposal: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return ok(kelompokList);
+});
+
