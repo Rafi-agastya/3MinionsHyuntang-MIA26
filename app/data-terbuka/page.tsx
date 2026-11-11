@@ -168,14 +168,19 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
   ];
 
   // Handle Hash Verification
-  const handleVerifyHash = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = inputHash.trim();
+  const verifyHashString = (hashStr: string) => {
+    const clean = hashStr.trim().toLowerCase();
+    const isTampered =
+      clean.includes("tampered") ||
+      clean.includes("fake") ||
+      clean.includes("rusak") ||
+      clean.includes("00000000000000000");
 
-    if (
-      clean.toLowerCase() === defaultValidHash.toLowerCase() ||
-      clean.startsWith("sha256:")
-    ) {
+    // Valid jika berformat 64 hex hash murni dan bukan hash contoh rusak
+    const isValidSha256 =
+      /^(sha256:)?[a-f0-9]{64}$/.test(clean) && !isTampered;
+
+    if (isValidSha256) {
       setVerificationResult({
         status: "valid",
         blockNumber: 142,
@@ -193,6 +198,11 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
         entriesCount: 0,
       });
     }
+  };
+
+  const handleVerifyHash = (e: React.FormEvent) => {
+    e.preventDefault();
+    verifyHashString(inputHash);
   };
 
   return (
@@ -309,17 +319,20 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
                   type="button"
                   onClick={() => {
                     setInputHash(defaultValidHash);
+                    verifyHashString(defaultValidHash);
                   }}
-                  className="px-2.5 py-1 rounded bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 font-mono text-[11px]"
+                  className="px-2.5 py-1 rounded bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 font-mono text-[11px] transition-colors"
                 >
                   Hash Blok Terkini (Valid)
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    setInputHash("sha256:TAMPERED_FAKE_HASH_0000000000000000000000000");
+                    const tampered = "sha256:TAMPERED_FAKE_HASH_0000000000000000000000000";
+                    setInputHash(tampered);
+                    verifyHashString(tampered);
                   }}
-                  className="px-2.5 py-1 rounded bg-white border border-red-200 text-red-600 hover:bg-red-50 font-mono text-[11px]"
+                  className="px-2.5 py-1 rounded bg-white border border-red-200 text-red-600 hover:bg-red-50 font-mono text-[11px] transition-colors"
                 >
                   Hash Termodifikasi (Rusak)
                 </button>
@@ -328,7 +341,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
 
             {/* Verification Result Card */}
             {verificationResult.status === "valid" ? (
-              <div className="rounded-xl border border-emerald-300 bg-white p-5 space-y-3 shadow-2xs">
+              <div className="rounded-xl border border-emerald-300 bg-white p-5 space-y-3 shadow-2xs animate-in fade-in duration-200">
                 <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                   <span>Rantai Integritas Terverifikasi Sah (Valid SHA-256)</span>
@@ -361,16 +374,37 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-red-300 bg-red-50/80 p-5 space-y-2 text-red-950">
+              <div className="rounded-xl border border-red-300 bg-red-50/90 p-5 space-y-3 text-red-950 animate-in fade-in duration-200">
                 <div className="flex items-center gap-2 font-bold text-sm text-red-700">
-                  <AlertTriangle className="w-5 h-5 shrink-0" />
-                  <span>Ketidaksesuaian Hash Terdeteksi!</span>
+                  <AlertTriangle className="w-5 h-5 shrink-0 text-red-600" />
+                  <span>Ketidaksesuaian Hash Terdeteksi! (Rantai Integritas Rusak)</span>
                 </div>
                 <p className="text-xs leading-relaxed text-red-800">
                   Hash yang dimasukkan tidak ditemukan dalam buku kas publik atau memiliki
                   tanda tangan kriptografis yang tidak cocok dengan rantai sebelumnya. Data
-                  diduga telah dimanipulasi atau tidak terdaftar.
+                  transaksi diduga telah dimanipulasi, diubah secara sepihak, atau tidak terdaftar.
                 </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs border-t border-red-200/60">
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-red-200">
+                    <span className="text-red-600 font-semibold block">Status Integritas:</span>
+                    <span className="font-mono font-bold text-red-700 block mt-0.5">
+                      GAGAL / TIDAK SAH
+                    </span>
+                  </div>
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-red-200">
+                    <span className="text-red-600 font-semibold block">Diagnosa Anomali:</span>
+                    <span className="font-medium text-red-800 block mt-0.5">
+                      Rantai Hash Terputus (Tampered)
+                    </span>
+                  </div>
+                  <div className="bg-white/80 p-2.5 rounded-lg border border-red-200">
+                    <span className="text-red-600 font-semibold block">Tindakan Lanjut:</span>
+                    <span className="font-medium text-zinc-700 block mt-0.5">
+                      Rujuk Buku Kas Asli &amp; BPD
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

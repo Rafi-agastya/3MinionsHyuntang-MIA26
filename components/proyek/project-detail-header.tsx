@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProjectDetailData } from "./types";
 import { useCurrentRole } from "@/lib/use-current-role";
+import { KakModal } from "./kak-modal";
 
 interface ProjectDetailHeaderProps {
   proyek: ProjectDetailData;
@@ -37,6 +38,7 @@ export function ProjectDetailHeader({
 }: ProjectDetailHeaderProps) {
   const [copied, setCopied] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isKakModalOpen, setIsKakModalOpen] = React.useState(false);
   const { role, permissions } = useCurrentRole();
 
   const handleShare = () => {
@@ -303,20 +305,15 @@ export function ProjectDetailHeader({
                   </Link>
                 )}
 
-                <a
-                  href="#project-tabs-section"
-                  onClick={(e) => {
-                    const el = document.getElementById("project-tabs-section");
-                    if (el) {
-                      e.preventDefault();
-                      el.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                  className="inline-flex flex-row items-center justify-center gap-2 whitespace-nowrap px-4 py-2.5 rounded-xl border border-zinc-200 bg-white text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors min-h-[44px]"
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsKakModalOpen(true)}
+                  className="gap-2 whitespace-nowrap px-4 py-2.5 rounded-xl border-zinc-200 bg-white text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors min-h-[44px]"
                 >
                   <Download className="w-4 h-4 shrink-0 text-zinc-500" />
                   <span>Unduh KAK</span>
-                </a>
+                </Button>
 
                 <Button
                   variant="ghost"
@@ -443,6 +440,12 @@ export function ProjectDetailHeader({
           </div>
         </div>
       )}
+      {/* Modal Dokumen KAK Resmi Sayembara Swakelola */}
+      <KakModal
+        isOpen={isKakModalOpen}
+        onClose={() => setIsKakModalOpen(false)}
+        proyek={proyek}
+      />
     </>
   );
 }
