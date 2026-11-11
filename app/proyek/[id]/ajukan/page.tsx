@@ -507,7 +507,7 @@ export default function FormAjukanProposalPage() {
       <>
         <Navbar />
 
-        <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+        <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
           <SlideIndicator
             slides={[
               { id: "ajukan-frame-1", label: "Proposal Terkirim" },
@@ -518,8 +518,9 @@ export default function FormAjukanProposalPage() {
           <section
             id="ajukan-frame-1"
             aria-label="Konfirmasi Pengajuan Proposal"
-            className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full"
+            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
           >
+            <div className="max-w-4xl mx-auto w-full my-auto">
             {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumb"
@@ -669,15 +670,16 @@ export default function FormAjukanProposalPage() {
                 dokumenList={files}
               />
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section
+          <div
             id="ajukan-frame-footer"
             aria-label="Informasi Footer"
             className="snap-end w-full"
           >
             <Footer />
-          </section>
+          </div>
         </main>
       </>
     );
@@ -687,7 +689,7 @@ export default function FormAjukanProposalPage() {
     <>
       <Navbar />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         <SlideIndicator slides={ajukanSlides} />
 
         {/* Modal Buat Pokmas Baru */}
@@ -702,8 +704,9 @@ export default function FormAjukanProposalPage() {
           <section
             id="ajukan-frame-1"
             aria-label="Identitas Kelompok dan Serapan Tenaga Kerja PKTD"
-            className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-4"
+            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-6 md:py-10 px-4 sm:px-6 lg:px-8"
           >
+            <div className="max-w-7xl mx-auto w-full space-y-4 my-auto">
             {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumb"
@@ -1112,14 +1115,16 @@ export default function FormAjukanProposalPage() {
                 </div>
               </aside>
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* FRAME 2: Micro-RAB, Berkas & Submit */}
           <section
             id="ajukan-frame-2"
             aria-label="Rincian Anggaran Micro-RAB dan Berkas Pendukung"
-            className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
           >
+            <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
               {/* Kolom Kiri: 8 cols */}
               <div className="lg:col-span-8 space-y-6">
@@ -1641,16 +1646,17 @@ export default function FormAjukanProposalPage() {
                 </div>
               </aside>
             </div>
+            </div>
           </section>
 
           {/* FRAME 3: Footer Snap End */}
-          <section
+          <div
             id="ajukan-frame-footer"
             aria-label="Informasi Footer"
             className="snap-end w-full"
           >
             <Footer />
-          </section>
+          </div>
         </form>
       </main>
     </>

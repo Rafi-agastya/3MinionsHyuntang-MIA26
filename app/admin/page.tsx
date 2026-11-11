@@ -455,15 +455,15 @@ export default function AdminPage() {
       <SlideIndicator slides={ADMIN_SLIDES} />
 
       {/* Per-frame scroll-snap container */}
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
         {/* FRAME 1: TOP DASHBOARD HEADER & 4 SUMMARY METRICS                          */}
         {/* ========================================================================= */}
         <section
           id="admin-frame-1"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-6">
+          <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
             {/* Header Banner in Emerald Forest */}
             <div className="rounded-3xl bg-gradient-to-br from-[#1F6F43] via-[#1a5f39] to-[#14492c] text-white p-6 sm:p-8 lg:p-10 shadow-md relative overflow-hidden">
               {/* Subtle Logo Watermark */}
@@ -626,7 +626,7 @@ export default function AdminPage() {
         {/* ========================================================================= */}
         <section
           id="admin-frame-2"
-          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6">
             {/* Tab Navigation Controls */}

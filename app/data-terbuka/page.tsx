@@ -207,7 +207,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
     <>
       <Navbar />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         {/* Desktop Dot Pagination */}
         <SlideIndicator slides={dataSlides} />
 
@@ -215,8 +215,9 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
         <section
           id="data-frame-1"
           aria-label="Verifikasi Kriptografis dan Data Terbuka"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full space-y-6"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-6xl mx-auto w-full space-y-6 my-auto">
           {/* Hero Header with Watermark & Emerald Accent */}
           <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50/70 via-white to-white rounded-3xl border border-emerald-200/80 p-6 sm:p-8 lg:p-10 shadow-sm space-y-4">
             {/* Subtle Watermark Logo */}
@@ -395,14 +396,16 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
               <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* FRAME 2: Katalog Dataset Terbuka */}
         <section
           id="data-frame-2"
           aria-label="Katalog Dataset Terbuka APBDes 2026"
-          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full flex flex-col justify-start space-y-6"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-6xl mx-auto w-full flex flex-col justify-start space-y-6">
           {/* SECTION 2: DAFTAR DATASET PUBLIK SIAP UNDUH */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
@@ -532,16 +535,17 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
               <span>&uarr; Kembali ke Cek Hash SHA-256</span>
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* FRAME 3: Footer Snap End */}
-        <section
+        <div
           id="data-frame-footer"
           aria-label="Informasi Footer"
           className="snap-end w-full"
         >
           <Footer />
-        </section>
+        </div>
       </main>
     </>
   );

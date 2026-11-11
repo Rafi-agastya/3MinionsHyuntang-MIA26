@@ -61,7 +61,7 @@ export default async function ProyekDetailPage({
     <>
       <Navbar />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         {/* Desktop Dot Pagination */}
         <SlideIndicator slides={detailSlides} />
 
@@ -69,33 +69,35 @@ export default async function ProyekDetailPage({
         <section
           id="detail-frame-1"
           aria-label="Ringkasan & Timeline Proyek"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-5 md:space-y-6"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-6 md:py-10 px-4 sm:px-6 lg:px-8"
         >
-          {/* Header & Status Action Banner */}
-          <ProjectDetailHeader proyek={proyek} />
+          <div className="max-w-7xl mx-auto w-full space-y-5 md:space-y-6 my-auto">
+            {/* Header & Status Action Banner */}
+            <ProjectDetailHeader proyek={proyek} />
 
-          {/* Horizontal Project Stepper Timeline */}
-          <ProjectTimeline currentStatus={proyek.status} />
+            {/* Horizontal Project Stepper Timeline */}
+            <ProjectTimeline currentStatus={proyek.status} />
 
-          {/* Quick Summary Metric Cards (4 Cards) */}
-          <ProjectSummaryCards
-            pagu={proyek.pagu}
-            durasiMin={proyek.durasiMin}
-            durasiMax={proyek.durasiMax}
-            syaratLokalMin={proyek.syaratLokalMin}
-            proposalCount={proyek.proposals.length}
-            sumberDana={proyek.sumberDana}
-          />
+            {/* Quick Summary Metric Cards (4 Cards) */}
+            <ProjectSummaryCards
+              pagu={proyek.pagu}
+              durasiMin={proyek.durasiMin}
+              durasiMax={proyek.durasiMax}
+              syaratLokalMin={proyek.syaratLokalMin}
+              proposalCount={proyek.proposals.length}
+              sumberDana={proyek.sumberDana}
+            />
 
-          {/* Helper Jump Action Button */}
-          <div className="pt-2 flex justify-start">
-            <a
-              href="#detail-frame-2"
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
-            >
-              <span>Lihat Papan Skor AI & Rincian Teknis</span>
-              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-            </a>
+            {/* Helper Jump Action Button */}
+            <div className="pt-2 flex justify-start">
+              <a
+                href="#detail-frame-2"
+                className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
+              >
+                <span>Lihat Papan Skor AI & Rincian Teknis</span>
+                <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
+              </a>
+            </div>
           </div>
         </section>
 
@@ -103,19 +105,21 @@ export default async function ProyekDetailPage({
         <section
           id="detail-frame-2"
           aria-label="Papan Skor AI dan Rincian Teknis"
-          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
         >
-          <ProjectTabs proyek={proyek} initialTab="proposal" />
+          <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
+            <ProjectTabs proyek={proyek} initialTab="proposal" />
+          </div>
         </section>
 
         {/* FRAME 3: Footer Snap End */}
-        <section
+        <div
           id="detail-frame-footer"
           aria-label="Informasi Footer"
           className="snap-end w-full"
         >
           <Footer />
-        </section>
+        </div>
       </main>
     </>
   );

@@ -472,7 +472,7 @@ export default function AspirasiPortalPage() {
     <>
       <Navbar />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         {/* Desktop Dot Pagination */}
         <SlideIndicator slides={aspirasiSlides} />
 
@@ -488,8 +488,9 @@ export default function AspirasiPortalPage() {
         <section
           id="aspirasi-frame-1"
           aria-label="Kirim Aspirasi dan Aduan Warga"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-6 md:py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-4"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-6 md:py-10 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-7xl mx-auto w-full space-y-4 my-auto">
           {/* Header Banner */}
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 sm:p-7 shadow-sm space-y-3">
             <div className="flex flex-wrap items-center gap-2">
@@ -929,14 +930,16 @@ export default function AspirasiPortalPage() {
               <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* FRAME 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
         <section
           id="aspirasi-frame-2"
           aria-label="Daftar Aspirasi Publik Terkini"
-          className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
             <div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
@@ -1136,16 +1139,17 @@ export default function AspirasiPortalPage() {
               <span>&uarr; Kembali ke Formulir Kirim Aspirasi</span>
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* FRAME 3: Footer Snap End */}
-        <section
+        <div
           id="aspirasi-frame-footer"
           aria-label="Informasi Footer"
           className="snap-end w-full"
         >
           <Footer />
-        </section>
+        </div>
       </main>
 
       {/* Auth Restriction Modal for PUBLIK Role (PRD Bagian 8) */}

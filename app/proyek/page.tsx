@@ -90,15 +90,16 @@ export default async function ProyekIndexPage() {
         ]}
       />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
         {/* FRAME 1: BANNER SOROTAN SAYEMBARA (12-COL CSS GRID WITH EVEN OVERLAY)    */}
         {/* ========================================================================= */}
         <section
           id="proyek-frame-1"
           aria-label="Bursa Sayembara Proyek"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
         <div className="relative rounded-3xl overflow-hidden border border-emerald-800/20 shadow-md">
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -216,7 +217,8 @@ export default async function ProyekIndexPage() {
               <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* ========================================================================= */}
         {/* FRAME 2: DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                    */}
@@ -224,17 +226,19 @@ export default async function ProyekIndexPage() {
         <section
           id="proyek-frame-2"
           aria-label="Daftar Proyek Desa"
-          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
         >
-          <ProyekDirectoryList initialProyekList={proyekList} />
+          <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
+            <ProyekDirectoryList initialProyekList={proyekList} />
+          </div>
         </section>
 
         {/* ========================================================================= */}
         {/* FRAME 3: FOOTER                                                           */}
         {/* ========================================================================= */}
-        <section id="proyek-frame-footer" aria-label="Informasi Footer" className="snap-end">
+        <div id="proyek-frame-footer" aria-label="Informasi Footer" className="snap-end">
           <Footer />
-        </section>
+        </div>
       </main>
     </div>
   );

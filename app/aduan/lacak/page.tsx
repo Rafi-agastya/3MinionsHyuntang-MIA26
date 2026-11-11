@@ -437,8 +437,9 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-1"
         aria-label="Pencarian Tiket Aduan"
-        className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-5"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
       >
+        <div className="max-w-4xl mx-auto w-full space-y-5 my-auto">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
@@ -543,14 +544,16 @@ function LacakTiketContent() {
             <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
           </a>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* FRAME 2: Status & Timeline Tiket */}
       <section
         id="lacak-frame-2"
         aria-label="Status dan Timeline Penanganan Tiket"
-        className="min-h-[calc(100vh-64px)] snap-start py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full flex flex-col justify-start space-y-6"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
       >
+        <div className="max-w-4xl mx-auto w-full flex flex-col justify-start space-y-6">
         {searchError ? (
           /* Empty / Not Found State */
           <div className="bg-white rounded-2xl border border-zinc-200/80 p-8 sm:p-12 text-center space-y-4 shadow-sm">
@@ -782,16 +785,17 @@ function LacakTiketContent() {
             <span>&uarr; Cari Tiket Lainnya</span>
           </a>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* FRAME 3: Footer Snap End */}
-      <section
+      <div
         id="lacak-frame-footer"
         aria-label="Informasi Footer"
         className="snap-end w-full"
       >
         <Footer />
-      </section>
+      </div>
     </>
   );
 }
@@ -800,11 +804,11 @@ export default function LacakTiketPage() {
   return (
     <>
       <Navbar />
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
         <SlideIndicator slides={lacakSlides} />
         <React.Suspense
           fallback={
-            <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-12 text-center text-xs text-zinc-500">
+            <div className="min-h-[calc(100dvh-64px)] flex items-center justify-center p-12 text-center text-xs text-zinc-500">
               Memuat data pelacakan tiket...
             </div>
           }

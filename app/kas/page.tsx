@@ -222,15 +222,16 @@ export default async function KasPage() {
         ]}
       />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
         {/* FRAME 1: SPLIT HERO BANNER + INTEGRITY BADGE + BENTO SUMMARY CARDS        */}
         {/* ========================================================================= */}
         <section
           id="kas-frame-1"
           aria-label="Ringkasan Kas Desa"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-5"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-7xl mx-auto w-full space-y-5 my-auto">
         {/* ========================================================================= */}
         {/* PAGE HEADER: SPLIT HERO BANNER (12-COL CSS GRID)                          */}
         {/* ========================================================================= */}
@@ -427,7 +428,6 @@ export default async function KasPage() {
             </div>
           </div>
         </div>
-
           {/* Tombol Lanjut ke Bawah Helper */}
           <div className="pt-2 flex justify-center">
             <a
@@ -438,7 +438,8 @@ export default async function KasPage() {
               <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
             </a>
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* ========================================================================= */}
         {/* FRAME 2: MUTASI TRANSAKSI TABLE SECTION (SCROLLABLE & AMPLE READING ROOM) */}
@@ -446,33 +447,35 @@ export default async function KasPage() {
         <section
           id="kas-frame-2"
           aria-label="Tabel Mutasi Kas"
-          className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-4"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
-                Mutasi Buku Kas Umum
-              </h2>
-              <p className="text-sm text-zinc-600 mt-0.5">
-                Riwayat transaksi kas masuk dan keluar yang tercatat secara permanen (<em>append-only</em>).
-              </p>
+          <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
+                  Mutasi Buku Kas Umum
+                </h2>
+                <p className="text-sm text-zinc-600 mt-0.5">
+                  Riwayat transaksi kas masuk dan keluar yang tercatat secara permanen (<em>append-only</em>).
+                </p>
+              </div>
+
+              <div className="text-xs text-zinc-500 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>Klik pada baris transaksi untuk melihat berkas bukti transfer &amp; kuitansi.</span>
+              </div>
             </div>
 
-            <div className="text-xs text-zinc-500 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>Klik pada baris transaksi untuk melihat berkas bukti transfer &amp; kuitansi.</span>
-            </div>
+            <KasMutasiTable transaksiList={transaksiList} />
           </div>
-
-          <KasMutasiTable transaksiList={transaksiList} />
         </section>
 
         {/* ========================================================================= */}
         {/* FRAME 3: FOOTER                                                           */}
         {/* ========================================================================= */}
-        <section id="kas-frame-footer" aria-label="Informasi Footer" className="snap-end">
+        <div id="kas-frame-footer" aria-label="Informasi Footer" className="snap-end">
           <Footer />
-        </section>
+        </div>
       </main>
     </div>
   );

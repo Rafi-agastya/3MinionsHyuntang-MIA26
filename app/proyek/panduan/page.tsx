@@ -45,15 +45,16 @@ export default function PanduanProposalPage() {
         ]}
       />
 
-      <main className="h-[calc(100vh-64px)] mt-16 overflow-y-auto snap-y snap-proximity md:snap-mandatory scroll-smooth bg-[#FAFAF7]">
+      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
         {/* ========================================================================= */}
         {/* FRAME 1: HEADER & 4 SYARAT POKOK KELOMPOK + SIDEBAR BANTUAN BALAI WARGA   */}
         {/* ========================================================================= */}
         <section
           id="panduan-frame-1"
           aria-label="Syarat Pokok Kelompok Pengusul"
-          className="min-h-[calc(100vh-64px)] snap-start flex flex-col justify-center py-8 md:py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
+          <div className="max-w-7xl mx-auto w-full space-y-8 my-auto">
           {/* Breadcrumb & Header */}
           <div className="space-y-4 border-b border-zinc-200/80 pb-6">
             {/* Breadcrumb Navigation */}
@@ -292,7 +293,8 @@ export default function PanduanProposalPage() {
           <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
         </a>
       </div>
-    </section>
+    </div>
+  </section>
 
     {/* ========================================================================= */}
     {/* FRAME 2: FORMAT MICRO-RAB & BOBOT AI SCORING (40/30/20/10)               */}
@@ -300,8 +302,9 @@ export default function PanduanProposalPage() {
     <section
       id="panduan-frame-2"
       aria-label="Format Micro-RAB dan Bobot AI"
-      className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-start space-y-10"
+      className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
     >
+      <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-10">
       {/* SECTION 2: FORMAT & RINCIAN MICRO-RAB */}
       <section aria-labelledby="section-rab" className="space-y-6">
           <div className="space-y-1">
@@ -486,7 +489,8 @@ export default function PanduanProposalPage() {
             <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
           </a>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* ========================================================================= */}
       {/* FRAME 3: ALUR 5 TAHAP & CALL TO ACTION BANNER                             */}
@@ -494,8 +498,9 @@ export default function PanduanProposalPage() {
       <section
         id="panduan-frame-3"
         aria-label="Alur Prosedur dan Pengajuan"
-        className="min-h-[calc(100vh-64px)] snap-start py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full flex flex-col justify-center space-y-8"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
       >
+        <div className="max-w-7xl mx-auto w-full flex flex-col space-y-8">
         {/* SECTION 4: ALUR 5 TAHAP PENGAJUAN HINGGA PENCAIRAN */}
         <div aria-labelledby="section-alur" className="space-y-6">
           <div className="space-y-1">
@@ -634,14 +639,15 @@ export default function PanduanProposalPage() {
             </Link>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* ========================================================================= */}
       {/* FRAME FOOTER                                                              */}
       {/* ========================================================================= */}
-      <section id="panduan-frame-footer" aria-label="Informasi Footer" className="snap-end">
+      <div id="panduan-frame-footer" aria-label="Informasi Footer" className="snap-end">
         <Footer />
-      </section>
+      </div>
     </main>
   </div>
 );
