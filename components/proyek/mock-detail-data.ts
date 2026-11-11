@@ -3,11 +3,11 @@ import { ProjectDetailData } from "./types";
 export const mockProjectDrainase: ProjectDetailData = {
   id: "seed_proyek_001",
   desaId: "seed_desa_001",
-  judul: "Pembangunan Saluran Drainase & Gorong-Gorong RT 03",
+  judul: "Pembangunan Saluran Drainase RT 3",
   deskripsi:
-    "Pengerjaan fisik saluran drainase pemukiman warga sepanjang 250 meter berbasis Padat Karya Tunai Desa (PKTD) guna mencegah genangan air musim hujan.",
-  lokasi: "Dusun Krajan RT 03 / RW 01",
-  pagu: 50_000_000,
+    "Pembangunan saluran drainase lingkungan permanen sepanjang 350 meter menggunakan batu kali mortar untuk mencegah genangan air saat musim hujan di RT 3 Dusun Krajan.",
+  lokasi: "RT 03 Dusun Krajan",
+  pagu: 100_000_000,
   kelas: "KECIL",
   jalur: "SAYEMBARA",
   alasanJalur:
@@ -18,32 +18,32 @@ export const mockProjectDrainase: ProjectDetailData = {
   tenggatHari: 7,
   syaratLokalMin: 70,
   durasiMin: 30,
-  durasiMax: 45,
+  durasiMax: 60,
   sumberDana: "Dana Desa (APBDes TA 2026)",
   rabItems: [
     {
       id: "rab_001",
-      uraian: "Pekerjaan Galian Tanah Saluran & Gorong-gorong",
-      volume: 120,
+      uraian: "Pekerjaan Galian Tanah Saluran",
+      volume: 250,
       satuan: "m³",
       hargaSatuan: 80_000,
-      subtotal: 9_600_000,
+      subtotal: 20_000_000,
     },
     {
       id: "rab_002",
-      uraian: "Pekerjaan Pasangan Batu Kali Mortar (1:4)",
-      volume: 60,
+      uraian: "Pekerjaan Pasangan Batu Kali Mortar",
+      volume: 150,
       satuan: "m³",
-      hargaSatuan: 450_000,
-      subtotal: 27_000_000,
+      hargaSatuan: 400_000,
+      subtotal: 60_000_000,
     },
     {
       id: "rab_003",
-      uraian: "Pekerjaan Pemasangan Pipa Beton Gorong-gorong & Plesteran Siar",
-      volume: 268,
+      uraian: "Pekerjaan Plesteran & Siaran Saluran",
+      volume: 400,
       satuan: "m²",
       hargaSatuan: 50_000,
-      subtotal: 13_400_000,
+      subtotal: 20_000_000,
     },
   ],
   proposals: [
@@ -51,11 +51,11 @@ export const mockProjectDrainase: ProjectDetailData = {
       id: "prop_makmur_jaya_01",
       namaKelompok: "Pokmas Makmur Jaya RT 03",
       ketua: "Slamet Rahardjo",
-      penawaran: 46_200_000,
-      durasiHari: 30,
-      tenagaTotal: 25,
-      tenagaLokal: 22,
-      persentaseLokal: 88,
+      penawaran: 88_000_000,
+      durasiHari: 45,
+      tenagaTotal: 10,
+      tenagaLokal: 9,
+      persentaseLokal: 90,
       narasiMetode:
         "Metode galian saluran swakelola bergiliran per regu warga RT 03 dengan pasangan batu kali mortar kedap air dan pemasangan gorong-gorong drainase bertahap 25 meter per segmen.",
       narasiJadwal:
@@ -82,14 +82,14 @@ export const mockProjectDrainase: ProjectDetailData = {
       ringkasanAi: {
         model: "meta-llama/llama-3.3-70b-instruct",
         ringkasanEksekutif:
-          "Proposal Pokmas Makmur Jaya RT 03 mendapatkan skor tertinggi dengan serapan tenaga kerja lokal mencapai 88% (22 warga desa) serta nilai penawaran hemat dan rasional di angka Rp46.200.000 (92,4% pagu).",
+          "Proposal Pokmas Makmur Jaya RT 03 mendapatkan skor tertinggi dengan serapan tenaga kerja lokal mencapai 90% (9 dari 10 pekerja warga desa) serta nilai penawaran hemat dan rasional di angka Rp88.000.000 (88% pagu).",
         poinKekuatan: [
-          "Serapan tenaga kerja lokal 88% (22 dari 25 pekerja adalah warga RT 03 Dusun Krajan)",
-          "Efisiensi anggaran optimal dengan sisa buffer Rp3.800.000 dari pagu Rp50 juta",
+          "Serapan tenaga kerja lokal 90% (9 dari 10 pekerja adalah warga RT 03 Dusun Krajan)",
+          "Efisiensi anggaran optimal dengan sisa buffer Rp12.000.000 dari pagu Rp100 juta",
           "Metode mitigasi risiko matang dengan pompa air portabel dan sodetan sementara",
         ],
         poinPerhatian: [
-          "Pastikan suplai batu kali dan semen mortar dipesan di muka agar ritme kerja 30 hari terjaga",
+          "Pastikan suplai batu kali dan semen mortar dipesan di muka agar ritme kerja 45 hari terjaga",
         ],
         rekomendasiCatatan:
           "Rekomendasi Utama: Sangat layak ditetapkan sebagai pelaksana sayembara swakelola drainase RT 03.",
@@ -99,15 +99,15 @@ export const mockProjectDrainase: ProjectDetailData = {
       id: "prop_sari_guyub_02",
       namaKelompok: "Kelompok Tukang Sari Guyub",
       ketua: "Budi Santoso",
-      penawaran: 48_500_000,
-      durasiHari: 35,
-      tenagaTotal: 20,
-      tenagaLokal: 15,
-      persentaseLokal: 75,
+      penawaran: 99_000_000,
+      durasiHari: 25,
+      tenagaTotal: 12,
+      tenagaLokal: 6,
+      persentaseLokal: 50,
       narasiMetode:
         "Pengerjaan fisik saluran drainase dengan tim tukang batu berpengalaman dan bantuan tenaga angkut warga lingkungan Dusun Krajan.",
       narasiJadwal:
-        "Pelaksanaan terencana selama 35 hari kalender dengan monitoring berkala bersama pengurus RT dan BPD.",
+        "Pelaksanaan terencana selama 25 hari kalender dengan monitoring berkala bersama pengurus RT dan BPD.",
       narasiRisiko:
         "Keterlambatan suplai material batu kali diantisipasi dengan pemesanan awal dari kuari terdekat.",
       dokumen: ["proposal-sari-guyub.pdf", "daftar-tukang-lokal.pdf"],
@@ -126,29 +126,29 @@ export const mockProjectDrainase: ProjectDetailData = {
       ringkasanAi: {
         model: "meta-llama/llama-3.3-70b-instruct",
         ringkasanEksekutif:
-          "Penawaran realistis sebesar Rp48.500.000 dengan tingkat serapan tukang lokal 75% (15 dari 20 pekerja). Metode pengerjaan memenuhi standar KAK proyek desa.",
+          "Penawaran sebesar Rp99.000.000 dengan kecepatan pengerjaan 25 hari. Namun serapan tenaga kerja lokal perlu ditingkatkan agar memenuhi standar minimal 70%.",
         poinKekuatan: [
-          "Tukang batu berpengalaman dengan rekam jejak pekerjaan fisik desa yang baik",
-          "Serapan tenaga lokal 75% melampaui batas regulasi minimal (70%)",
+          "Durasi pengerjaan sangat cepat (25 hari)",
+          "Tukang batu berpengalaman dengan sertifikat kerja",
         ],
         poinPerhatian: [
-          "Estimasi waktu pelaksanaan 35 hari lebih lama dibandingkan Pokmas Makmur Jaya",
+          "Serapan tenaga kerja lokal masih di bawah ambang batas regulasi 70%",
         ],
         rekomendasiCatatan:
-          "Peringkat 2. Memenuhi seluruh syarat administrasi dan teknis jika kelompok peringkat 1 berhalangan.",
+          "Perlu komitmen penambahan tenaga kerja warga setempat sebelum penandatanganan SPK.",
       },
     },
     {
       id: "prop_warga_muda_03",
       namaKelompok: "Paguyuban Warga Muda Dusun 1",
       ketua: "Agus Setiawan",
-      penawaran: 49_800_000,
+      penawaran: 62_000_000,
       durasiHari: 40,
-      tenagaTotal: 20,
-      tenagaLokal: 14,
-      persentaseLokal: 70,
+      tenagaTotal: 8,
+      tenagaLokal: 8,
+      persentaseLokal: 100,
       narasiMetode:
-        "Pemberdayaan pemuda karang taruna dusun untuk pekerjaan galian tanah saluran dibantu oleh 4 tukang senior.",
+        "Pemberdayaan pemuda karang taruna dusun untuk pekerjaan galian tanah saluran dibantu oleh tukang senior.",
       narasiJadwal:
         "Target pengerjaan 40 hari kerja dengan rotasi regu pemuda pada akhir pekan dan sore hari.",
       narasiRisiko:
@@ -169,14 +169,14 @@ export const mockProjectDrainase: ProjectDetailData = {
       ringkasanAi: {
         model: "meta-llama/llama-3.3-70b-instruct",
         ringkasanEksekutif:
-          "Penawaran Rp49.800.000 mendekati batas pagu dengan serapan tenaga kerja lokal tepat di batas 70%. Rencana kerja padat karya pemuda sangat positif untuk pemberdayaan.",
+          "Penawaran hemat Rp62.000.000 dengan serapan tenaga kerja lokal 100% (8 dari 8 pekerja adalah warga lokal). Pengerjaan berbasis gotong royong penuh.",
         poinKekuatan: [
-          "Semangat gotong royong pemuda desa tinggi untuk pemeliharaan infrastruktur lingkungan",
-          "Keterlibatan 14 pemuda lokal Dusun 1 dalam padat karya tunai",
+          "Serapan tenaga lokal sempurna 100%",
+          "Penawaran anggaran sangat hemat dan efisien",
         ],
         poinPerhatian: [
-          "Efisiensi RAB rendah (hanya selisih Rp200.000 dari pagu maksimal Rp50.000.000)",
-          "Durasi pengerjaan 40 hari mendekati batas maksimal toleransi KAK",
+          "Efisiensi RAB optimal dengan sisa buffer Rp38.000.000 dari pagu Rp100.000.000",
+          "Durasi pengerjaan 40 hari memenuhi batas toleransi KAK",
         ],
         rekomendasiCatatan:
           "Peringkat 3. Memenuhi syarat minimal KAK sayembara swakelola desa.",
@@ -188,10 +188,10 @@ export const mockProjectDrainase: ProjectDetailData = {
 export const mockProjectBalaiWarga: ProjectDetailData = {
   id: "seed_proyek_002",
   desaId: "seed_desa_001",
-  judul: "Renovasi Gedung Pertemuan Balai Warga",
+  judul: "Rehabilitasi Gedung Pertemuan Balai Warga Dusun",
   deskripsi:
-    "Renovasi konstruksi atap genteng, pengecatan dinding aula serbaguna, dan pemasangan lantai keramik balai pertemuan warga Dusun Karang Anyar.",
-  lokasi: "Dusun Karang Anyar RT 02 / RW 03",
+    "Peningkatan fasilitas aula desa dan ruang serbaguna dusun untuk kegiatan posyandu, pelatihan tani mandiri, dan kegiatan kepemudaan karang taruna setempat.",
+  lokasi: "Dusun Karang Anyar",
   pagu: 140_000_000,
   kelas: "MENENGAH",
   jalur: "SAYEMBARA",
@@ -201,7 +201,7 @@ export const mockProjectBalaiWarga: ProjectDetailData = {
   tanggalPublikasi: "1 Maret 2026",
   tenggatProposal: "15 Maret 2026",
   tenggatHari: 0,
-  syaratLokalMin: 70,
+  syaratLokalMin: 75,
   durasiMin: 45,
   durasiMax: 90,
   sumberDana: "Dana Desa (APBDes TA 2026)",
@@ -234,10 +234,10 @@ export const mockProjectBalaiWarga: ProjectDetailData = {
 export const mockProjectJalanSetapak: ProjectDetailData = {
   id: "seed_proyek_003",
   desaId: "seed_desa_001",
-  judul: "Pavingisasi Jalan Setapak Dusun",
+  judul: "Pavingisasi Jalan Setapak Permukiman Dusun Makmur",
   deskripsi:
-    "Pemasangan paving block press hidrolik K-250 dan kanstin pembatas jalan pemukiman warga sepanjang 400 meter di Dusun Tani Makmur.",
-  lokasi: "Dusun Tani Makmur RT 01 / RW 02",
+    "Pemasangan paving block jalan setapak pemukiman sepanjang 400 meter dengan sistem Padat Karya Tunai Desa (PKTD) guna mempermudah akses anak sekolah dan mobilitas panen.",
+  lokasi: "Dusun Tani Makmur",
   pagu: 60_000_000,
   kelas: "KECIL",
   jalur: "SAYEMBARA",
@@ -247,7 +247,7 @@ export const mockProjectJalanSetapak: ProjectDetailData = {
   tanggalPublikasi: "15 Januari 2026",
   tenggatProposal: "30 Januari 2026",
   tenggatHari: 0,
-  syaratLokalMin: 80,
+  syaratLokalMin: 85,
   durasiMin: 20,
   durasiMax: 40,
   sumberDana: "Dana Desa (APBDes TA 2026)",

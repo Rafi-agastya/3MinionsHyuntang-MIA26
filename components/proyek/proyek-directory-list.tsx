@@ -74,6 +74,22 @@ function getStatusBadge(status: string) {
         progresPersen: 0,
         terminLabel: "Termin 0% • Seleksi Proposal",
       };
+    case "SELEKSI":
+      return {
+        label: "Tahap Seleksi",
+        badgeClass: "bg-sky-600 text-white font-semibold",
+        hasPulse: true,
+        progresPersen: 0,
+        terminLabel: "Termin 0% • Evaluasi Penawaran",
+      };
+    case "MASA_SANGGAH":
+      return {
+        label: "Masa Sanggah",
+        badgeClass: "bg-amber-600 text-white font-semibold",
+        hasPulse: true,
+        progresPersen: 0,
+        terminLabel: "Masa Sanggah • 3 Hari Kalender",
+      };
     case "PENGERJAAN":
       return {
         label: "Pengerjaan Berjalan",
@@ -90,9 +106,10 @@ function getStatusBadge(status: string) {
         progresPersen: 100,
         terminLabel: "Termin 100% • LPJ Tuntas BPD",
       };
+    case "PEMATANGAN":
     default:
       return {
-        label: status.replace(/_/g, " "),
+        label: status === "PEMATANGAN" ? "Pematangan" : status.replace(/_/g, " "),
         badgeClass: "bg-zinc-800 text-white font-semibold",
         hasPulse: false,
         progresPersen: 25,
@@ -102,12 +119,14 @@ function getStatusBadge(status: string) {
 }
 
 // Prioritas urutan status untuk 3 kartu utama demo:
-// 1. TENDER_DIBUKA (Sayembara Terbuka - Saluran Drainase)
+// 1. TENDER_DIBUKA / SELEKSI / MASA_SANGGAH (Sayembara Terbuka - Saluran Drainase)
 // 2. PENGERJAAN (Pengerjaan Berjalan - Balai Warga)
 // 3. SELESAI (Selesai & Diaudit - Pavingisasi)
 // 4. PEMATANGAN (Wisata) - dieleminasi oleh batas slice(0, 3)
 const STATUS_PRIORITY: Record<string, number> = {
   TENDER_DIBUKA: 1,
+  SELEKSI: 1,
+  MASA_SANGGAH: 1,
   PENGERJAAN: 2,
   SELESAI: 3,
   PEMATANGAN: 4,
@@ -120,7 +139,15 @@ export function ProyekDirectoryList({ initialProyekList }: ProyekDirectoryListPr
   const filteredProyek = React.useMemo(() => {
     const list = initialProyekList.filter((item) => {
       // Filter status
-      if (activeFilter !== "SEMUA") {
+      if (activeFilter === "TENDER_DIBUKA") {
+        if (
+          item.status !== "TENDER_DIBUKA" &&
+          item.status !== "SELEKSI" &&
+          item.status !== "MASA_SANGGAH"
+        ) {
+          return false;
+        }
+      } else if (activeFilter !== "SEMUA") {
         if (item.status !== activeFilter) return false;
       }
 

@@ -20,10 +20,14 @@ import { LandingProjectsIdeas } from "@/components/landing-projects-ideas";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import mockData from "@/data/mock.json";
+import { getProyekList } from "@/lib/proyek-api";
 import type {
   ProjectPreview,
   CommunityIdeaPreview,
 } from "@/lib/mock-data";
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 const {
   desaInfo: mockDesaInfo,
@@ -35,7 +39,50 @@ const {
 const mockRecentProjects = recentProjects as ProjectPreview[];
 const mockPopularIdeas = popularIdeas as CommunityIdeaPreview[];
 
-export default function HomePage() {
+export default async function HomePage() {
+  let projectsList: ProjectPreview[] = mockRecentProjects;
+
+  try {
+    const liveList = await getProyekList();
+    if (liveList && liveList.length > 0) {
+      const sorted = [...liveList].sort((a, b) => {
+        if (a.id === "seed_proyek_001") return -1;
+        if (b.id === "seed_proyek_001") return 1;
+        return 0;
+      });
+
+      projectsList = sorted.slice(0, 3).map((item) => {
+        let statusLabel = "Tender Dibuka";
+        if (item.status === "PENGERJAAN") statusLabel = "Dalam Pengerjaan";
+        else if (item.status === "SELESAI") statusLabel = "Selesai & Diaudit";
+        else if (item.status === "MASA_SANGGAH") statusLabel = "Masa Sanggah";
+        else if (item.status === "PEMATANGAN") statusLabel = "Tahap Pematangan";
+        else if (item.status === "SELEKSI") statusLabel = "Tahap Seleksi";
+
+        return {
+          id: item.id,
+          judul: item.judul,
+          deskripsi: item.deskripsi,
+          lokasi: item.lokasi,
+          pagu: item.pagu,
+          status: (["TENDER_DIBUKA", "PENGERJAAN", "SELESAI", "PEMATANGAN", "MASA_SANGGAH", "SELEKSI"].includes(item.status)
+            ? item.status
+            : "TENDER_DIBUKA") as ProjectPreview["status"],
+          statusLabel,
+          jalur: (item.jalur ?? "SAYEMBARA") as "SAYEMBARA" | "VENDOR",
+          jalurLabel: item.jalur === "VENDOR" ? "Pengadaan Vendor" : "Sayembara Swakelola",
+          sumberIde: "WARGA",
+          sumberIdeLabel: "Aspirasi Warga",
+          serapanLokal: item.syaratLokalMin,
+          tenggatHari: 14,
+          progresPersen:
+            item.status === "SELESAI" ? 100 : item.status === "PENGERJAAN" ? 50 : undefined,
+        };
+      });
+    }
+  } catch (err) {
+    console.warn("[HomePage] Using fallback mockRecentProjects:", err);
+  }
   return (
     <div className="w-full min-h-screen lg:h-screen lg:overflow-y-scroll lg:snap-y lg:snap-mandatory scroll-smooth bg-akar-bg text-akar-ink overflow-x-hidden">
       {/* Fixed Translucent Navbar */}
@@ -384,7 +431,7 @@ export default function HomePage() {
         className="min-h-screen lg:h-screen w-full lg:snap-start flex flex-col justify-center items-center relative p-4 sm:p-6 lg:p-8 py-16 lg:py-0 bg-white border-b border-akar-border/80"
       >
         <LandingProjectsIdeas
-          projects={mockRecentProjects}
+          projects={projectsList}
           ideas={mockPopularIdeas}
         />
       </section>

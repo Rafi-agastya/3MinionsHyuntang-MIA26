@@ -48,6 +48,14 @@ export function LandingProjectsIdeas({ projects, ideas }: LandingProjectsIdeasPr
   const filteredProjects = React.useMemo(() => {
     if (activeFilter === "IDE") return [];
     if (activeFilter === "SEMUA") return projects;
+    if (activeFilter === "TENDER_DIBUKA") {
+      return projects.filter(
+        (p) =>
+          p.status === "TENDER_DIBUKA" ||
+          p.status === "MASA_SANGGAH" ||
+          p.status === "SELEKSI"
+      );
+    }
     return projects.filter((p) => p.status === activeFilter);
   }, [projects, activeFilter]);
 
@@ -131,9 +139,14 @@ export function LandingProjectsIdeas({ projects, ideas }: LandingProjectsIdeasPr
                         ? "earth"
                         : "neutral"
                     }
-                    className="text-[11px] font-semibold"
+                    className={`text-[11px] font-semibold ${
+                      project.status === "MASA_SANGGAH"
+                        ? "border-amber-500 text-amber-700 bg-amber-50"
+                        : ""
+                    }`}
                   >
                     {project.status === "TENDER_DIBUKA" && <Clock className="h-3 w-3 mr-1" />}
+                    {project.status === "MASA_SANGGAH" && <Clock className="h-3 w-3 mr-1 text-amber-600" />}
                     {project.status === "PENGERJAAN" && <HardHat className="h-3 w-3 mr-1" />}
                     {project.status === "SELESAI" && <CheckCircle2 className="h-3 w-3 mr-1" />}
                     {project.statusLabel}

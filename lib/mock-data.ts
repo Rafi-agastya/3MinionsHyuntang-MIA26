@@ -16,7 +16,7 @@ export interface ProjectPreview {
   deskripsi: string;
   lokasi: string;
   pagu: number;
-  status: "TENDER_DIBUKA" | "PENGERJAAN" | "SELESAI" | "PEMATANGAN";
+  status: "TENDER_DIBUKA" | "PENGERJAAN" | "SELESAI" | "PEMATANGAN" | "MASA_SANGGAH" | "SELEKSI";
   statusLabel: string;
   jalur: "SAYEMBARA" | "VENDOR";
   jalurLabel: string;
