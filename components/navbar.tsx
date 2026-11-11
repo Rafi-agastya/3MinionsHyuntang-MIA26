@@ -77,7 +77,7 @@ export function Navbar({ className }: NavbarProps) {
               alt="Logo AKAR"
               width={36}
               height={36}
-              className="h-8 w-8 sm:h-9 sm:w-9 object-contain mix-blend-multiply dark:mix-blend-normal"
+              className="h-8 w-8 sm:h-9 sm:w-9 object-contain"
               priority
             />
           </div>

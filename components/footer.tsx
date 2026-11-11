@@ -18,13 +18,13 @@ export function Footer({ className = "" }: { className?: string } = {}) {
           {/* Column 1: Brand & Keterangan Transparansi */}
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center gap-2.5 group">
-              <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-emerald-50 border border-emerald-200/60 p-1 flex items-center justify-center">
+              <div className="relative flex h-8 w-8 shrink-0 items-center justify-center">
                 <Image
                   src="/logo-akar.png"
                   alt="Logo AKAR"
-                  width={28}
-                  height={28}
-                  className="object-contain"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain"
                 />
               </div>
               <span className="font-extrabold text-xl tracking-tight text-[#1F6F43]">

@@ -128,13 +128,13 @@ export default function DaftarPage() {
             href="/"
             className="inline-flex items-center gap-2.5 text-white hover:text-emerald-200 transition-colors"
           >
-            <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/10 backdrop-blur-md p-1 border border-white/20">
+            <div className="relative flex h-8 w-8 shrink-0 items-center justify-center">
               <Image
                 src="/logo-akar.png"
                 alt="Logo AKAR"
-                width={28}
-                height={28}
-                className="object-contain"
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain drop-shadow-sm"
               />
             </div>
             <span className="font-extrabold text-xl tracking-tight">AKAR</span>

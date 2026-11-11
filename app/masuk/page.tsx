@@ -117,13 +117,13 @@ export default function MasukPage() {
         {/* Top Header: Logo AKAR & Identitas Desa */}
         <div className="relative z-20 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md p-2 border border-white/20 shadow-md flex items-center justify-center group-hover:bg-black/60 transition-all">
+            <div className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center transition-transform group-hover:scale-105">
               <Image
                 src="/logo-akar.png"
                 alt="Logo AKAR"
-                width={36}
-                height={36}
-                className="w-full h-full object-contain"
+                width={48}
+                height={48}
+                className="w-full h-full object-contain drop-shadow-sm"
               />
             </div>
             <div>
