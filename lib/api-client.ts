@@ -103,11 +103,11 @@ export async function apiFetch<T = unknown>(
 
 export const apiClient = {
   get: <T = unknown>(url: string, options?: RequestInit) =>
-    apiFetch<T>(url, { credentials: "omit", ...options, method: "GET" }),
+    apiFetch<T>(url, { credentials: "same-origin", ...options, method: "GET" }),
 
   post: <T = unknown>(url: string, body?: unknown, options?: RequestInit) =>
     apiFetch<T>(url, {
-      credentials: "omit",
+      credentials: "same-origin",
       ...options,
       method: "POST",
       body: body instanceof FormData ? body : JSON.stringify(body),
@@ -115,13 +115,13 @@ export const apiClient = {
 
   patch: <T = unknown>(url: string, body?: unknown, options?: RequestInit) =>
     apiFetch<T>(url, {
-      credentials: "omit",
+      credentials: "same-origin",
       ...options,
       method: "PATCH",
       body: body instanceof FormData ? body : JSON.stringify(body),
     }),
 
   delete: <T = unknown>(url: string, options?: RequestInit) =>
-    apiFetch<T>(url, { credentials: "omit", ...options, method: "DELETE" }),
+    apiFetch<T>(url, { credentials: "same-origin", ...options, method: "DELETE" }),
 };
 

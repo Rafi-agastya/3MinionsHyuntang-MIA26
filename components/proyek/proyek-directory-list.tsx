@@ -101,12 +101,24 @@ function getStatusBadge(status: string) {
   }
 }
 
+// Prioritas urutan status untuk 3 kartu utama demo:
+// 1. TENDER_DIBUKA (Sayembara Terbuka - Saluran Drainase)
+// 2. PENGERJAAN (Pengerjaan Berjalan - Balai Warga)
+// 3. SELESAI (Selesai & Diaudit - Pavingisasi)
+// 4. PEMATANGAN (Wisata) - dieleminasi oleh batas slice(0, 3)
+const STATUS_PRIORITY: Record<string, number> = {
+  TENDER_DIBUKA: 1,
+  PENGERJAAN: 2,
+  SELESAI: 3,
+  PEMATANGAN: 4,
+};
+
 export function ProyekDirectoryList({ initialProyekList }: ProyekDirectoryListProps) {
   const [activeFilter, setActiveFilter] = React.useState<FilterStatus>("SEMUA");
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const filteredProyek = React.useMemo(() => {
-    return initialProyekList.filter((item) => {
+    const list = initialProyekList.filter((item) => {
       // Filter status
       if (activeFilter !== "SEMUA") {
         if (item.status !== activeFilter) return false;
@@ -122,6 +134,16 @@ export function ProyekDirectoryList({ initialProyekList }: ProyekDirectoryListPr
       }
 
       return true;
+    });
+
+    return list.sort((a, b) => {
+      // Prioritaskan seed_proyek_001 (Saluran Drainase) di posisi paling awal
+      if (a.id === "seed_proyek_001") return -1;
+      if (b.id === "seed_proyek_001") return 1;
+
+      const prioA = STATUS_PRIORITY[a.status] ?? 99;
+      const prioB = STATUS_PRIORITY[b.status] ?? 99;
+      return prioA - prioB;
     });
   }, [initialProyekList, activeFilter, searchQuery]);
 

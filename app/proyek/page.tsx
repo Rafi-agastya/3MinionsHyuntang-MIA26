@@ -63,6 +63,13 @@ const fallbackProyekList: ProyekListItem[] = [
   },
 ];
 
+const STATUS_PRIORITY: Record<string, number> = {
+  TENDER_DIBUKA: 1,
+  PENGERJAAN: 2,
+  SELESAI: 3,
+  PEMATANGAN: 4,
+};
+
 export default async function ProyekIndexPage() {
   let proyekList: ProyekListItem[];
 
@@ -75,6 +82,15 @@ export default async function ProyekIndexPage() {
     console.warn("Using fallback seeded proyek list:", error);
     proyekList = fallbackProyekList;
   }
+
+  // Prioritaskan Saluran Drainase (Sayembara Terbuka) di posisi nomor 1
+  proyekList = [...proyekList].sort((a, b) => {
+    if (a.id === "seed_proyek_001") return -1;
+    if (b.id === "seed_proyek_001") return 1;
+    const prioA = STATUS_PRIORITY[a.status] ?? 99;
+    const prioB = STATUS_PRIORITY[b.status] ?? 99;
+    return prioA - prioB;
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
