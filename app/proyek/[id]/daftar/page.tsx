@@ -8,3 +8,4 @@ export default async function ProyekDaftarAliasPage({ params }: PageProps) {
   const { id } = await params;
   redirect(`/proyek/${id}/ajukan`);
 }
+
