@@ -40,6 +40,7 @@ interface AdminProject {
   jumlahProposal: number;
   tenggatHari: number;
   pemenang?: string;
+  pokmasPengusul?: string;
 }
 
 interface AdminKasEntry {
@@ -237,7 +238,15 @@ interface ApiProjectItem {
   lokasi?: string;
   pagu: number | string;
   status: string;
-  proposal?: Array<{ id: string }>;
+  proposal?: Array<{
+    id: string;
+    kelompok?: { id: string; nama: string };
+  }>;
+  keputusan?: {
+    proposal?: {
+      kelompok?: { id: string; nama: string };
+    };
+  } | null;
 }
 
 interface ApiTicketItem {
@@ -269,16 +278,32 @@ interface ApiTicketItem {
           Array.isArray(projRes.value.data) &&
           projRes.value.data.length > 0
         ) {
-          const apiProjects: AdminProject[] = projRes.value.data.map((p: ApiProjectItem) => ({
-            id: p.id,
-            judul: p.judul,
-            dusun: p.lokasi || "Desa Karang Sari",
-            paguAnggaran: Number(p.pagu) || 0,
-            status: p.status as AdminProject["status"],
-            jumlahProposal: p.proposal ? p.proposal.length : 0,
-            tenggatHari: 7,
-            pemenang: p.status === "PENGERJAAN" || p.status === "SELESAI" ? "Pokmas Pelaksana" : undefined,
-          }));
+          const apiProjects: AdminProject[] = projRes.value.data.map((p: ApiProjectItem) => {
+            const pemenangNama = p.keputusan?.proposal?.kelompok?.nama;
+            const pokmasPengusul =
+              p.proposal && p.proposal.length > 0
+                ? p.proposal
+                    .map((pr) => pr.kelompok?.nama)
+                    .filter(Boolean)
+                    .join(", ")
+                : undefined;
+
+            return {
+              id: p.id,
+              judul: p.judul,
+              dusun: p.lokasi || "Desa Karang Sari",
+              paguAnggaran: Number(p.pagu) || 0,
+              status: p.status as AdminProject["status"],
+              jumlahProposal: p.proposal ? p.proposal.length : 0,
+              tenggatHari: 7,
+              pemenang:
+                pemenangNama ||
+                (p.status === "PENGERJAAN" || p.status === "SELESAI"
+                  ? "Pokmas Pelaksana"
+                  : undefined),
+              pokmasPengusul,
+            };
+          });
 
           setProjects((prev) => {
             const existingIds = new Set(apiProjects.map((p) => p.id));
@@ -393,21 +418,6 @@ interface ApiTicketItem {
     }, 1200);
   };
 
-  // Handle Tetapkan Pemenang
-  const handlePilihPemenang = (projId: string) => {
-    setProjects(
-      projects.map((p) =>
-        p.id === projId
-          ? {
-              ...p,
-              status: "PENGERJAAN",
-              pemenang: "Pokmas Makmur Jaya",
-            }
-          : p
-      )
-    );
-  };
-
   // Handle Add Kas Entry
   const handleAddKas = (e: React.FormEvent) => {
     e.preventDefault();
@@ -435,12 +445,32 @@ interface ApiTicketItem {
   };
 
   // Handle Save Ticket Update
-  const handleSaveTicket = (e: React.FormEvent) => {
+  const handleSaveTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTicket) return;
 
-    setTickets(
-      tickets.map((t) =>
+    const dbStatusMap: Record<AdminTicket["status"], string> = {
+      MENUNGGU: "BARU",
+      DIVERIFIKASI: "DITINJAU",
+      TINDAK_LANJUT: "DITANGGAPI",
+      SELESAI: "SELESAI",
+    };
+
+    const targetDbStatus = dbStatusMap[ticketStatusInput] || "DITANGGAPI";
+
+    try {
+      if (selectedTicket.kode && !selectedTicket.kode.startsWith("MOCK-")) {
+        await apiClient.patch(`/api/tiket/${selectedTicket.kode}`, {
+          status: targetDbStatus,
+          tanggapan: ticketCatatanInput ? ticketCatatanInput.trim() : undefined,
+        });
+      }
+    } catch (err) {
+      console.warn("Gagal memperbarui status tiket ke server:", err);
+    }
+
+    setTickets((prev) =>
+      prev.map((t) =>
         t.id === selectedTicket.id
           ? {
               ...t,
@@ -828,6 +858,11 @@ interface ApiTicketItem {
                                 <FileText className="w-3.5 h-3.5 text-zinc-400" />
                                 {proj.jumlahProposal} Proposal
                               </span>
+                              {proj.pokmasPengusul && (
+                                <p className="text-[11px] text-zinc-500 mt-0.5 max-w-[220px] truncate" title={`Pengusul: ${proj.pokmasPengusul}`}>
+                                  Usulan: {proj.pokmasPengusul}
+                                </p>
+                              )}
                             </td>
                             <td className="py-3.5 px-4">
                               {proj.status === "TENDER_DIBUKA" && (
@@ -861,7 +896,7 @@ interface ApiTicketItem {
                                 </Badge>
                               )}
                               {proj.pemenang && (
-                                <p className="text-[11px] text-zinc-500 mt-1 font-medium">
+                                <p className="text-[11px] text-emerald-800 font-bold mt-1 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                                   Pelaksana: {proj.pemenang}
                                 </p>
                               )}
@@ -892,14 +927,16 @@ interface ApiTicketItem {
 
                                 {/* Tetapkan Pemenang if in SELEKSI */}
                                 {proj.status === "SELEKSI" && (
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handlePilihPemenang(proj.id)}
-                                    className="text-xs h-8 px-2.5 bg-[#1F6F43] text-white hover:bg-[#185935]"
-                                  >
-                                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                                    <span>Pilih Pemenang</span>
-                                  </Button>
+                                  <Link href={`/proyek/${proj.id}/bandingkan`}>
+                                    <Button
+                                      size="sm"
+                                      className="text-xs h-8 px-2.5 bg-[#1F6F43] text-white hover:bg-[#185935]"
+                                      title="Masuk ke Panel Penetapan Pemenang"
+                                    >
+                                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                                      <span>Pilih Pemenang</span>
+                                    </Button>
+                                  </Link>
                                 )}
 
                                 {/* Bandingkan Proposal & Tinjau Flag */}
@@ -1534,14 +1571,15 @@ interface ApiTicketItem {
 
               <div className="space-y-1">
                 <label className="font-semibold text-zinc-700 block">
-                  Catatan Resmi Pemerintah Desa <span className="text-red-500">*</span>
+                  Catatan Resmi Pemerintah Desa <span className="text-red-500">* (min. 10 karakter)</span>
                 </label>
                 <textarea
                   required
+                  minLength={10}
                   rows={3}
                   value={ticketCatatanInput}
                   onChange={(e) => setTicketCatatanInput(e.target.value)}
-                  placeholder="Tuliskan keterangan resmi tindak lanjut yang dapat dibaca oleh warga pelapor..."
+                  placeholder="Tuliskan keterangan resmi tindak lanjut (minimal 10 karakter) yang dapat dipantau oleh warga pelapor..."
                   className="w-full rounded-xl border border-zinc-200 px-3 py-2 text-zinc-800 text-xs sm:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 focus:border-[#1F6F43]"
                 />
               </div>
