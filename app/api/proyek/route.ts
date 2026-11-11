@@ -53,7 +53,23 @@ export const GET = apiHandler(async () => {
       desa: true,
       rab: true,
       proposal: {
-        select: { id: true },
+        select: {
+          id: true,
+          kelompok: {
+            select: { id: true, nama: true },
+          },
+        },
+      },
+      keputusan: {
+        include: {
+          proposal: {
+            include: {
+              kelompok: {
+                select: { id: true, nama: true },
+              },
+            },
+          },
+        },
       },
     },
   });

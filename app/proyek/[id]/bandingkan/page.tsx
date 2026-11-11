@@ -52,6 +52,10 @@ interface ProposalDataApi {
     total?: number;
     rincian?: Record<string, number>;
   };
+  scoring?: {
+    total?: number;
+    rincian?: Record<string, number>;
+  };
   ringkasan?: {
     ringkasanEksekutif?: string;
     poinKekuatan?: string[];
@@ -121,7 +125,7 @@ export default function BandingkanProposalPage() {
       try {
         const [projRes, propRes, flagRes] = await Promise.allSettled([
           apiClient.get<ProyekDataApi>(`/api/proyek/${projectId}`),
-          apiClient.get<ProposalDataApi[]>(`/api/proyek/${projectId}/proposal`),
+          apiClient.get<ProposalDataApi[]>(`/api/proyek/${projectId}/proposal?mode=bandingkan`),
           apiClient.get<FlagKemiripanData[]>(`/api/proyek/${projectId}/flag`),
         ]);
 
@@ -149,7 +153,8 @@ export default function BandingkanProposalPage() {
             const tTotal = p.tenagaTotal || 1;
             const tLokal = p.tenagaLokal || 0;
             const pLokal = tTotal > 0 ? Math.round((tLokal / tTotal) * 100) : 0;
-            const rincian = p.skor?.rincian || {};
+            const scoreObj = p.skor || p.scoring;
+            const rincian = scoreObj?.rincian || {};
 
             return {
               id: p.id,
@@ -160,24 +165,24 @@ export default function BandingkanProposalPage() {
               tenagaTotal: tTotal,
               tenagaLokal: tLokal,
               persentaseLokal: pLokal,
-              skorTotal: p.skor?.total ?? 85,
+              skorTotal: scoreObj?.total ?? 85,
               skorBiaya: rincian.harga ?? rincian.biaya ?? 35,
               skorLokal: rincian.tenagaLokal ?? rincian.lokal ?? 26,
               skorJadwal: rincian.durasi ?? rincian.jadwal ?? 18,
               skorDokumen: rincian.pengalaman ?? rincian.lengkap ?? 8,
               ringkasanEksekutif:
                 p.ringkasan?.ringkasanEksekutif ||
-                "Metode kerja padat karya warga dengan pasangan batu mortar standar KAK dan komitmen tenaga kerja lokal tinggi.",
+                `Proposal padat karya swakelola dari ${p.kelompok?.nama || "Pokmas Warga"} dengan efisiensi penawaran dan serapan warga lokal ${pLokal}%.`,
               poinKekuatan: p.ringkasan?.poinKekuatan || [
-                "Serapan tenaga kerja warga setempat di atas 70%",
-                "Rincian Micro-RAB material lengkap dan wajar",
+                `Serapan tenaga kerja warga setempat ${pLokal}% (${tLokal} dari ${tTotal} warga desa)`,
+                `Nilai penawaran sebesar ${formatRupiah(penawaranNum)} dengan durasi ${p.durasiHari || 30} hari kalender`,
               ],
               poinPerhatian: p.ringkasan?.poinPerhatian || [
-                "Perlu mitigasi genangan air pada musim hujan",
+                "Perlu koordinasi berkala dengan TPK desa saat pekerjaan fisik berlangsung",
               ],
               rekomendasiCatatan:
                 p.ringkasan?.rekomendasiCatatan ||
-                "Dapat direkomendasikan sebagai pelaksana swakelola prioritas.",
+                "Memenuhi batas kriteria administrasi dan teknis sayembara swakelola.",
               modelAi: p.ringkasan?.model || "google/gemini-2.0-flash-exp",
               flags: (p.flags || []).map((f: string) => ({
                 label: "Catatan Integritas",
@@ -234,7 +239,7 @@ export default function BandingkanProposalPage() {
     return () => {
       isMounted = false;
     };
-  }, [projectId]);
+  }, [projectId, role]);
 
   // Proposal yang sedang aktif dibandingkan (maks. 4)
   const activeProposals = React.useMemo(() => {
@@ -411,7 +416,7 @@ export default function BandingkanProposalPage() {
           {projectFlags.length > 0 && (
             <div
               className={cn(
-                "rounded-2xl border p-4 sm:p-5 flex items-start justify-between gap-4 shadow-sm animate-in fade-in",
+                "rounded-2xl border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm animate-in fade-in",
                 unreviewedFlagsCount > 0
                   ? "border-amber-300 bg-amber-50 text-amber-950"
                   : "border-emerald-300 bg-emerald-50 text-emerald-950"
@@ -436,6 +441,24 @@ export default function BandingkanProposalPage() {
                   </p>
                 </div>
               </div>
+
+              {unreviewedFlagsCount > 0 && isInternal && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    const firstUnreviewed = projectFlags.find((f) => f.keputusan === "BELUM");
+                    if (firstUnreviewed) {
+                      setSelectedFlagToReview(firstUnreviewed);
+                      setIsFlagModalOpen(true);
+                    }
+                  }}
+                  className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shrink-0 min-h-[38px] px-3.5 self-start sm:self-center"
+                >
+                  <ShieldAlert className="w-3.5 h-3.5 mr-1.5" />
+                  <span>Tinjau Catatan Sekarang ({unreviewedFlagsCount})</span>
+                </Button>
+              )}
             </div>
           )}
 

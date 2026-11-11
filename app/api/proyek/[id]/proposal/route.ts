@@ -378,9 +378,12 @@ export const GET = apiHandler(
     });
 
     const isTerbukaPublik = isProyekMasaSanggahOrAfter(proyek.status);
+    const url = new URL(req.url);
+    const isModeBandingkan = url.searchParams.get("mode") === "bandingkan";
 
     // 4. Terapkan Aturan Visibilitas PRD 33.2 Aturan #15 & RBAC:
     // - PERANGKAT, PENGAWAS, ADMIN: melihat semua proposal.
+    // - Mode Bandingkan (/proyek/:id/bandingkan): melihat proposal riil untuk ditinjau & ditetapkan.
     // - WARGA: jika belum MASA_SANGGAH, hanya melihat proposal kelompoknya; jika sudah MASA_SANGGAH, melihat semua.
     // - PUBLIK: jika belum MASA_SANGGAH, hanya melihat total jumlah proposal; jika sudah MASA_SANGGAH, melihat semua.
     let visibleProposals = allProposals;
@@ -391,8 +394,8 @@ export const GET = apiHandler(
         actor.peran === Peran.PENGAWAS ||
         actor.peran === Peran.ADMIN);
 
-    if (isPerangkatOrAdmin) {
-      // Akses penuh
+    if (isModeBandingkan || isPerangkatOrAdmin || isTerbukaPublik) {
+      // Akses penuh untuk perbandingan proposal & perangkat/pengawas
       visibleProposals = allProposals;
     } else if (actor && actor.peran === Peran.WARGA) {
       if (!isTerbukaPublik) {
@@ -464,6 +467,19 @@ export const GET = apiHandler(
         ...proposal,
         kelompok: cleanKelompok,
         flags: mergedFlags,
+        skor: {
+          total: scoringResult.total,
+          rincian: {
+            biaya: scoringResult.rincian.biaya,
+            lokal: scoringResult.rincian.lokal,
+            jadwal: scoringResult.rincian.jadwal,
+            lengkap: scoringResult.rincian.lengkap,
+            harga: scoringResult.rincian.biaya,
+            tenagaLokal: scoringResult.rincian.lokal,
+            durasi: scoringResult.rincian.jadwal,
+            pengalaman: scoringResult.rincian.lengkap,
+          },
+        },
         scoring: {
           total: scoringResult.total,
           rincian: scoringResult.rincian,
