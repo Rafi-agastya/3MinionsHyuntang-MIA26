@@ -200,7 +200,7 @@ export default function HomePage() {
         {/* Foreground Content */}
         <div className="relative z-10 w-full max-w-6xl mx-auto px-2 sm:px-4 my-auto flex flex-col justify-center items-center">
           {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-8 space-y-1.5 bg-akar-bg/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-akar-border/60 shadow-xs">
+          <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-8 space-y-1.5 rounded-2xl border border-zinc-200/80 bg-white shadow-sm p-4 sm:p-5">
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">
               <span className="text-akar-ink">Empat Pilar Transparansi </span>
               <span className="text-akar-primary font-extrabold">AKAR</span>
