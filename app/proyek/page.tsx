@@ -97,7 +97,7 @@ export default async function ProyekIndexPage() {
         <section
           id="proyek-frame-1"
           aria-label="Bursa Sayembara Proyek"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
         <div className="relative rounded-3xl overflow-hidden border border-emerald-800/20 shadow-md">
@@ -226,7 +226,7 @@ export default async function ProyekIndexPage() {
         <section
           id="proyek-frame-2"
           aria-label="Daftar Proyek Desa"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <ProyekDirectoryList initialProyekList={proyekList} />

@@ -437,7 +437,7 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-1"
         aria-label="Pencarian Tiket Aduan"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
       >
         <div className="max-w-4xl mx-auto w-full space-y-5 my-auto">
         {/* Breadcrumb Navigation */}
@@ -551,7 +551,7 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-2"
         aria-label="Status dan Timeline Penanganan Tiket"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
       >
         <div className="max-w-4xl mx-auto w-full flex flex-col justify-start space-y-6">
         {searchError ? (

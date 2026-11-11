@@ -229,7 +229,7 @@ export default async function KasPage() {
         <section
           id="kas-frame-1"
           aria-label="Ringkasan Kas Desa"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-5 my-auto">
         {/* ========================================================================= */}
@@ -447,7 +447,7 @@ export default async function KasPage() {
         <section
           id="kas-frame-2"
           aria-label="Tabel Mutasi Kas"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">

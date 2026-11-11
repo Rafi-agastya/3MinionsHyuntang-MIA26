@@ -488,7 +488,7 @@ export default function AspirasiPortalPage() {
         <section
           id="aspirasi-frame-1"
           aria-label="Kirim Aspirasi dan Aduan Warga"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-6 md:py-10 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-4 my-auto">
           {/* Header Banner */}
@@ -937,7 +937,7 @@ export default function AspirasiPortalPage() {
         <section
           id="aspirasi-frame-2"
           aria-label="Daftar Aspirasi Publik Terkini"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">

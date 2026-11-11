@@ -215,7 +215,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
         <section
           id="data-frame-1"
           aria-label="Verifikasi Kriptografis dan Data Terbuka"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-6xl mx-auto w-full space-y-6 my-auto">
           {/* Hero Header with Watermark & Emerald Accent */}
@@ -403,7 +403,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
         <section
           id="data-frame-2"
           aria-label="Katalog Dataset Terbuka APBDes 2026"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-6xl mx-auto w-full flex flex-col justify-start space-y-6">
           {/* SECTION 2: DAFTAR DATASET PUBLIK SIAP UNDUH */}

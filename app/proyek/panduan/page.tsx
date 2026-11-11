@@ -52,7 +52,7 @@ export default function PanduanProposalPage() {
         <section
           id="panduan-frame-1"
           aria-label="Syarat Pokok Kelompok Pengusul"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-8 my-auto">
           {/* Breadcrumb & Header */}
@@ -302,7 +302,7 @@ export default function PanduanProposalPage() {
     <section
       id="panduan-frame-2"
       aria-label="Format Micro-RAB dan Bobot AI"
-      className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+      className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
     >
       <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-10">
       {/* SECTION 2: FORMAT & RINCIAN MICRO-RAB */}
@@ -498,7 +498,7 @@ export default function PanduanProposalPage() {
       <section
         id="panduan-frame-3"
         aria-label="Alur Prosedur dan Pengajuan"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
       >
         <div className="max-w-7xl mx-auto w-full flex flex-col space-y-8">
         {/* SECTION 4: ALUR 5 TAHAP PENGAJUAN HINGGA PENCAIRAN */}

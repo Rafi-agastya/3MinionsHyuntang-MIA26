@@ -69,7 +69,7 @@ export default async function ProyekDetailPage({
         <section
           id="detail-frame-1"
           aria-label="Ringkasan & Timeline Proyek"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-6 md:py-10 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-5 md:space-y-6 my-auto">
             {/* Header & Status Action Banner */}
@@ -105,7 +105,7 @@ export default async function ProyekDetailPage({
         <section
           id="detail-frame-2"
           aria-label="Papan Skor AI dan Rincian Teknis"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <ProjectTabs proyek={proyek} initialTab="proposal" />

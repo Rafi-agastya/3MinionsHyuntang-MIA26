@@ -461,7 +461,7 @@ export default function AdminPage() {
         {/* ========================================================================= */}
         <section
           id="admin-frame-1"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
             {/* Header Banner in Emerald Forest */}
@@ -626,7 +626,7 @@ export default function AdminPage() {
         {/* ========================================================================= */}
         <section
           id="admin-frame-2"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80"
+          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80 scroll-mt-4"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6">
             {/* Tab Navigation Controls */}
