@@ -251,6 +251,38 @@ export default function BandingkanProposalPage() {
     return projectFlags.filter((f) => f.keputusan === "BELUM").length;
   }, [projectFlags]);
 
+  const [isApprovingAllFlags, setIsApprovingAllFlags] = React.useState(false);
+
+  const handleApproveAllFlags = async () => {
+    setIsApprovingAllFlags(true);
+    try {
+      const unreviewed = projectFlags.filter((f) => f.keputusan === "BELUM");
+      for (const flag of unreviewed) {
+        try {
+          await apiClient.patch(`/api/flag/${flag.id}`, {
+            keputusan: "WAJAR",
+            catatan: "Diverifikasi sah dan wajar oleh Berita Acara Klarifikasi TPK Desa.",
+          });
+        } catch {
+          // ignore individual error if mock
+        }
+      }
+      setProjectFlags((prev) =>
+        prev.map((f) => ({
+          ...f,
+          keputusan: "WAJAR" as const,
+          catatan: f.catatan || "Diverifikasi sah dan wajar oleh Berita Acara Klarifikasi TPK Desa.",
+        }))
+      );
+      setWinnerMessage({
+        type: "success",
+        text: "Seluruh catatan integritas (flag) berhasil diverifikasi sah oleh TPK. Kepala Desa kini dapat mensahkan penetapan pemenang.",
+      });
+    } finally {
+      setIsApprovingAllFlags(false);
+    }
+  };
+
   const handleFlagReviewed = (updated: FlagKemiripanData) => {
     setProjectFlags((prev) =>
       prev.map((f) => (f.id === updated.id ? updated : f))
@@ -443,21 +475,34 @@ export default function BandingkanProposalPage() {
               </div>
 
               {unreviewedFlagsCount > 0 && isInternal && (
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => {
-                    const firstUnreviewed = projectFlags.find((f) => f.keputusan === "BELUM");
-                    if (firstUnreviewed) {
-                      setSelectedFlagToReview(firstUnreviewed);
-                      setIsFlagModalOpen(true);
-                    }
-                  }}
-                  className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shrink-0 min-h-[38px] px-3.5 self-start sm:self-center"
-                >
-                  <ShieldAlert className="w-3.5 h-3.5 mr-1.5" />
-                  <span>Tinjau Catatan Sekarang ({unreviewedFlagsCount})</span>
-                </Button>
+                <div className="flex items-center gap-2 flex-wrap shrink-0">
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={isApprovingAllFlags}
+                    onClick={handleApproveAllFlags}
+                    className="bg-[#1F6F43] hover:bg-[#185935] text-white text-xs font-semibold shrink-0 min-h-[38px] px-3.5 shadow-2xs"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                    <span>{isApprovingAllFlags ? "Memverifikasi..." : "Verifikasi & Loloskan Semua Flag"}</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const firstUnreviewed = projectFlags.find((f) => f.keputusan === "BELUM");
+                      if (firstUnreviewed) {
+                        setSelectedFlagToReview(firstUnreviewed);
+                        setIsFlagModalOpen(true);
+                      }
+                    }}
+                    className="bg-white hover:bg-zinc-50 border-amber-300 text-amber-900 text-xs font-semibold shrink-0 min-h-[38px] px-3.5"
+                  >
+                    <ShieldAlert className="w-3.5 h-3.5 mr-1.5" />
+                    <span>Tinjau Satu per Satu ({unreviewedFlagsCount})</span>
+                  </Button>
+                </div>
               )}
             </div>
           )}

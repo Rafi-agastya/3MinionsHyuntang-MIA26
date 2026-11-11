@@ -185,9 +185,138 @@ export const mockProjectDrainase: ProjectDetailData = {
   ],
 };
 
+export const mockProjectBalaiWarga: ProjectDetailData = {
+  id: "seed_proyek_002",
+  desaId: "seed_desa_001",
+  judul: "Renovasi Gedung Pertemuan Balai Warga",
+  deskripsi:
+    "Renovasi konstruksi atap genteng, pengecatan dinding aula serbaguna, dan pemasangan lantai keramik balai pertemuan warga Dusun Karang Anyar.",
+  lokasi: "Dusun Karang Anyar RT 02 / RW 03",
+  pagu: 140_000_000,
+  kelas: "MENENGAH",
+  jalur: "SAYEMBARA",
+  alasanJalur:
+    "Dikerjakan oleh kelompok pertukangan desa dengan serapan tenaga kerja lokal mencapai 75% untuk memberdayakan tukang dan pemuda setempat.",
+  status: "PENGERJAAN",
+  tanggalPublikasi: "1 Maret 2026",
+  tenggatProposal: "15 Maret 2026",
+  tenggatHari: 0,
+  syaratLokalMin: 70,
+  durasiMin: 45,
+  durasiMax: 90,
+  sumberDana: "Dana Desa (APBDes TA 2026)",
+  rabItems: [
+    { id: "rab_b1", uraian: "Pekerjaan Pembongkaran & Rangka Atap Baja Ringan", volume: 180, satuan: "m²", hargaSatuan: 250_000, subtotal: 45_000_000 },
+    { id: "rab_b2", uraian: "Pekerjaan Pasangan Genteng & Plafond Gypsum", volume: 180, satuan: "m²", hargaSatuan: 200_000, subtotal: 36_000_000 },
+    { id: "rab_b3", uraian: "Pekerjaan Lantai Keramik Granit 60x60 cm", volume: 220, satuan: "m²", hargaSatuan: 180_000, subtotal: 39_600_000 },
+    { id: "rab_b4", uraian: "Pekerjaan Pengecatan Interior & Eksterior", volume: 450, satuan: "m²", hargaSatuan: 43_100, subtotal: 19_400_000 },
+  ],
+  proposals: [
+    {
+      id: "prop_balai_pemenang",
+      namaKelompok: "Pokmas Karya Warga RT 02",
+      ketua: "Hendra Gunawan",
+      penawaran: 138_000_000,
+      durasiHari: 60,
+      tenagaTotal: 18,
+      tenagaLokal: 15,
+      persentaseLokal: 83,
+      narasiMetode: "Pengerjaan bertahap dari pembongkaran atap sisi timur agar kegiatan musyawarah warga tetap dapat berlangsung sebagian.",
+      narasiJadwal: "Bulan 1: Struktur atap dan plafond. Bulan 2: Pasangan lantai granit dan pengecatan tuntas.",
+      narasiRisiko: "Penyediaan terpal pelindung hujan lebar 200m2 untuk melindungi material lantai dari tampias air.",
+      dokumen: ["spk-swakelola-balai.pdf", "pakta-integritas-rt02.pdf"],
+      skor: { total: 91.5, rincian: { harga: 36.5, tenagaLokal: 28.0, pengalaman: 9.0, durasi: 18.0 }, flags: [], versiBobot: "v1.0" },
+      flagsDetail: [],
+    },
+  ],
+};
+
+export const mockProjectJalanSetapak: ProjectDetailData = {
+  id: "seed_proyek_003",
+  desaId: "seed_desa_001",
+  judul: "Pavingisasi Jalan Setapak Dusun",
+  deskripsi:
+    "Pemasangan paving block press hidrolik K-250 dan kanstin pembatas jalan pemukiman warga sepanjang 400 meter di Dusun Tani Makmur.",
+  lokasi: "Dusun Tani Makmur RT 01 / RW 02",
+  pagu: 60_000_000,
+  kelas: "KECIL",
+  jalur: "SAYEMBARA",
+  alasanJalur:
+    "Pekerjaan sederhana padat karya tunai desa (PKTD) berbasis gotong royong warga rukun tetangga setempat.",
+  status: "SELESAI",
+  tanggalPublikasi: "15 Januari 2026",
+  tenggatProposal: "30 Januari 2026",
+  tenggatHari: 0,
+  syaratLokalMin: 80,
+  durasiMin: 20,
+  durasiMax: 40,
+  sumberDana: "Dana Desa (APBDes TA 2026)",
+  rabItems: [
+    { id: "rab_j1", uraian: "Pekerjaan Perataan & Pemadatan Tanah Dasar", volume: 400, satuan: "m²", hargaSatuan: 25_000, subtotal: 10_000_000 },
+    { id: "rab_j2", uraian: "Pemasangan Pasir Urug Tebal 5 cm", volume: 20, satuan: "m³", hargaSatuan: 250_000, subtotal: 5_000_000 },
+    { id: "rab_j3", uraian: "Pemasangan Paving Block Segienam K-250", volume: 400, satuan: "m²", hargaSatuan: 95_000, subtotal: 38_000_000 },
+    { id: "rab_j4", uraian: "Pemasangan Kanstin Beton Pengunci Tepi", volume: 140, satuan: "m'", hargaSatuan: 50_000, subtotal: 7_000_000 },
+  ],
+  proposals: [
+    {
+      id: "prop_jalan_selesai",
+      namaKelompok: "Kelompok Tani Makmur Sejahtera",
+      ketua: "Rudi Hermawan",
+      penawaran: 58_500_000,
+      durasiHari: 25,
+      tenagaTotal: 20,
+      tenagaLokal: 18,
+      persentaseLokal: 90,
+      narasiMetode: "Pemasangan paving swakelola gotong royong dengan target 20 meter per hari dipimpin oleh 3 tukang paving ahli.",
+      narasiJadwal: "Minggu 1: Pemadatan dasar. Minggu 2-3: Pasang paving & kanstin. Minggu 4: Finishing abu batu dan pemadatan stamper.",
+      narasiRisiko: "Penyiraman air berkala untuk mencegah debu mengotori pekarangan rumah warga.",
+      dokumen: ["baphp-100-jalan.pdf", "laporan-lpj-lengkap.pdf", "berita-acara-audit-bpd.pdf"],
+      skor: { total: 94.0, rincian: { harga: 38.0, tenagaLokal: 29.0, pengalaman: 9.0, durasi: 18.0 }, flags: [], versiBobot: "v1.0" },
+      flagsDetail: [],
+    },
+  ],
+};
+
+export const mockProjectWisata: ProjectDetailData = {
+  id: "seed_proyek_004",
+  desaId: "seed_desa_001",
+  judul: "Pengembangan Kawasan Wisata Pemandian Air Panas",
+  deskripsi:
+    "Proyek strategis desa untuk pembangunan fasilitas pariwisata pemandian air panas terpadu berbasis Badan Usaha Milik Desa (BUMDes) dan Pokdarwis.",
+  lokasi: "Dusun Sumber Rejeki",
+  pagu: 80_000_000,
+  kelas: "MENENGAH",
+  jalur: "SAYEMBARA",
+  alasanJalur:
+    "Pemberdayaan kelompok sadar wisata (Pokdarwis) dan warga Dusun Sumber Rejeki untuk mengelola potensi alam desa.",
+  status: "PEMATANGAN",
+  tanggalPublikasi: "1 April 2026",
+  tenggatProposal: "Menunggu Jadwal Sayembara",
+  tenggatHari: 14,
+  syaratLokalMin: 60,
+  durasiMin: 60,
+  durasiMax: 120,
+  sumberDana: "Dana Desa (Penyertaan Modal BUMDes)",
+  rabItems: [
+    { id: "rab_w1", uraian: "Studi Kelayakan & Pemetaan Geologis Sumber Air Panas", volume: 1, satuan: "ls", hargaSatuan: 15_000_000, subtotal: 15_000_000 },
+    { id: "rab_w2", uraian: "Pematangan Lahan & Pembuatan Jalur Akses Masuk", volume: 200, satuan: "m²", hargaSatuan: 175_000, subtotal: 35_000_000 },
+    { id: "rab_w3", uraian: "Pembangunan Bak Penampung & Filter Air Panas", volume: 2, satuan: "unit", hargaSatuan: 15_000_000, subtotal: 30_000_000 },
+  ],
+  proposals: [],
+};
+
 export function getMockProjectById(id?: string): ProjectDetailData {
   if (!id || id === "seed_proyek_001" || id === "proj-drainase-rt3") {
     return mockProjectDrainase;
+  }
+  if (id === "seed_proyek_002" || id.includes("balai")) {
+    return mockProjectBalaiWarga;
+  }
+  if (id === "seed_proyek_003" || id.includes("jalan") || id.includes("paving")) {
+    return mockProjectJalanSetapak;
+  }
+  if (id === "seed_proyek_004" || id.includes("wisata") || id.includes("pemandian")) {
+    return mockProjectWisata;
   }
 
   // Fallback variant for other IDs

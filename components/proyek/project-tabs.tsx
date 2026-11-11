@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Receipt,
   Lock,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProjectDetailData, formatRupiah } from "./types";
@@ -857,75 +858,143 @@ export function ProjectTabs({
               <strong>Klausul Pencairan Dana:</strong> &ldquo;AKAR mencatat dan menampilkan status termin. AKAR tidak mencairkan dana; pencairan mengikuti prosedur resmi pemerintah desa.&rdquo;
             </div>
 
-            {/* Stepper Pencairan Dana Bertahap */}
-            <div className="space-y-4">
-              {/* Termin 0 (30% - 50%) */}
-              <div className="p-4 sm:p-5 rounded-xl border border-emerald-200/80 bg-emerald-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    T1
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-zinc-900">
-                        Termin I: Uang Muka Bahan &amp; HOK Awal (50%)
-                      </span>
-                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                        Tersalurkan
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-600 leading-relaxed">
-                      Pencairan tahap pertama disalurkan langsung ke rekening kelompok setelah penandatanganan SPK dan pakta integritas swakelola.
-                    </p>
-                    <div className="text-[11px] text-zinc-500 font-mono">
-                      Ref Mutasi Kas: <code className="text-zinc-700 font-bold">BKK-2026-0006</code> • Disahkan BPD
-                    </div>
-                  </div>
+            {/* Jika proyek BELUM dalam tahap konstruksi (misal masih TENDER_DIBUKA, SELEKSI, PEMATANGAN): */}
+            {/* Isinya dikosongkan dengan empty state bersih, tidak ada transaksi Termin 1 fiktif */}
+            {proyek.status !== "PENGERJAAN" && proyek.status !== "SELESAI" ? (
+              <div className="p-8 sm:p-10 rounded-2xl border border-dashed border-zinc-200 bg-zinc-50/60 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 mx-auto">
+                  <Clock className="w-6 h-6 text-zinc-500" />
                 </div>
-
-                <div className="text-left sm:text-right shrink-0">
-                  <span className="font-mono text-base font-bold text-emerald-700 block">
-                    {formatRupiah(proyek.pagu * 0.5)}
+                <div className="space-y-1">
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-800">
+                    Belum Ada Catatan Audit Pencairan Dana
+                  </h4>
+                  <p className="text-xs sm:text-sm text-zinc-500 max-w-lg mx-auto leading-relaxed">
+                    Proyek saat ini masih berada dalam tahap{" "}
+                    <strong className="text-zinc-700">
+                      {proyek.status === "PEMATANGAN"
+                        ? "Pematangan KAK & Musdes"
+                        : "Seleksi Sayembara Swakelola"}
+                    </strong>
+                    . Pencairan dana Termin I (Uang Muka 50%) baru akan disalurkan dan dicatat ke ledger kas desa setelah penetapan pemenang disahkan dan penandatanganan Surat Perjanjian Kerja (SPK).
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-200/70 text-zinc-700 text-xs font-semibold">
+                    <Lock className="w-3.5 h-3.5 text-zinc-500" />
+                    <span>Termin Kas Masih Terkunci (Rp 0 Tersalurkan)</span>
                   </span>
-                  <span className="text-xs text-zinc-500 font-medium">50% dari total pagu</span>
                 </div>
               </div>
-
-              {/* Termin 50% Opname Fisik */}
-              <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 bg-zinc-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-zinc-200 text-zinc-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    T2
+            ) : (
+              /* Stepper Pencairan Dana Bertahap untuk PENGERJAAN & SELESAI */
+              <div className="space-y-4">
+                {/* Termin 1 */}
+                <div className="p-4 sm:p-5 rounded-xl border border-emerald-200/80 bg-emerald-50/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+                      T1
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-zinc-900">
+                          Termin I: Uang Muka Bahan &amp; HOK Awal (50%)
+                        </span>
+                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                          Tersalurkan
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-600 leading-relaxed">
+                        Pencairan tahap pertama disalurkan langsung ke rekening kelompok setelah penandatanganan SPK dan pakta integritas swakelola.
+                      </p>
+                      <div className="text-[11px] text-zinc-500 font-mono">
+                        Ref Mutasi Kas: <code className="text-zinc-700 font-bold">BKK-2026-0006</code> • Disahkan BPD
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-zinc-900">
-                        Termin II: Pelunasan Serah Terima Pekerjaan (50%)
-                      </span>
-                      <span className="text-[11px] font-semibold text-zinc-600 bg-zinc-200/80 px-2 py-0.5 rounded-full">
-                        Menunggu Opname 100%
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-600 leading-relaxed">
-                      Pencairan tahap akhir dicairkan setelah pemeriksaan fisik bersama Tim Teknis BPD dan pengesahan Berita Acara Pemeriksaan Hasil Pekerjaan (BAPHP).
-                    </p>
-                    <div className="text-[11px] text-zinc-500">
-                      Syarat: Laporan Pertanggungjawaban (LPJ) HOK Warga Lengkap
-                    </div>
+
+                  <div className="text-left sm:text-right shrink-0">
+                    <span className="font-mono text-base font-bold text-emerald-700 block">
+                      {formatRupiah(proyek.pagu * 0.5)}
+                    </span>
+                    <span className="text-xs text-zinc-500 font-medium">50% dari total pagu</span>
                   </div>
                 </div>
 
-                <div className="text-left sm:text-right shrink-0">
-                  <span className="font-mono text-base font-bold text-zinc-800 block">
-                    {formatRupiah(proyek.pagu * 0.5)}
-                  </span>
-                  <span className="text-xs text-zinc-500 font-medium">Sisa 50% pelunasan</span>
+                {/* Termin 2 */}
+                <div
+                  className={cn(
+                    "p-4 sm:p-5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+                    proyek.status === "SELESAI"
+                      ? "border-emerald-200/80 bg-emerald-50/30"
+                      : "border-zinc-200 bg-zinc-50/60"
+                  )}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 mt-0.5",
+                        proyek.status === "SELESAI"
+                          ? "bg-emerald-600 text-white"
+                          : "bg-zinc-200 text-zinc-700"
+                      )}
+                    >
+                      T2
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-zinc-900">
+                          Termin II: Pelunasan Serah Terima Pekerjaan (50%)
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[11px] font-semibold px-2 py-0.5 rounded-full",
+                            proyek.status === "SELESAI"
+                              ? "text-emerald-700 bg-emerald-100/70"
+                              : "text-zinc-600 bg-zinc-200/80"
+                          )}
+                        >
+                          {proyek.status === "SELESAI"
+                            ? "Tersalurkan (Lunas 100%)"
+                            : "Menunggu Opname 100%"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-zinc-600 leading-relaxed">
+                        {proyek.status === "SELESAI"
+                          ? "Pelunasan pekerjaan fisik telah disalurkan penuh setelah Berita Acara Pemeriksaan Hasil Pekerjaan (BAPHP 100%) disahkan."
+                          : "Pencairan tahap akhir dicairkan setelah pemeriksaan fisik bersama Tim Teknis BPD dan pengesahan Berita Acara Pemeriksaan Hasil Pekerjaan (BAPHP)."}
+                      </p>
+                      <div className="text-[11px] text-zinc-500">
+                        {proyek.status === "SELESAI" ? (
+                          <span className="font-mono">
+                            Ref Mutasi Kas: <code className="text-zinc-700 font-bold">BKK-2026-0012</code> • Disahkan BPD
+                          </span>
+                        ) : (
+                          <span>Syarat: Laporan Pertanggungjawaban (LPJ) HOK Warga Lengkap</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-left sm:text-right shrink-0">
+                    <span
+                      className={cn(
+                        "font-mono text-base font-bold block",
+                        proyek.status === "SELESAI" ? "text-emerald-700" : "text-zinc-700"
+                      )}
+                    >
+                      {formatRupiah(proyek.pagu * 0.5)}
+                    </span>
+                    <span className="text-xs text-zinc-500 font-medium">
+                      {proyek.status === "SELESAI" ? "Sisa 50% pelunasan tuntas" : "Sisa 50% pelunasan"}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Link to Buku Kas */}
-            <div className="pt-2 flex items-center justify-between text-xs text-zinc-600">
+            <div className="pt-2 flex items-center justify-between text-xs text-zinc-600 border-t border-zinc-100">
               <span className="flex items-center gap-1.5">
                 <Receipt className="w-4 h-4 text-[#1F6F43]" />
                 <span>Lihat riwayat mutasi pembayaran pada buku kas umum desa.</span>
