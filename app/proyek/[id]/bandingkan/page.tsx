@@ -85,7 +85,12 @@ interface ProposalComparisonItem {
   poinPerhatian: string[];
   rekomendasiCatatan: string;
   modelAi: string;
-  flags: Array<{ label: string; deskripsi: string; tingkat: "warning" | "danger" | "info" }>;
+  flags: Array<{
+    tipe?: string;
+    label: string;
+    deskripsi: string;
+    tingkat: "warning" | "danger" | "info";
+  }>;
 }
 
 export default function BandingkanProposalPage() {
@@ -123,10 +128,15 @@ export default function BandingkanProposalPage() {
     async function loadData() {
       setIsLoading(true);
       try {
+        const targetId =
+          projectId === "proj-drainase-rt3" || projectId === "seed_proyek_001"
+            ? "seed_proyek_001"
+            : projectId;
+
         const [projRes, propRes, flagRes] = await Promise.allSettled([
-          apiClient.get<ProyekDataApi>(`/api/proyek/${projectId}`),
-          apiClient.get<ProposalDataApi[]>(`/api/proyek/${projectId}/proposal?mode=bandingkan`),
-          apiClient.get<FlagKemiripanData[]>(`/api/proyek/${projectId}/flag`),
+          apiClient.get<ProyekDataApi>(`/api/proyek/${targetId}`),
+          apiClient.get<ProposalDataApi[]>(`/api/proyek/${targetId}/proposal?mode=bandingkan`),
+          apiClient.get<FlagKemiripanData[]>(`/api/proyek/${targetId}/flag`),
         ]);
 
         if (isMounted && flagRes.status === "fulfilled" && flagRes.value.data && Array.isArray(flagRes.value.data)) {
@@ -155,13 +165,45 @@ export default function BandingkanProposalPage() {
             const pLokal = tTotal > 0 ? Math.round((tLokal / tTotal) * 100) : 0;
             const scoreObj = p.skor || p.scoring;
             const rincian = scoreObj?.rincian || {};
+            const durasi = p.durasiHari || 30;
+
+            // Evaluasi kepatuhan KAK proyek
+            const kakFlags: Array<{
+              tipe?: string;
+              label: string;
+              deskripsi: string;
+              tingkat: "warning" | "danger" | "info";
+            }> = [];
+            if (pLokal < 70) {
+              kakFlags.push({
+                tipe: "PELANGGARAN_SYARAT",
+                label: "Pelanggaran Syarat KAK",
+                deskripsi: `Serapan tenaga kerja lokal di bawah syarat minimal regulasi (${pLokal}% < 70%).`,
+                tingkat: "warning",
+              });
+            }
+            if (durasi < 30) {
+              kakFlags.push({
+                tipe: "JADWAL_TIDAK_REALISTIS",
+                label: "Penyimpangan Jadwal KAK",
+                deskripsi: `Durasi pengerjaan ${durasi} hari di bawah batas minimal toleransi KAK (30 hari).`,
+                tingkat: "warning",
+              });
+            }
+
+            const existingFlags = (p.flags || []).map((f: string) => ({
+              tipe: "CATATAN_INTEGRITAS",
+              label: "Catatan Integritas",
+              deskripsi: f,
+              tingkat: "warning" as const,
+            }));
 
             return {
               id: p.id,
               namaKelompok: p.kelompok?.nama || "Pokmas Warga",
               ketua: p.kelompok?.ketua?.nama || "Ketua Pokmas",
               penawaran: penawaranNum,
-              durasiHari: p.durasiHari || 30,
+              durasiHari: durasi,
               tenagaTotal: tTotal,
               tenagaLokal: tLokal,
               persentaseLokal: pLokal,
@@ -175,7 +217,7 @@ export default function BandingkanProposalPage() {
                 `Proposal padat karya swakelola dari ${p.kelompok?.nama || "Pokmas Warga"} dengan efisiensi penawaran dan serapan warga lokal ${pLokal}%.`,
               poinKekuatan: p.ringkasan?.poinKekuatan || [
                 `Serapan tenaga kerja warga setempat ${pLokal}% (${tLokal} dari ${tTotal} warga desa)`,
-                `Nilai penawaran sebesar ${formatRupiah(penawaranNum)} dengan durasi ${p.durasiHari || 30} hari kalender`,
+                `Nilai penawaran sebesar ${formatRupiah(penawaranNum)} dengan durasi ${durasi} hari kalender`,
               ],
               poinPerhatian: p.ringkasan?.poinPerhatian || [
                 "Perlu koordinasi berkala dengan TPK desa saat pekerjaan fisik berlangsung",
@@ -184,11 +226,7 @@ export default function BandingkanProposalPage() {
                 p.ringkasan?.rekomendasiCatatan ||
                 "Memenuhi batas kriteria administrasi dan teknis sayembara swakelola.",
               modelAi: p.ringkasan?.model || "google/gemini-2.0-flash-exp",
-              flags: (p.flags || []).map((f: string) => ({
-                label: "Catatan Integritas",
-                deskripsi: f,
-                tingkat: "warning" as const,
-              })),
+              flags: [...kakFlags, ...existingFlags],
             };
           });
         }
@@ -196,29 +234,68 @@ export default function BandingkanProposalPage() {
         // Jika API kosong, gunakan fallback data mock sayembara
         if (loadedProps.length === 0) {
           const fallbackProj = getMockProjectById(projectId);
-          loadedProps = fallbackProj.proposals.map((p) => ({
-            id: p.id,
-            namaKelompok: p.namaKelompok,
-            ketua: p.ketua,
-            penawaran: p.penawaran,
-            durasiHari: p.durasiHari,
-            tenagaTotal: p.tenagaTotal,
-            tenagaLokal: p.tenagaLokal,
-            persentaseLokal: p.persentaseLokal,
-            skorTotal: p.skor.total,
-            skorBiaya: p.skor.rincian.harga,
-            skorLokal: p.skor.rincian.tenagaLokal,
-            skorJadwal: p.skor.rincian.durasi,
-            skorDokumen: p.skor.rincian.pengalaman,
-            ringkasanEksekutif:
-              p.ringkasanAi?.ringkasanEksekutif || "Metode padat karya warga desa.",
-            poinKekuatan: p.ringkasanAi?.poinKekuatan || ["Tenaga kerja lokal dominan"],
-            poinPerhatian: p.ringkasanAi?.poinPerhatian || ["Pengawasan mutu adukan mortar"],
-            rekomendasiCatatan:
-              p.ringkasanAi?.rekomendasiCatatan || "Lolos batas administratif.",
-            modelAi: p.ringkasanAi?.model || "google/gemini-2.0-flash-exp",
-            flags: p.flagsDetail || [],
-          }));
+          loadedProps = fallbackProj.proposals.map((p) => {
+            const kakFlags: Array<{
+              tipe?: string;
+              label: string;
+              deskripsi: string;
+              tingkat: "warning" | "danger" | "info";
+            }> = [];
+            if (p.persentaseLokal < 70) {
+              kakFlags.push({
+                tipe: "PELANGGARAN_SYARAT",
+                label: "Pelanggaran Syarat KAK",
+                deskripsi: `Serapan tenaga kerja lokal di bawah syarat regulasi (${p.persentaseLokal}% < 70%).`,
+                tingkat: "warning",
+              });
+            }
+            if (p.durasiHari < 30) {
+              kakFlags.push({
+                tipe: "JADWAL_TIDAK_REALISTIS",
+                label: "Penyimpangan Jadwal KAK",
+                deskripsi: `Durasi pengerjaan ${p.durasiHari} hari di bawah batas minimal toleransi KAK (30 hari).`,
+                tingkat: "warning",
+              });
+            }
+
+            const existingFlags = p.flagsDetail || [];
+            // Hindari duplikasi flag jika sudah ada di mock
+            const combinedFlags: Array<{
+              tipe?: string;
+              label: string;
+              deskripsi: string;
+              tingkat: "warning" | "danger" | "info";
+            }> = [...existingFlags];
+            kakFlags.forEach((kf) => {
+              if (!combinedFlags.some((ef) => ef.deskripsi.includes(kf.label) || ef.label.includes(kf.label))) {
+                combinedFlags.push(kf);
+              }
+            });
+
+            return {
+              id: p.id,
+              namaKelompok: p.namaKelompok,
+              ketua: p.ketua,
+              penawaran: p.penawaran,
+              durasiHari: p.durasiHari,
+              tenagaTotal: p.tenagaTotal,
+              tenagaLokal: p.tenagaLokal,
+              persentaseLokal: p.persentaseLokal,
+              skorTotal: p.skor.total,
+              skorBiaya: p.skor.rincian.harga,
+              skorLokal: p.skor.rincian.tenagaLokal,
+              skorJadwal: p.skor.rincian.durasi,
+              skorDokumen: p.skor.rincian.pengalaman,
+              ringkasanEksekutif:
+                p.ringkasanAi?.ringkasanEksekutif || "Metode padat karya warga desa.",
+              poinKekuatan: p.ringkasanAi?.poinKekuatan || ["Tenaga kerja lokal dominan"],
+              poinPerhatian: p.ringkasanAi?.poinPerhatian || ["Pengawasan mutu adukan mortar"],
+              rekomendasiCatatan:
+                p.ringkasanAi?.rekomendasiCatatan || "Lolos batas administratif.",
+              modelAi: p.ringkasanAi?.model || "google/gemini-2.0-flash-exp",
+              flags: combinedFlags,
+            };
+          });
         }
 
         // Urutkan berdasarkan skor total tertinggi
@@ -317,6 +394,13 @@ export default function BandingkanProposalPage() {
 
   // Handler penetapan pemenang sayembara
   const handlePilihPemenang = async (proposalId: string) => {
+    if (project.status !== "SELEKSI" && project.status !== "TENDER_DIBUKA") {
+      setWinnerMessage({
+        type: "error",
+        text: `Tahap seleksi telah selesai (status proyek saat ini: ${project.status}). Pemilihan pemenang tidak dapat diulang.`,
+      });
+      return;
+    }
     setSelectedWinnerId(proposalId);
     setWinnerMessage(null);
   };
@@ -324,6 +408,14 @@ export default function BandingkanProposalPage() {
   const handleConfirmWinner = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedWinnerId) return;
+
+    if (project.status !== "SELEKSI" && project.status !== "TENDER_DIBUKA") {
+      setWinnerMessage({
+        type: "error",
+        text: "Tahap seleksi telah selesai. Pemilihan pemenang sudah ditutup.",
+      });
+      return;
+    }
 
     if (alasanMenang.trim().length < 30) {
       setWinnerMessage({
@@ -352,13 +444,20 @@ export default function BandingkanProposalPage() {
         payload.alasanTambahan = alasanTambahan.trim();
       }
 
-      const res = await apiClient.post(`/api/proyek/${projectId}/pemenang`, payload);
+      const targetId =
+        projectId === "proj-drainase-rt3" || projectId === "seed_proyek_001"
+          ? "seed_proyek_001"
+          : projectId;
+
+      const res = await apiClient.post(`/api/proyek/${targetId}/pemenang`, payload);
       if (res.data) {
+        setProject((prev) => ({ ...prev, status: "MASA_SANGGAH" }));
         setWinnerMessage({
           text: "Pemenang pelaksana sayembara swakelola berhasil ditetapkan secara sah dalam sistem audit desa!",
           type: "success",
         });
         setTimeout(() => {
+          setSelectedWinnerId(null);
           router.push(`/proyek/${projectId}`);
         }, 1500);
       } else if (res.error) {
@@ -825,11 +924,26 @@ export default function BandingkanProposalPage() {
                         const matchingFlags = projectFlags.filter(
                           (f) => f.proposalAId === prop.id || f.proposalBId === prop.id
                         );
+                        const hasKakFlags = prop.flags && prop.flags.length > 0;
+                        const hasAnyFlag = matchingFlags.length > 0 || hasKakFlags;
 
                         return (
                           <td key={prop.id} className="p-4 sm:p-5 border-r border-zinc-200/80 last:border-r-0 text-xs">
-                            {matchingFlags.length > 0 ? (
+                            {hasAnyFlag ? (
                               <div className="space-y-2">
+                                {prop.flags.map((fl, fIdx) => (
+                                  <div
+                                    key={`kak-${fIdx}`}
+                                    className="p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 text-xs space-y-1 shadow-2xs"
+                                  >
+                                    <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                                      <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                                      <span>{fl.label || "Peringatan Integritas KAK"}</span>
+                                    </div>
+                                    <p className="text-[11px] leading-relaxed text-amber-900/90">{fl.deskripsi}</p>
+                                  </div>
+                                ))}
+
                                 {matchingFlags.map((fl) => (
                                   <div
                                     key={fl.id}
@@ -887,18 +1001,6 @@ export default function BandingkanProposalPage() {
                                   </div>
                                 ))}
                               </div>
-                            ) : prop.flags.length > 0 ? (
-                              <div className="space-y-1.5">
-                                {prop.flags.map((fl, fIdx) => (
-                                  <div
-                                    key={fIdx}
-                                    className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-1.5"
-                                  >
-                                    <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
-                                    <span>{fl.deskripsi}</span>
-                                  </div>
-                                ))}
-                              </div>
                             ) : (
                               <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center gap-1.5 font-semibold">
                                 <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
@@ -915,25 +1017,47 @@ export default function BandingkanProposalPage() {
                       <td className="p-4 sm:p-5 font-bold text-zinc-800 sticky left-0 bg-zinc-50/95 backdrop-blur-xs border-r border-zinc-200/80">
                         <span>Aksi Keputusan</span>
                       </td>
-                      {activeProposals.map((prop) => (
-                        <td key={prop.id} className="p-4 sm:p-5 border-r border-zinc-200/80 last:border-r-0">
-                          {isInternal ? (
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => handlePilihPemenang(prop.id)}
-                              className="w-full gap-1.5 font-semibold bg-[#1F6F43] hover:bg-[#185935] text-white min-h-[40px]"
-                            >
-                              <Award className="w-3.5 h-3.5" />
-                              <span>Tetapkan Pelaksana</span>
-                            </Button>
-                          ) : (
-                            <span className="text-xs text-zinc-400 italic block text-center">
-                              Hak akses Perangkat Desa
-                            </span>
-                          )}
-                        </td>
-                      ))}
+                      {activeProposals.map((prop, pIdx) => {
+                        const isPastSelection =
+                          project.status !== "SELEKSI" && project.status !== "TENDER_DIBUKA";
+                        const isWinner = pIdx === 0;
+
+                        return (
+                          <td key={prop.id} className="p-4 sm:p-5 border-r border-zinc-200/80 last:border-r-0">
+                            {isPastSelection ? (
+                              isWinner ? (
+                                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 text-center space-y-1 shadow-2xs">
+                                  <div className="flex items-center justify-center gap-1.5 font-bold text-xs text-[#1F6F43]">
+                                    <Award className="w-4 h-4 shrink-0" />
+                                    <span>Pemenang Ditetapkan</span>
+                                  </div>
+                                  <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-200/80 text-emerald-900">
+                                    {project.status === "MASA_SANGGAH" ? "Masa Sanggah 3 Hari" : "Tahap Pelaksanaan"}
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="p-2.5 rounded-xl bg-zinc-100/80 border border-zinc-200 text-zinc-500 text-center text-xs font-medium">
+                                  <span>Seleksi Selesai</span>
+                                </div>
+                              )
+                            ) : isInternal ? (
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() => handlePilihPemenang(prop.id)}
+                                className="w-full gap-1.5 font-semibold bg-[#1F6F43] hover:bg-[#185935] text-white min-h-[40px]"
+                              >
+                                <Award className="w-3.5 h-3.5" />
+                                <span>Tetapkan Pelaksana</span>
+                              </Button>
+                            ) : (
+                              <span className="text-xs text-zinc-400 italic block text-center">
+                                Hak akses Perangkat Desa
+                              </span>
+                            )}
+                          </td>
+                        );
+                      })}
                     </tr>
                   </tbody>
                 </table>

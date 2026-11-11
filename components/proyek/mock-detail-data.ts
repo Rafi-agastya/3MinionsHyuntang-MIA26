@@ -119,10 +119,28 @@ export const mockProjectDrainase: ProjectDetailData = {
           pengalaman: 9.0,
           durasi: 16.0,
         },
-        flags: [],
+        flags: [
+          "Tenaga kerja lokal di bawah syarat minimal KAK (50% < 70%)",
+          "Durasi pengerjaan di bawah estimasi toleransi KAK (25 hari < 30 hari)",
+        ],
         versiBobot: "v1.0",
       },
-      flagsDetail: [],
+      flagsDetail: [
+        {
+          tipe: "PELANGGARAN_SYARAT",
+          label: "Tenaga Kerja Lokal Di Bawah Syarat (50% < 70%)",
+          deskripsi:
+            "Serapan tenaga kerja warga desa hanya 50% (6/12 orang). Batas minimal regulasi sayembara adalah 70%.",
+          tingkat: "warning",
+        },
+        {
+          tipe: "JADWAL_TIDAK_REALISTIS",
+          label: "Durasi di Bawah Batas KAK (25 hari < 30 hari)",
+          deskripsi:
+            "Estimasi waktu 25 hari berada di bawah toleransi minimal KAK (30–60 hari) berpotensi menurunkan mutu pekerjaan.",
+          tingkat: "warning",
+        },
+      ],
       ringkasanAi: {
         model: "meta-llama/llama-3.3-70b-instruct",
         ringkasanEksekutif:
