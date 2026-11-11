@@ -1024,11 +1024,11 @@ export default function AspirasiPortalPage() {
               </div>
 
               {/* Status Filter Dropdown */}
-              <div className="relative inline-block self-end sm:self-auto">
+              <div className="relative inline-block self-end sm:self-auto min-w-[150px]">
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="appearance-none bg-white border border-zinc-200 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-zinc-700 hover:border-zinc-300 focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 focus:border-[#1F6F43] cursor-pointer min-h-[38px]"
+                  className="w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 cursor-pointer min-h-[40px]"
                 >
                   <option value="SEMUA">Semua Status</option>
                   <option value="Diterima">Diterima</option>
@@ -1036,7 +1036,7 @@ export default function AspirasiPortalPage() {
                   <option value="Masuk Musrenbangdes">Masuk Musrenbangdes</option>
                   <option value="Selesai">Selesai</option>
                 </select>
-                <ChevronDown className="w-4 h-4 text-zinc-500 pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" />
+                <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               </div>
             </div>
           </div>

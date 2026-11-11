@@ -28,6 +28,7 @@ import {
   AlertCircle,
   Clock,
   UserPlus,
+  ChevronDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -822,17 +823,20 @@ return (
                       ) : isLoadingKelompok ? (
                         <div className="h-11 rounded-xl bg-zinc-100 animate-pulse" />
                       ) : kelompokList.length > 0 ? (
-                        <select
-                          value={selectedKelompokId}
-                          onChange={(e) => setSelectedKelompokId(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-zinc-200 bg-white text-zinc-900 font-semibold focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[44px]"
-                        >
-                          {kelompokList.map((k) => (
-                            <option key={k.id} value={k.id}>
-                              {k.nama} (Ketua: {k.ketua?.nama || "Ketua Terdaftar"}) — {k.anggota?.length || k._count?.anggota || 0} Anggota
-                            </option>
-                          ))}
-                        </select>
+                        <div className="relative w-full">
+                          <select
+                            value={selectedKelompokId}
+                            onChange={(e) => setSelectedKelompokId(e.target.value)}
+                            className="w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm font-semibold text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 min-h-[44px]"
+                          >
+                            {kelompokList.map((k) => (
+                              <option key={k.id} value={k.id}>
+                                {k.nama} (Ketua: {k.ketua?.nama || "Ketua Terdaftar"}) — {k.anggota?.length || k._count?.anggota || 0} Anggota
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                        </div>
                       ) : (
                         <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/70 text-xs text-amber-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                           <span>

@@ -21,6 +21,7 @@ import {
   SlidersHorizontal,
   Lock,
   UserCheck,
+  ChevronDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -873,17 +874,20 @@ export default function AdminPage() {
                       <label className="font-semibold text-zinc-700 block">
                         Bidang / Kategori Anggaran
                       </label>
-                      <select
-                        value={kasKategori}
-                        onChange={(e) => setKasKategori(e.target.value)}
-                        className="w-full rounded-xl border border-zinc-200 px-3 py-2 bg-white text-zinc-800 text-xs sm:text-sm min-h-[44px]"
-                      >
-                        <option value="Swakelola Fisik">Swakelola Fisik (Jalan, Balai, Drainase)</option>
-                        <option value="Padat Karya Tunai">Padat Karya Tunai Desa (PKTD)</option>
-                        <option value="Operasional Kantor">Operasional Kantor &amp; Musdes</option>
-                        <option value="Alokasi Dana Desa (ADD)">Alokasi Dana Desa (ADD)</option>
-                        <option value="Pendapatan Asli Desa (PADes)">Pendapatan Asli Desa (PADes)</option>
-                      </select>
+                      <div className="relative w-full">
+                        <select
+                          value={kasKategori}
+                          onChange={(e) => setKasKategori(e.target.value)}
+                          className="w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 min-h-[44px]"
+                        >
+                          <option value="Swakelola Fisik">Swakelola Fisik (Jalan, Balai, Drainase)</option>
+                          <option value="Padat Karya Tunai">Padat Karya Tunai Desa (PKTD)</option>
+                          <option value="Operasional Kantor">Operasional Kantor &amp; Musdes</option>
+                          <option value="Alokasi Dana Desa (ADD)">Alokasi Dana Desa (ADD)</option>
+                          <option value="Pendapatan Asli Desa (PADes)">Pendapatan Asli Desa (PADes)</option>
+                        </select>
+                        <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                      </div>
                     </div>
 
                     {/* Uraian Transaksi */}
@@ -1228,16 +1232,19 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="font-semibold text-zinc-700 block">Lokasi Dusun</label>
-                  <select
-                    value={newProjectDusun}
-                    onChange={(e) => setNewProjectDusun(e.target.value)}
-                    className="w-full rounded-xl border border-zinc-200 px-3 py-2 bg-white min-h-[44px]"
-                  >
-                    <option value="Dusun Krajan">Dusun Krajan</option>
-                    <option value="Dusun Sukamaju">Dusun Sukamaju</option>
-                    <option value="Dusun Makmur">Dusun Makmur</option>
-                    <option value="Dusun Sidodadi">Dusun Sidodadi</option>
-                  </select>
+                  <div className="relative w-full">
+                    <select
+                      value={newProjectDusun}
+                      onChange={(e) => setNewProjectDusun(e.target.value)}
+                      className="w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 min-h-[44px]"
+                    >
+                      <option value="Dusun Krajan">Dusun Krajan</option>
+                      <option value="Dusun Sukamaju">Dusun Sukamaju</option>
+                      <option value="Dusun Makmur">Dusun Makmur</option>
+                      <option value="Dusun Sidodadi">Dusun Sidodadi</option>
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -1386,16 +1393,19 @@ export default function AdminPage() {
 
               <div className="space-y-1">
                 <label className="font-semibold text-zinc-700 block">Status Tindak Lanjut</label>
-                <select
-                  value={ticketStatusInput}
-                  onChange={(e) => setTicketStatusInput(e.target.value as AdminTicket["status"])}
-                  className="w-full rounded-xl border border-zinc-200 px-3 py-2 bg-white min-h-[44px]"
-                >
-                  <option value="MENUNGGU">Menunggu Verifikasi</option>
-                  <option value="DIVERIFIKASI">Diverifikasi Tim Desa</option>
-                  <option value="TINDAK_LANJUT">Tindak Lanjut Lapangan / Perbaikan</option>
-                  <option value="SELESAI">Selesai Ditangani</option>
-                </select>
+                <div className="relative w-full">
+                  <select
+                    value={ticketStatusInput}
+                    onChange={(e) => setTicketStatusInput(e.target.value as AdminTicket["status"])}
+                    className="w-full appearance-none rounded-xl border border-zinc-200 bg-white px-4 py-2.5 pr-10 text-sm text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 min-h-[44px]"
+                  >
+                    <option value="MENUNGGU">Menunggu Verifikasi</option>
+                    <option value="DIVERIFIKASI">Diverifikasi Tim Desa</option>
+                    <option value="TINDAK_LANJUT">Tindak Lanjut Lapangan / Perbaikan</option>
+                    <option value="SELESAI">Selesai Ditangani</option>
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                </div>
               </div>
 
               <div className="space-y-1">

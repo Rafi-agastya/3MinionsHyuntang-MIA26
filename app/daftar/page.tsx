@@ -18,6 +18,7 @@ import {
   Phone,
   AlertCircle,
   HelpCircle,
+  ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -318,15 +319,16 @@ export default function DaftarPage() {
                   <label className="text-xs font-semibold text-zinc-700 block">
                     Wilayah Desa <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <Building2 className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <div className="relative w-full">
+                    <Building2 className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                     <select
                       value={desaId}
                       onChange={(e) => setDesaId(e.target.value)}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-zinc-200 text-xs sm:text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#1F6F43] min-h-[44px]"
+                      className="w-full appearance-none rounded-xl border border-zinc-200 bg-white pl-10 pr-10 py-2.5 text-sm text-zinc-900 transition-colors focus:border-[#1F6F43] focus:outline-none focus:ring-2 focus:ring-[#1F6F43]/20 disabled:bg-zinc-50 disabled:text-zinc-500 min-h-[44px]"
                     >
                       <option value="seed_desa_001">Desa Karang Sari</option>
                     </select>
+                    <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
                   </div>
                 </div>
 
