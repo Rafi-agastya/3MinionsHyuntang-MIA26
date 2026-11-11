@@ -54,6 +54,22 @@ export default function AspirasiPortalPage() {
   const { role } = useCurrentRole();
   const isPublik = role === "PUBLIK";
 
+  // Active Tab State ("form" | "daftar")
+  const [activeTab, setActiveTab] = React.useState<"form" | "daftar">("form");
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash;
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get("tab");
+      if (tabParam === "daftar" || hash === "#daftar" || hash === "#aspirasi-frame-2") {
+        setActiveTab("daftar");
+      } else if (tabParam === "form" || hash === "#form" || hash === "#aspirasi-frame-1") {
+        setActiveTab("form");
+      }
+    }
+  }, []);
+
   // Form State
   const [judul, setJudul] = React.useState("");
   const [kategori, setKategori] = React.useState<AspirasiItem["kategori"]>("Infrastruktur Rusak");
@@ -473,83 +489,111 @@ export default function AspirasiPortalPage() {
           </div>
         )}
 
-        {/* FRAME 1: Header & Form Kirim Aspirasi */}
+        {/* Portal Aspirasi & Aduan Warga */}
         <section
-          id="aspirasi-frame-1"
-          aria-label="Kirim Aspirasi dan Aduan Warga"
+          id="aspirasi-portal"
+          aria-label="Portal Aspirasi Warga"
           className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-4">
-          {/* Header Banner */}
-          <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 sm:p-7 shadow-sm space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="default" className="text-xs font-semibold">
-                Saluran Aspirasi Warga Berbukti
-              </Badge>
-              <span className="text-xs text-zinc-500">
-                Tenggat Respons Regulasi: <strong>Maks. 14 Hari Kalender</strong>
-              </span>
+          <div className="max-w-7xl mx-auto w-full space-y-6">
+            {/* Header Banner */}
+            <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 sm:p-7 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="default" className="text-xs font-semibold">
+                  Saluran Aspirasi Warga Berbukti
+                </Badge>
+                <span className="text-xs text-zinc-500">
+                  Tenggat Respons Regulasi: <strong>Maks. 14 Hari Kalender</strong>
+                </span>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
+                Portal Ide, Aspirasi &amp; Aduan Warga
+              </h1>
+              <p className="text-xs sm:text-sm text-zinc-600 max-w-2xl leading-relaxed">
+                Sampaikan usulan pembangunan desa, laporan infrastruktur rusak, atau
+                pengawasan realisasi dana desa secara transparan dengan nomor tiket yang bisa
+                dilacak hingga tuntas.
+              </p>
+
+              {/* Quick stats row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-zinc-100 text-xs">
+                <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
+                  <span className="text-zinc-500 block">Total Aspirasi Masuk</span>
+                  <span className="text-base font-bold text-zinc-900 block mt-0.5">
+                    142 Usulan
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
+                  <span className="text-zinc-500 block">Diverifikasi BPD</span>
+                  <span className="text-base font-bold text-[#8A5A2B] block mt-0.5">
+                    36 Ditinjau
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
+                  <span className="text-zinc-500 block">Masuk APBDes 2026</span>
+                  <span className="text-base font-bold text-[#1F6F43] block mt-0.5">
+                    18 Proyek
+                  </span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
+                  <span className="text-zinc-500 block">Tingkat Tindak Lanjut</span>
+                  <span className="text-base font-bold text-emerald-700 block mt-0.5">
+                    94.2% Tepat Waktu
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight">
-              Portal Ide, Aspirasi &amp; Aduan Warga
-            </h1>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-2xl leading-relaxed">
-              Sampaikan usulan pembangunan desa, laporan infrastruktur rusak, atau
-              pengawasan realisasi dana desa secara transparan dengan nomor tiket yang bisa
-              dilacak hingga tuntas.
-            </p>
-
-            {/* Quick stats row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-zinc-100 text-xs">
-              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
-                <span className="text-zinc-500 block">Total Aspirasi Masuk</span>
-                <span className="text-base font-bold text-zinc-900 block mt-0.5">
-                  142 Usulan
-                </span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
-                <span className="text-zinc-500 block">Diverifikasi BPD</span>
-                <span className="text-base font-bold text-[#8A5A2B] block mt-0.5">
-                  36 Ditinjau
-                </span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
-                <span className="text-zinc-500 block">Masuk APBDes 2026</span>
-                <span className="text-base font-bold text-[#1F6F43] block mt-0.5">
-                  18 Proyek
-                </span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-zinc-50 border border-zinc-100">
-                <span className="text-zinc-500 block">Tingkat Tindak Lanjut</span>
-                <span className="text-base font-bold text-emerald-700 block mt-0.5">
-                  94.2% Tepat Waktu
-                </span>
-              </div>
+            {/* Tab Navigation (Eksklusif: Form vs Daftar) */}
+            <div
+              role="tablist"
+              aria-label="Pilihan Tampilan Aspirasi"
+              className="flex border border-zinc-200/80 bg-white p-1.5 rounded-2xl shadow-sm gap-1.5"
+            >
+              <button
+                type="button"
+                role="tab"
+                id="tab-form"
+                aria-selected={activeTab === "form"}
+                aria-controls="panel-form"
+                onClick={() => setActiveTab("form")}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] cursor-pointer ${
+                  activeTab === "form"
+                    ? "bg-[#1F6F43] text-white shadow-xs"
+                    : "bg-white text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50"
+                }`}
+              >
+                <MessageSquarePlus className="w-4 h-4" />
+                <span>Formulir Kirim Aspirasi</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                id="tab-daftar"
+                aria-selected={activeTab === "daftar"}
+                aria-controls="panel-daftar"
+                onClick={() => setActiveTab("daftar")}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] cursor-pointer ${
+                  activeTab === "daftar"
+                    ? "bg-[#1F6F43] text-white shadow-xs"
+                    : "bg-white text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50"
+                }`}
+              >
+                <ListFilter className="w-4 h-4" />
+                <span>Daftar Aspirasi Publik ({aspirasiList.length})</span>
+              </button>
             </div>
-          </div>
 
-          {/* Quick Anchor Navigation */}
-          <div className="flex border border-zinc-200/80 bg-white p-1.5 rounded-2xl shadow-sm gap-1.5">
-            <a
-              href="#aspirasi-frame-1"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] bg-[#1F6F43] text-white shadow-xs"
-            >
-              <MessageSquarePlus className="w-4 h-4" />
-              <span>Formulir Kirim Aspirasi</span>
-            </a>
-            <a
-              href="#aspirasi-frame-2"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[44px] text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100"
-            >
-              <ListFilter className="w-4 h-4" />
-              <span>Daftar Aspirasi Publik ({aspirasiList.length})</span>
-            </a>
-          </div>
-
-          {/* Main 12-col Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-            <div className="lg:col-span-8 space-y-6">
+            {/* TAB PANEL 1: FORMULIR & SIDEBAR */}
+            {activeTab === "form" && (
+              <div
+                id="panel-form"
+                role="tabpanel"
+                aria-labelledby="tab-form"
+                className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start animate-in fade-in duration-200"
+              >
+                <div className="lg:col-span-8 space-y-6">
               {generatedTicket ? (
                 /* Ticket Success Banner */
                 <div className="bg-white rounded-2xl border border-emerald-200 p-6 sm:p-8 shadow-sm space-y-5 animate-in fade-in zoom-in-95 duration-200 text-center sm:text-left">
@@ -604,14 +648,27 @@ export default function AspirasiPortalPage() {
                     </div>
                   </div>
 
-                  <div className="pt-2 flex justify-start">
+                  <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-zinc-100">
                     <button
                       type="button"
                       onClick={() => setGeneratedTicket(null)}
-                      className="text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:underline min-h-[44px] flex items-center"
+                      className="text-xs font-semibold text-zinc-600 hover:text-zinc-900 hover:underline min-h-[44px] flex items-center justify-center sm:justify-start"
                     >
                       &larr; Kirim Usulan / Aduan Lainnya
                     </button>
+
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setGeneratedTicket(null);
+                        setActiveTab("daftar");
+                      }}
+                      className="w-full sm:w-auto bg-[#1F6F43] hover:bg-[#185935] text-white text-xs font-semibold gap-2 min-h-[44px]"
+                    >
+                      <ListFilter className="w-4 h-4" />
+                      <span>Lihat Usulan di Daftar Aspirasi</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -908,17 +965,17 @@ export default function AspirasiPortalPage() {
               </div>
             </aside>
           </div>
-        </div>
-      </section>
+        )}
 
-        {/* FRAME 2: DAFTAR ASPIRASI PUBLIK TERKINI */}
-        <section
-          id="aspirasi-frame-2"
-          aria-label="Daftar Aspirasi Publik Terkini"
-          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
-        >
-          <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
+        {/* TAB PANEL 2: DAFTAR ASPIRASI PUBLIK */}
+        {activeTab === "daftar" && (
+          <div
+            id="panel-daftar"
+            role="tabpanel"
+            aria-labelledby="tab-daftar"
+            className="space-y-5 animate-in fade-in duration-200"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
             <div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight">
                 Daftar Aspirasi &amp; Aduan Publik Terkini
@@ -1107,10 +1164,11 @@ export default function AspirasiPortalPage() {
               })
             )}
           </div>
-
         </div>
-      </section>
-    </main>
+      )}
+    </div>
+  </section>
+</main>
 
     <Footer className="mt-auto" />
 
