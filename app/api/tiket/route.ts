@@ -102,3 +102,23 @@ export const POST = apiHandler(async (req: Request) => {
   );
 });
 
+export const GET = apiHandler(async (req: Request) => {
+  const actor = await requireAuth(req);
+  requireRole(actor, Peran.PERANGKAT, Peran.PENGAWAS, Peran.ADMIN);
+
+  const tiketList = await prisma.tiket.findMany({
+    orderBy: { dibuatPada: "desc" },
+    include: {
+      proyek: {
+        select: { id: true, judul: true, lokasi: true },
+      },
+      pelapor: {
+        select: { id: true, nama: true, peran: true },
+      },
+    },
+  });
+
+  return ok(tiketList, { total: tiketList.length });
+});
+
+

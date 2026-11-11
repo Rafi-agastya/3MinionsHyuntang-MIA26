@@ -1,9 +1,13 @@
 export type StatusProyek =
   | "PEMATANGAN"
   | "TENDER_DIBUKA"
+  | "PEMILIHAN_VENDOR"
   | "SELEKSI"
+  | "VERIFIKASI_KOMPETENSI"
+  | "MASA_SANGGAH"
   | "PENGERJAAN"
   | "SELESAI"
+  | "DIBATALKAN"
   | "BATAL";
 
 export type JalurProyek = "SAYEMBARA" | "VENDOR";

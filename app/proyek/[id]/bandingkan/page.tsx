@@ -28,6 +28,7 @@ import { getMockProjectById } from "@/components/proyek/mock-detail-data";
 import { useCurrentRole } from "@/lib/use-current-role";
 import { apiClient } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
+import { TinjauFlagModal, FlagKemiripanData } from "@/components/proyek/tinjau-flag-modal";
 
 interface ProyekDataApi {
   id: string;
@@ -107,16 +108,26 @@ export default function BandingkanProposalPage() {
   const [isSubmittingWinner, setIsSubmittingWinner] = React.useState(false);
   const [winnerMessage, setWinnerMessage] = React.useState<{ text: string; type: "success" | "error" } | null>(null);
 
-  // Fetch proposals from API with mock fallback
+  // Flag Review State
+  const [projectFlags, setProjectFlags] = React.useState<FlagKemiripanData[]>([]);
+  const [selectedFlagToReview, setSelectedFlagToReview] = React.useState<FlagKemiripanData | null>(null);
+  const [isFlagModalOpen, setIsFlagModalOpen] = React.useState(false);
+
+  // Fetch proposals & flags from API with mock fallback
   React.useEffect(() => {
     let isMounted = true;
     async function loadData() {
       setIsLoading(true);
       try {
-        const [projRes, propRes] = await Promise.allSettled([
+        const [projRes, propRes, flagRes] = await Promise.allSettled([
           apiClient.get<ProyekDataApi>(`/api/proyek/${projectId}`),
           apiClient.get<ProposalDataApi[]>(`/api/proyek/${projectId}/proposal`),
+          apiClient.get<FlagKemiripanData[]>(`/api/proyek/${projectId}/flag`),
         ]);
+
+        if (isMounted && flagRes.status === "fulfilled" && flagRes.value.data && Array.isArray(flagRes.value.data)) {
+          setProjectFlags(flagRes.value.data);
+        }
 
         if (isMounted && projRes.status === "fulfilled" && projRes.value.data) {
           const apiProj = projRes.value.data;
@@ -230,10 +241,28 @@ export default function BandingkanProposalPage() {
     return proposals.filter((p) => selectedIds.includes(p.id)).slice(0, 4);
   }, [proposals, selectedIds]);
 
+  // Jumlah flag yang belum ditinjau
+  const unreviewedFlagsCount = React.useMemo(() => {
+    return projectFlags.filter((f) => f.keputusan === "BELUM").length;
+  }, [projectFlags]);
+
+  const handleFlagReviewed = (updated: FlagKemiripanData) => {
+    setProjectFlags((prev) =>
+      prev.map((f) => (f.id === updated.id ? updated : f))
+    );
+    setWinnerMessage({
+      type: "success",
+      text: `Status catatan integritas ${updated.id} berhasil diperbarui menjadi ${updated.keputusan}.`,
+    });
+  };
+
   const toggleSelectProposal = (id: string) => {
     if (selectedIds.includes(id)) {
       if (selectedIds.length <= 2) {
-        alert("Minimal bandingkan 2 proposal untuk evaluasi yang adil.");
+        setWinnerMessage({
+          type: "error",
+          text: "Minimal bandingkan 2 proposal untuk evaluasi yang adil.",
+        });
         return;
       }
       setSelectedIds((prev) => prev.filter((item) => item !== id));
@@ -342,7 +371,7 @@ export default function BandingkanProposalPage() {
               <span>{project.judul}</span>
             </Link>
             <ChevronRight className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-            <span className="text-zinc-900 font-semibold">Bandingkan Proposal (P1)</span>
+            <span className="text-zinc-900 font-semibold">Bandingkan Proposal</span>
           </nav>
 
           {/* Header Banner */}
@@ -351,7 +380,7 @@ export default function BandingkanProposalPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="default" className="text-xs font-semibold gap-1.5 py-1 px-3">
                   <Scale className="w-3.5 h-3.5" />
-                  <span>Fitur P1: Evaluasi Berdampingan</span>
+                  <span>Evaluasi Berdampingan</span>
                 </Badge>
                 <Badge variant="outline" className="text-xs">
                   Pagu: {formatRupiah(project.pagu)}
@@ -377,6 +406,38 @@ export default function BandingkanProposalPage() {
               </Link>
             </div>
           </div>
+
+          {/* Flag Review Requirement Banner */}
+          {projectFlags.length > 0 && (
+            <div
+              className={cn(
+                "rounded-2xl border p-4 sm:p-5 flex items-start justify-between gap-4 shadow-sm animate-in fade-in",
+                unreviewedFlagsCount > 0
+                  ? "border-amber-300 bg-amber-50 text-amber-950"
+                  : "border-emerald-300 bg-emerald-50 text-emerald-950"
+              )}
+            >
+              <div className="flex items-start gap-3">
+                {unreviewedFlagsCount > 0 ? (
+                  <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                ) : (
+                  <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                )}
+                <div className="space-y-1 text-xs sm:text-sm">
+                  <span className="font-bold block">
+                    {unreviewedFlagsCount > 0
+                      ? `Perhatian: Terdapat ${unreviewedFlagsCount} Catatan Integritas (Flag) yang Perlu Ditinjau`
+                      : "Seluruh Catatan Integritas (Flag) Telah Selesai Ditinjau"}
+                  </span>
+                  <p className={unreviewedFlagsCount > 0 ? "text-amber-900 leading-relaxed" : "text-emerald-900 leading-relaxed"}>
+                    {unreviewedFlagsCount > 0
+                      ? "Sesuai regulasi sayembara desa, seluruh catatan kemiripan teks maupun keanggotaan ganda wajib ditinjau dan diklarifikasi oleh Perangkat Desa sebelum penetapan pemenang definitif disahkan."
+                      : "Semua catatan integritas telah diverifikasi keabsahannya. Kepala Desa dapat mensahkan penetapan pemenang pelaksana sayembara."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Role Access Notice (Jika bukan Perangkat / Admin) */}
           {!isInternal && (
@@ -692,28 +753,93 @@ export default function BandingkanProposalPage() {
                           </span>
                         </div>
                       </td>
-                      {activeProposals.map((prop) => (
-                        <td key={prop.id} className="p-4 sm:p-5 border-r border-zinc-200/80 last:border-r-0 text-xs">
-                          {prop.flags.length > 0 ? (
-                            <div className="space-y-1.5">
-                              {prop.flags.map((fl, fIdx) => (
-                                <div
-                                  key={fIdx}
-                                  className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-1.5"
-                                >
-                                  <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
-                                  <span>{fl.deskripsi}</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center gap-1.5 font-semibold">
-                              <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
-                              <span>Bersih (Tanpa Flag)</span>
-                            </div>
-                          )}
-                        </td>
-                      ))}
+                      {activeProposals.map((prop) => {
+                        const matchingFlags = projectFlags.filter(
+                          (f) => f.proposalAId === prop.id || f.proposalBId === prop.id
+                        );
+
+                        return (
+                          <td key={prop.id} className="p-4 sm:p-5 border-r border-zinc-200/80 last:border-r-0 text-xs">
+                            {matchingFlags.length > 0 ? (
+                              <div className="space-y-2">
+                                {matchingFlags.map((fl) => (
+                                  <div
+                                    key={fl.id}
+                                    className={cn(
+                                      "p-2.5 rounded-xl border text-xs space-y-1.5 shadow-2xs",
+                                      fl.keputusan === "BELUM"
+                                        ? "bg-amber-50 border-amber-300 text-amber-950"
+                                        : fl.keputusan === "WAJAR"
+                                        ? "bg-emerald-50 border-emerald-300 text-emerald-950"
+                                        : fl.keputusan === "KLARIFIKASI"
+                                        ? "bg-blue-50 border-blue-300 text-blue-950"
+                                        : "bg-red-50 border-red-300 text-red-950"
+                                    )}
+                                  >
+                                    <div className="flex items-center justify-between gap-1 flex-wrap">
+                                      <span className="font-bold text-[11px] uppercase tracking-wide">
+                                        {fl.jenis === "ANGGOTA" ? "Anggota Ganda" : fl.jenis === "TEKS" ? "Kemiripan Teks" : fl.jenis} ({(fl.nilai * 100).toFixed(0)}%)
+                                      </span>
+                                      <span
+                                        className={cn(
+                                          "px-2 py-0.5 rounded text-[10px] font-bold",
+                                          fl.keputusan === "BELUM"
+                                            ? "bg-amber-200/90 text-amber-900"
+                                            : fl.keputusan === "WAJAR"
+                                            ? "bg-emerald-200/90 text-emerald-900"
+                                            : fl.keputusan === "KLARIFIKASI"
+                                            ? "bg-blue-200/90 text-blue-900"
+                                            : "bg-red-200/90 text-red-900"
+                                        )}
+                                      >
+                                        {fl.keputusan === "BELUM" ? "Perlu Ditinjau" : fl.keputusan}
+                                      </span>
+                                    </div>
+
+                                    {fl.catatan && (
+                                      <p className="text-[11px] leading-relaxed line-clamp-3">
+                                        {fl.catatan}
+                                      </p>
+                                    )}
+
+                                    {isInternal && (
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => {
+                                          setSelectedFlagToReview(fl);
+                                          setIsFlagModalOpen(true);
+                                        }}
+                                        className="w-full text-xs h-7 font-semibold mt-1 bg-white hover:bg-zinc-50 border-zinc-300"
+                                      >
+                                        {fl.keputusan === "BELUM" ? "Tinjau Flag Ini" : "Ubah Keputusan"}
+                                      </Button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : prop.flags.length > 0 ? (
+                              <div className="space-y-1.5">
+                                {prop.flags.map((fl, fIdx) => (
+                                  <div
+                                    key={fIdx}
+                                    className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-1.5"
+                                  >
+                                    <ShieldAlert className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                                    <span>{fl.deskripsi}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center gap-1.5 font-semibold">
+                                <ShieldCheck className="w-4 h-4 text-[#1F6F43]" />
+                                <span>Bersih (Tanpa Flag)</span>
+                              </div>
+                            )}
+                          </td>
+                        );
+                      })}
                     </tr>
 
                     {/* BARIS 8: TINDAKAN KEPALA DESA / TPK */}
@@ -859,6 +985,13 @@ export default function BandingkanProposalPage() {
               </div>
             </div>
           )}
+          {/* Modal Tinjau Flag Integritas (Mencegah Blocker 409 pada Penetapan Pemenang) */}
+          <TinjauFlagModal
+            isOpen={isFlagModalOpen}
+            onClose={() => setIsFlagModalOpen(false)}
+            flag={selectedFlagToReview}
+            onSuccess={handleFlagReviewed}
+          />
         </div>
       </main>
 
