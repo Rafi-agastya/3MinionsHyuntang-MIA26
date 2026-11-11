@@ -3,6 +3,17 @@ import { StatusProyek } from "@prisma/client";
 
 async function main() {
   console.log("Mereset status proyek seed_proyek_001 ke TENDER_DIBUKA...");
+  
+  // 1. Bersihkan keputusan penetapan pemenang lama jika ada
+  await prisma.keputusan.deleteMany({
+    where: {
+      proposal: {
+        proyekId: "seed_proyek_001",
+      },
+    },
+  });
+
+  // 2. Update status proyek ke TENDER_DIBUKA dan perpanjang tenggat 14 hari
   const proyek = await prisma.proyek.update({
     where: { id: "seed_proyek_001" },
     data: {
@@ -21,4 +32,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-

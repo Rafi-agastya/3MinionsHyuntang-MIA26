@@ -52,12 +52,14 @@ export default async function HomePage() {
       });
 
       projectsList = sorted.slice(0, 3).map((item) => {
+        const isSayembara = item.id === "seed_proyek_001";
+        const status = isSayembara ? "TENDER_DIBUKA" : item.status;
         let statusLabel = "Tender Dibuka";
-        if (item.status === "PENGERJAAN") statusLabel = "Dalam Pengerjaan";
-        else if (item.status === "SELESAI") statusLabel = "Selesai & Diaudit";
-        else if (item.status === "MASA_SANGGAH") statusLabel = "Masa Sanggah";
-        else if (item.status === "PEMATANGAN") statusLabel = "Tahap Pematangan";
-        else if (item.status === "SELEKSI") statusLabel = "Tahap Seleksi";
+        if (status === "PENGERJAAN") statusLabel = "Dalam Pengerjaan";
+        else if (status === "SELESAI") statusLabel = "Selesai & Diaudit";
+        else if (status === "MASA_SANGGAH") statusLabel = "Masa Sanggah";
+        else if (status === "PEMATANGAN") statusLabel = "Tahap Pematangan";
+        else if (status === "SELEKSI") statusLabel = "Tahap Seleksi";
 
         return {
           id: item.id,
@@ -65,8 +67,8 @@ export default async function HomePage() {
           deskripsi: item.deskripsi,
           lokasi: item.lokasi,
           pagu: item.pagu,
-          status: (["TENDER_DIBUKA", "PENGERJAAN", "SELESAI", "PEMATANGAN", "MASA_SANGGAH", "SELEKSI"].includes(item.status)
-            ? item.status
+          status: (["TENDER_DIBUKA", "PENGERJAAN", "SELESAI", "PEMATANGAN", "MASA_SANGGAH", "SELEKSI"].includes(status)
+            ? status
             : "TENDER_DIBUKA") as ProjectPreview["status"],
           statusLabel,
           jalur: (item.jalur ?? "SAYEMBARA") as "SAYEMBARA" | "VENDOR",
@@ -76,7 +78,7 @@ export default async function HomePage() {
           serapanLokal: item.syaratLokalMin,
           tenggatHari: 14,
           progresPersen:
-            item.status === "SELESAI" ? 100 : item.status === "PENGERJAAN" ? 50 : undefined,
+            status === "SELESAI" ? 100 : status === "PENGERJAAN" ? 50 : undefined,
         };
       });
     }

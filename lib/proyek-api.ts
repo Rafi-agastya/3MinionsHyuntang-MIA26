@@ -88,7 +88,17 @@ async function fetchApi<T>(path: string): Promise<T> {
 }
 
 export async function getProyekList(): Promise<ProyekListItem[]> {
-  return fetchApi<ProyekListItem[]>("/api/proyek");
+  const list = await fetchApi<ProyekListItem[]>("/api/proyek");
+  return list.map((item) => {
+    // Proyek seed_proyek_001 adalah etalase utama Sayembara Terbuka untuk demo
+    if (item.id === "seed_proyek_001") {
+      return {
+        ...item,
+        status: "TENDER_DIBUKA",
+      };
+    }
+    return item;
+  });
 }
 
 function formatTanggal(value: string | null) {
@@ -106,7 +116,6 @@ function normalizeStatus(status: string): StatusProyek {
     DIBATALKAN: "BATAL",
     PEMILIHAN_VENDOR: "SELEKSI",
     VERIFIKASI_KOMPETENSI: "SELEKSI",
-    MASA_SANGGAH: "SELEKSI",
   };
   return (map[status] ?? status) as StatusProyek;
 }
@@ -171,6 +180,10 @@ export async function getProyekDetail(id: string): Promise<ProjectDetailData> {
     fetchApi<ApiProposal[]>(`/api/proyek/${encodedId}/proposal`),
   ]);
 
+  const isSayembaraDemo = proyek.id === "seed_proyek_001" || id === "seed_proyek_001";
+  const status = isSayembaraDemo ? ("TENDER_DIBUKA" as StatusProyek) : normalizeStatus(proyek.status);
+  const tenggatHari = isSayembaraDemo ? Math.max(7, hitungSisaHari(proyek.tenggatProposal)) : hitungSisaHari(proyek.tenggatProposal);
+
   return {
     id: proyek.id,
     desaId: proyek.desaId,
@@ -181,10 +194,10 @@ export async function getProyekDetail(id: string): Promise<ProjectDetailData> {
     kelas: proyek.kelas as ProjectDetailData["kelas"],
     jalur: (proyek.jalur ?? "SAYEMBARA") as ProjectDetailData["jalur"],
     alasanJalur: proyek.alasanJalur ?? "Alasan pemilihan jalur belum dipublikasikan.",
-    status: normalizeStatus(proyek.status),
+    status,
     tanggalPublikasi: formatTanggal(proyek.createdAt),
     tenggatProposal: formatTanggal(proyek.tenggatProposal),
-    tenggatHari: hitungSisaHari(proyek.tenggatProposal),
+    tenggatHari,
     syaratLokalMin: proyek.syaratLokalMin,
     durasiMin: proyek.durasiMin,
     durasiMax: proyek.durasiMax,

@@ -8,6 +8,7 @@ import { ProjectSummaryCards } from "@/components/proyek/project-summary-cards";
 import { ProjectTabs } from "@/components/proyek/project-tabs";
 import { getProyekDetail } from "@/lib/proyek-api";
 import { getMockProjectById } from "@/components/proyek/mock-detail-data";
+import type { StatusProyek } from "@/components/proyek/types";
 
 interface ProyekDetailPageProps {
   params: Promise<{ id: string }>;
@@ -47,6 +48,15 @@ export default async function ProyekDetailPage({
 
   if (!proyek) {
     proyek = getMockProjectById(id);
+  }
+
+  // Khusus proyek utama sayembara terbuka (seed_proyek_001), pastikan selalu dalam tahap TENDER_DIBUKA
+  if (id === "seed_proyek_001" || id === "proj-drainase-rt3") {
+    proyek = {
+      ...proyek,
+      status: "TENDER_DIBUKA" as StatusProyek,
+      tenggatHari: Math.max(7, proyek.tenggatHari ?? 14),
+    };
   }
 
   return (

@@ -83,6 +83,14 @@ export default async function ProyekIndexPage() {
     proyekList = fallbackProyekList;
   }
 
+  // Pastikan seed_proyek_001 selalu berstatus TENDER_DIBUKA untuk demo sayembara terbuka
+  proyekList = proyekList.map((item) => {
+    if (item.id === "seed_proyek_001") {
+      return { ...item, status: "TENDER_DIBUKA" };
+    }
+    return item;
+  });
+
   // Prioritaskan Saluran Drainase (Sayembara Terbuka) di posisi nomor 1
   proyekList = [...proyekList].sort((a, b) => {
     if (a.id === "seed_proyek_001") return -1;
