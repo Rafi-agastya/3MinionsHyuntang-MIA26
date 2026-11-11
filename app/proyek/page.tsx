@@ -8,11 +8,9 @@ import {
   HardHat,
   Sparkles,
   FileText,
-  ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { ProyekDirectoryList } from "@/components/proyek/proyek-directory-list";
 import { getProyekList, type ProyekListItem } from "@/lib/proyek-api";
 
@@ -79,27 +77,18 @@ export default async function ProyekIndexPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
       <Navbar />
 
-      <SlideIndicator
-        slides={[
-          { id: "proyek-frame-1", label: "Sayembara PKTD" },
-          { id: "proyek-frame-2", label: "Daftar Proyek" },
-          { id: "proyek-frame-footer", label: "Transparansi" },
-        ]}
-      />
-
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
+      <main className="flex-1 pt-16">
         {/* ========================================================================= */}
-        {/* FRAME 1: BANNER SOROTAN SAYEMBARA (12-COL CSS GRID WITH EVEN OVERLAY)    */}
+        {/* BAGIAN 1: BANNER SOROTAN SAYEMBARA (12-COL CSS GRID)                      */}
         {/* ========================================================================= */}
         <section
-          id="proyek-frame-1"
           aria-label="Bursa Sayembara Proyek"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
+          <div className="max-w-7xl mx-auto w-full space-y-6">
         <div className="relative rounded-3xl overflow-hidden border border-emerald-800/20 shadow-md">
           {/* Background Image */}
           <div className="absolute inset-0">
@@ -206,40 +195,23 @@ export default async function ProyekIndexPage() {
             </div>
           </div>
         </div>
-
-          {/* Tombol Lanjut ke Bawah Helper */}
-          <div className="pt-2 flex justify-center">
-            <a
-              href="#proyek-frame-2"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
-            >
-              <span>Lihat Daftar Proyek &amp; Sayembara Terbuka</span>
-              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-            </a>
-          </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
         {/* ========================================================================= */}
-        {/* FRAME 2: DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                    */}
+        {/* BAGIAN 2: DIRECTORY LIST WITH TABS, CARDS & EMPTY STATE                   */}
         {/* ========================================================================= */}
         <section
-          id="proyek-frame-2"
           aria-label="Daftar Proyek Desa"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <ProyekDirectoryList initialProyekList={proyekList} />
           </div>
         </section>
-
-        {/* ========================================================================= */}
-        {/* FRAME 3: FOOTER                                                           */}
-        {/* ========================================================================= */}
-        <div id="proyek-frame-footer" aria-label="Informasi Footer" className="snap-end">
-          <Footer />
-        </div>
       </main>
+
+      <Footer className="mt-auto" />
     </div>
   );
 }

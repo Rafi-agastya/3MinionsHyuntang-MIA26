@@ -16,22 +16,14 @@ import {
   ChevronRight,
   Home,
   UserCheck,
-  ArrowDown,
   AlertCircle,
   HelpCircle,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api-client";
-
-const lacakSlides = [
-  { id: "lacak-frame-1", label: "Pencarian Tiket" },
-  { id: "lacak-frame-2", label: "Status & Timeline" },
-  { id: "lacak-frame-footer", label: "Transparansi" },
-];
 
 interface TimelineStep {
   title: string;
@@ -437,9 +429,9 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-1"
         aria-label="Pencarian Tiket Aduan"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
       >
-        <div className="max-w-4xl mx-auto w-full space-y-5 my-auto">
+        <div className="max-w-4xl mx-auto w-full space-y-5">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Breadcrumb"
@@ -533,17 +525,6 @@ function LacakTiketContent() {
             ))}
           </div>
         </div>
-
-        {/* Helper Jump Action Button */}
-        <div className="pt-2 flex justify-start">
-          <a
-            href="#lacak-frame-2"
-            className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
-          >
-            <span>Lihat Status &amp; Timeline Penanganan</span>
-            <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-          </a>
-        </div>
       </div>
     </section>
 
@@ -551,7 +532,7 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-2"
         aria-label="Status dan Timeline Penanganan Tiket"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
       >
         <div className="max-w-4xl mx-auto w-full flex flex-col justify-start space-y-6">
         {searchError ? (
@@ -776,39 +757,20 @@ function LacakTiketContent() {
           </div>
         ) : null}
 
-        {/* Back to Top Search */}
-        <div className="pt-2 flex justify-start">
-          <a
-            href="#lacak-frame-1"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
-          >
-            <span>&uarr; Cari Tiket Lainnya</span>
-          </a>
         </div>
-      </div>
-    </section>
-
-      {/* FRAME 3: Footer Snap End */}
-      <div
-        id="lacak-frame-footer"
-        aria-label="Informasi Footer"
-        className="snap-end w-full"
-      >
-        <Footer />
-      </div>
+      </section>
     </>
   );
 }
 
 export default function LacakTiketPage() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
       <Navbar />
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
-        <SlideIndicator slides={lacakSlides} />
+      <main className="flex-1 pt-16">
         <React.Suspense
           fallback={
-            <div className="min-h-[calc(100dvh-64px)] flex items-center justify-center p-12 text-center text-xs text-zinc-500">
+            <div className="flex items-center justify-center p-12 text-center text-xs text-zinc-500">
               Memuat data pelacakan tiket...
             </div>
           }
@@ -816,6 +778,7 @@ export default function LacakTiketPage() {
           <LacakTiketContent />
         </React.Suspense>
       </main>
-    </>
+      <Footer className="mt-auto" />
+    </div>
   );
 }

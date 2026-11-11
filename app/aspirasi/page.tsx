@@ -22,7 +22,6 @@ import {
   Sparkles,
   HelpCircle,
   ChevronDown,
-  ArrowDown,
   AlertCircle,
   LogIn,
   UserPlus,
@@ -30,17 +29,10 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCurrentRole } from "@/lib/use-current-role";
 import { apiClient } from "@/lib/api-client";
-
-const aspirasiSlides = [
-  { id: "aspirasi-frame-1", label: "Kirim Aspirasi" },
-  { id: "aspirasi-frame-2", label: "Daftar Aspirasi" },
-  { id: "aspirasi-frame-footer", label: "Transparansi" },
-];
 
 interface AspirasiItem {
   id: string;
@@ -469,13 +461,10 @@ export default function AspirasiPortalPage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
       <Navbar />
 
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
-        {/* Desktop Dot Pagination */}
-        <SlideIndicator slides={aspirasiSlides} />
-
+      <main className="flex-1 pt-16">
         {/* Toast Notification */}
         {toastMessage && (
           <div className="fixed bottom-6 right-6 z-50 bg-zinc-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
@@ -488,9 +477,9 @@ export default function AspirasiPortalPage() {
         <section
           id="aspirasi-frame-1"
           aria-label="Kirim Aspirasi dan Aduan Warga"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-4 my-auto">
+          <div className="max-w-7xl mx-auto w-full space-y-4">
           {/* Header Banner */}
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-5 sm:p-7 shadow-sm space-y-3">
             <div className="flex flex-wrap items-center gap-2">
@@ -919,17 +908,6 @@ export default function AspirasiPortalPage() {
               </div>
             </aside>
           </div>
-
-          {/* Helper Jump Action Button */}
-          <div className="pt-2 flex justify-start">
-            <a
-              href="#aspirasi-frame-2"
-              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
-            >
-              <span>Lihat Daftar Aspirasi Warga Lainnya</span>
-              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-            </a>
-          </div>
         </div>
       </section>
 
@@ -937,7 +915,7 @@ export default function AspirasiPortalPage() {
         <section
           id="aspirasi-frame-2"
           aria-label="Daftar Aspirasi Publik Terkini"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 pb-3">
@@ -1130,27 +1108,11 @@ export default function AspirasiPortalPage() {
             )}
           </div>
 
-          {/* Jump to Top Button */}
-          <div className="pt-2 flex justify-start">
-            <a
-              href="#aspirasi-frame-1"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-xs font-semibold text-zinc-700 hover:text-[#1F6F43] transition-colors min-h-[44px]"
-            >
-              <span>&uarr; Kembali ke Formulir Kirim Aspirasi</span>
-            </a>
-          </div>
         </div>
       </section>
+    </main>
 
-        {/* FRAME 3: Footer Snap End */}
-        <div
-          id="aspirasi-frame-footer"
-          aria-label="Informasi Footer"
-          className="snap-end w-full"
-        >
-          <Footer />
-        </div>
-      </main>
+    <Footer className="mt-auto" />
 
       {/* Auth Restriction Modal for PUBLIK Role (PRD Bagian 8) */}
       {showAuthModal && (
@@ -1210,6 +1172,6 @@ export default function AspirasiPortalPage() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

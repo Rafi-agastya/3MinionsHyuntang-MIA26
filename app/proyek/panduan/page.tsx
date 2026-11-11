@@ -19,11 +19,9 @@ import {
   Building2,
   MapPin,
   Clock,
-  ArrowDown,
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { SlideIndicator } from "@/components/slide-indicator";
 
 export const metadata: Metadata = {
   title: "Panduan Pengajuan Proposal Sayembara Swakelola | AKAR Desa Karang Sari",
@@ -33,28 +31,18 @@ export const metadata: Metadata = {
 
 export default function PanduanProposalPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
       <Navbar />
 
-      <SlideIndicator
-        slides={[
-          { id: "panduan-frame-1", label: "Syarat Pokmas" },
-          { id: "panduan-frame-2", label: "Micro-RAB & AI" },
-          { id: "panduan-frame-3", label: "Alur 5 Tahap" },
-          { id: "panduan-frame-footer", label: "Transparansi" },
-        ]}
-      />
-
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
+      <main className="flex-1 pt-16">
         {/* ========================================================================= */}
-        {/* FRAME 1: HEADER & 4 SYARAT POKOK KELOMPOK + SIDEBAR BANTUAN BALAI WARGA   */}
+        {/* BAGIAN 1: HEADER & 4 SYARAT POKOK KELOMPOK + SIDEBAR BANTUAN BALAI WARGA  */}
         {/* ========================================================================= */}
         <section
-          id="panduan-frame-1"
           aria-label="Syarat Pokok Kelompok Pengusul"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-8 my-auto">
+          <div className="max-w-7xl mx-auto w-full space-y-8">
           {/* Breadcrumb & Header */}
           <div className="space-y-4 border-b border-zinc-200/80 pb-6">
             {/* Breadcrumb Navigation */}
@@ -282,27 +270,16 @@ export default function PanduanProposalPage() {
           </div>
         </aside>
       </div>
-
-      {/* Tombol Lanjut ke Bawah Helper */}
-      <div className="pt-2 flex justify-center">
-        <a
-          href="#panduan-frame-2"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
-        >
-          <span>Lanjut ke Format Micro-RAB &amp; Bobot AI</span>
-          <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-        </a>
-      </div>
     </div>
   </section>
 
     {/* ========================================================================= */}
-    {/* FRAME 2: FORMAT MICRO-RAB & BOBOT AI SCORING (40/30/20/10)               */}
+    {/* SECTION 2: FORMAT MICRO-RAB & BOBOT AI SCORING (40/30/20/10)              */}
     {/* ========================================================================= */}
     <section
       id="panduan-frame-2"
       aria-label="Format Micro-RAB dan Bobot AI"
-      className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+      className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
     >
       <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-10">
       {/* SECTION 2: FORMAT & RINCIAN MICRO-RAB */}
@@ -478,27 +455,16 @@ export default function PanduanProposalPage() {
             </div>
           </div>
         </section>
-
-        {/* Tombol Lanjut ke Bawah Helper */}
-        <div className="pt-2 flex justify-center">
-          <a
-            href="#panduan-frame-3"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
-          >
-            <span>Lanjut ke Alur 5 Tahap &amp; Pencairan</span>
-            <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-          </a>
-        </div>
       </div>
     </section>
 
       {/* ========================================================================= */}
-      {/* FRAME 3: ALUR 5 TAHAP & CALL TO ACTION BANNER                             */}
+      {/* SECTION 3: ALUR 5 TAHAP & CALL TO ACTION BANNER                           */}
       {/* ========================================================================= */}
       <section
         id="panduan-frame-3"
         aria-label="Alur Prosedur dan Pengajuan"
-        className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
       >
         <div className="max-w-7xl mx-auto w-full flex flex-col space-y-8">
         {/* SECTION 4: ALUR 5 TAHAP PENGAJUAN HINGGA PENCAIRAN */}
@@ -641,14 +607,8 @@ export default function PanduanProposalPage() {
         </div>
       </div>
     </section>
-
-      {/* ========================================================================= */}
-      {/* FRAME FOOTER                                                              */}
-      {/* ========================================================================= */}
-      <div id="panduan-frame-footer" aria-label="Informasi Footer" className="snap-end">
-        <Footer />
-      </div>
-    </main>
-  </div>
+  </main>
+  <Footer className="mt-auto" />
+</div>
 );
 }

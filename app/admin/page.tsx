@@ -12,7 +12,6 @@ import {
   PlusCircle,
   Sparkles,
   CheckCircle2,
-  ArrowDown,
   Building2,
   FileText,
   ArrowRight,
@@ -25,17 +24,10 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCurrentRole, UserRole, ROLE_DETAILS } from "@/lib/use-current-role";
 import { formatRupiah } from "@/lib/format";
-
-const ADMIN_SLIDES = [
-  { id: "admin-frame-1", label: "Ringkasan" },
-  { id: "admin-frame-2", label: "Panel Kerja" },
-  { id: "admin-frame-footer", label: "Transparansi" },
-];
 
 interface AdminProject {
   id: string;
@@ -448,22 +440,18 @@ export default function AdminPage() {
   // AUTHENTICATED ADMIN / PERANGKAT DESA VIEW
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans antialiased selection:bg-[#1F6F43] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans antialiased selection:bg-[#1F6F43] selection:text-white">
       <Navbar />
 
-      {/* Floating frame indicator */}
-      <SlideIndicator slides={ADMIN_SLIDES} />
-
-      {/* Per-frame scroll-snap container */}
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
+      <main className="flex-1 pt-16">
         {/* ========================================================================= */}
         {/* FRAME 1: TOP DASHBOARD HEADER & 4 SUMMARY METRICS                          */}
         {/* ========================================================================= */}
         <section
           id="admin-frame-1"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-6 my-auto">
+          <div className="max-w-7xl mx-auto w-full space-y-6">
             {/* Header Banner in Emerald Forest */}
             <div className="rounded-3xl bg-gradient-to-br from-[#1F6F43] via-[#1a5f39] to-[#14492c] text-white p-6 sm:p-8 lg:p-10 shadow-md relative overflow-hidden">
               {/* Subtle Logo Watermark */}
@@ -603,21 +591,6 @@ export default function AdminPage() {
                 </div>
               </div>
             </div>
-
-            {/* Jump button to next frame */}
-            <div className="text-center pt-2">
-              <a
-                href="#admin-frame-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById("admin-frame-2")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-zinc-200 text-xs sm:text-sm font-semibold text-zinc-700 hover:text-[#1F6F43] hover:border-[#1F6F43]/40 shadow-2xs transition-all min-h-[44px]"
-              >
-                <span>Buka Panel Manajemen Terpadu</span>
-                <ArrowDown className="w-4 h-4 text-[#1F6F43]" />
-              </a>
-            </div>
           </div>
         </section>
 
@@ -626,7 +599,7 @@ export default function AdminPage() {
         {/* ========================================================================= */}
         <section
           id="admin-frame-2"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 border-b border-zinc-200/80 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6">
             {/* Tab Navigation Controls */}
@@ -1211,14 +1184,9 @@ export default function AdminPage() {
             )}
           </div>
         </section>
-
-        {/* ========================================================================= */}
-        {/* FRAME 3: FOOTER                                                           */}
-        {/* ========================================================================= */}
-        <div id="admin-frame-footer" className="snap-end">
-          <Footer />
-        </div>
       </main>
+
+      <Footer className="mt-auto" />
 
       {/* ========================================================================= */}
       {/* MODAL 1: BUAT PAKET PROYEK BARU                                           */}

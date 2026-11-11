@@ -24,7 +24,6 @@ import {
   Copy,
   ShieldCheck,
   HardHat,
-  ArrowDown,
   LogIn,
   AlertCircle,
   Clock,
@@ -32,7 +31,6 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, StatusProyek } from "@/components/proyek/types";
@@ -42,12 +40,6 @@ import { apiClient } from "@/lib/api-client";
 import { FormBuatPokmasModal } from "@/components/pokmas/form-buat-pokmas-modal";
 import { TandaTerimaModal } from "@/components/proyek/tanda-terima-modal";
 import { hitungSkor } from "@/lib/scoring";
-
-const ajukanSlides = [
-  { id: "ajukan-frame-1", label: "Identitas & PKTD" },
-  { id: "ajukan-frame-2", label: "Micro-RAB & Berkas" },
-  { id: "ajukan-frame-footer", label: "Transparansi" },
-];
 
 interface RabRow {
   id: string;
@@ -504,23 +496,16 @@ export default function FormAjukanProposalPage() {
 
   if (isSuccess) {
     return (
-      <>
+      <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
         <Navbar />
 
-        <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
-          <SlideIndicator
-            slides={[
-              { id: "ajukan-frame-1", label: "Proposal Terkirim" },
-              { id: "ajukan-frame-footer", label: "Transparansi" },
-            ]}
-          />
-
+        <main className="flex-1 pt-16">
           <section
             id="ajukan-frame-1"
             aria-label="Konfirmasi Pengajuan Proposal"
-            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+            className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
           >
-            <div className="max-w-4xl mx-auto w-full my-auto">
+            <div className="max-w-4xl mx-auto w-full">
             {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumb"
@@ -672,41 +657,33 @@ export default function FormAjukanProposalPage() {
             </div>
           </div>
         </section>
+      </main>
 
-          <div
-            id="ajukan-frame-footer"
-            aria-label="Informasi Footer"
-            className="snap-end w-full"
-          >
-            <Footer />
-          </div>
-        </main>
-      </>
-    );
-  }
+      <Footer className="mt-auto" />
+    </div>
+  );
+}
 
-  return (
-    <>
-      <Navbar />
+return (
+  <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
+    <Navbar />
 
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7] text-zinc-900 antialiased selection:bg-[#1F6F43] selection:text-white font-sans relative">
-        <SlideIndicator slides={ajukanSlides} />
+    <main className="flex-1 pt-16">
+      {/* Modal Buat Pokmas Baru */}
+      <FormBuatPokmasModal
+        isOpen={isModalPokmasOpen}
+        onClose={() => setIsModalPokmasOpen(false)}
+        onSuccess={handlePokmasCreated}
+      />
 
-        {/* Modal Buat Pokmas Baru */}
-        <FormBuatPokmasModal
-          isOpen={isModalPokmasOpen}
-          onClose={() => setIsModalPokmasOpen(false)}
-          onSuccess={handlePokmasCreated}
-        />
-
-        <form onSubmit={handleSubmit} className="w-full">
-          {/* FRAME 1: Identitas & Syarat PKTD */}
-          <section
-            id="ajukan-frame-1"
-            aria-label="Identitas Kelompok dan Serapan Tenaga Kerja PKTD"
-            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
-          >
-            <div className="max-w-7xl mx-auto w-full space-y-4 my-auto">
+      <form onSubmit={handleSubmit} className="w-full">
+        {/* FRAME 1: Identitas & Syarat PKTD */}
+        <section
+          id="ajukan-frame-1"
+          aria-label="Identitas Kelompok dan Serapan Tenaga Kerja PKTD"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
+        >
+          <div className="max-w-7xl mx-auto w-full space-y-4">
             {/* Breadcrumb Navigation */}
             <nav
               aria-label="Breadcrumb"
@@ -1051,17 +1028,6 @@ export default function FormAjukanProposalPage() {
                     </div>
                   </div>
                 </div>
-
-                {/* Helper Jump Action Button */}
-                <div className="pt-2 flex justify-start">
-                  <a
-                    href="#ajukan-frame-2"
-                    className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-white border border-zinc-200/90 shadow-sm text-sm font-semibold text-[#1F6F43] hover:bg-emerald-50/50 hover:border-[#1F6F43]/30 transition-all min-h-[44px]"
-                  >
-                    <span>Lanjut ke Pengisian Micro-RAB &amp; Berkas</span>
-                    <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-                  </a>
-                </div>
               </div>
 
               {/* Kolom Kanan: 4 cols */}
@@ -1122,7 +1088,7 @@ export default function FormAjukanProposalPage() {
           <section
             id="ajukan-frame-2"
             aria-label="Rincian Anggaran Micro-RAB dan Berkas Pendukung"
-            className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+            className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
           >
             <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
@@ -1648,17 +1614,10 @@ export default function FormAjukanProposalPage() {
             </div>
             </div>
           </section>
-
-          {/* FRAME 3: Footer Snap End */}
-          <div
-            id="ajukan-frame-footer"
-            aria-label="Informasi Footer"
-            className="snap-end w-full"
-          >
-            <Footer />
-          </div>
         </form>
       </main>
-    </>
+
+      <Footer className="mt-auto" />
+    </div>
   );
 }

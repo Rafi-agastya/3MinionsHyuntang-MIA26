@@ -8,13 +8,11 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   Lock,
-  ArrowDown,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { KasActionButtons } from "@/components/kas/kas-action-buttons";
 import { KasMutasiTable, type KasTransaction } from "@/components/kas/kas-mutasi-table";
 import { Navbar } from "@/components/navbar";
-import { SlideIndicator } from "@/components/slide-indicator";
 import { formatRupiah } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 import { hitungRingkasanKas } from "@/lib/kas-ringkasan";
@@ -211,27 +209,18 @@ export default async function KasPage() {
       ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-zinc-900 font-sans relative">
+    <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-zinc-900 font-sans">
       <Navbar />
 
-      <SlideIndicator
-        slides={[
-          { id: "kas-frame-1", label: "Ringkasan Kas" },
-          { id: "kas-frame-2", label: "Mutasi Kas" },
-          { id: "kas-frame-footer", label: "Transparansi" },
-        ]}
-      />
-
-      <main className="h-[calc(100dvh-64px)] mt-16 overflow-y-auto snap-y snap-proximity scroll-smooth bg-[#FAFAF7]">
+      <main className="flex-1 pt-16">
         {/* ========================================================================= */}
-        {/* FRAME 1: SPLIT HERO BANNER + INTEGRITY BADGE + BENTO SUMMARY CARDS        */}
+        {/* BAGIAN 1: SPLIT HERO BANNER + INTEGRITY BADGE + BENTO SUMMARY CARDS       */}
         {/* ========================================================================= */}
         <section
-          id="kas-frame-1"
           aria-label="Ringkasan Kas Desa"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col py-8 md:py-12 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
-          <div className="max-w-7xl mx-auto w-full space-y-5 my-auto">
+          <div className="max-w-7xl mx-auto w-full space-y-6">
         {/* ========================================================================= */}
         {/* PAGE HEADER: SPLIT HERO BANNER (12-COL CSS GRID)                          */}
         {/* ========================================================================= */}
@@ -428,26 +417,15 @@ export default async function KasPage() {
             </div>
           </div>
         </div>
-          {/* Tombol Lanjut ke Bawah Helper */}
-          <div className="pt-2 flex justify-center">
-            <a
-              href="#kas-frame-2"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-emerald-50 text-zinc-700 hover:text-[#1F6F43] border border-zinc-200/90 shadow-2xs text-xs sm:text-sm font-semibold transition-all hover:translate-y-0.5 min-h-[44px]"
-            >
-              <span>Lanjut ke Tabel Mutasi Kas</span>
-              <ArrowDown className="w-4 h-4 text-[#1F6F43] animate-bounce" />
-            </a>
-          </div>
-        </div>
-      </section>
+      </div>
+    </section>
 
         {/* ========================================================================= */}
-        {/* FRAME 2: MUTASI TRANSAKSI TABLE SECTION (SCROLLABLE & AMPLE READING ROOM) */}
+        {/* BAGIAN 2: MUTASI TRANSAKSI TABLE SECTION                                  */}
         {/* ========================================================================= */}
         <section
-          id="kas-frame-2"
           aria-label="Tabel Mutasi Kas"
-          className="min-h-[calc(100dvh-64px)] snap-start flex flex-col pt-8 md:pt-12 pb-16 px-4 sm:px-6 lg:px-8 scroll-mt-4"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
         >
           <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -469,14 +447,9 @@ export default async function KasPage() {
             <KasMutasiTable transaksiList={transaksiList} />
           </div>
         </section>
-
-        {/* ========================================================================= */}
-        {/* FRAME 3: FOOTER                                                           */}
-        {/* ========================================================================= */}
-        <div id="kas-frame-footer" aria-label="Informasi Footer" className="snap-end">
-          <Footer />
-        </div>
       </main>
+
+      <Footer className="mt-auto" />
     </div>
   );
 }
