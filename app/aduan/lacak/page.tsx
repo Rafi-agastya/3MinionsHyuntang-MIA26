@@ -532,7 +532,7 @@ function LacakTiketContent() {
       <section
         id="lacak-frame-2"
         aria-label="Status dan Timeline Penanganan Tiket"
-        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
       >
         <div className="max-w-4xl mx-auto w-full flex flex-col justify-start space-y-6">
         {searchError ? (

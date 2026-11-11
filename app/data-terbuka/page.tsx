@@ -381,7 +381,7 @@ Dusun Sumberwening,15,12,80.0%,420 HOK,Rp 37.800.000`,
         <section
           id="data-frame-2"
           aria-label="Katalog Dataset Terbuka APBDes 2026"
-          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-6xl mx-auto w-full flex flex-col justify-start space-y-6">
           {/* SECTION 2: DAFTAR DATASET PUBLIK SIAP UNDUH */}

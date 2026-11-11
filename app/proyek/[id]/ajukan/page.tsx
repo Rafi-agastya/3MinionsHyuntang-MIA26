@@ -1092,7 +1092,7 @@ return (
           <section
             id="ajukan-frame-2"
             aria-label="Rincian Anggaran Micro-RAB dan Berkas Pendukung"
-            className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+            className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
           >
             <div className="max-w-7xl mx-auto w-full flex flex-col justify-start">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">

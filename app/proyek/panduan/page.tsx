@@ -308,7 +308,7 @@ export default function PanduanProposalPage() {
     <section
       id="panduan-frame-2"
       aria-label="Format Micro-RAB dan Bobot AI"
-      className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+      className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto w-full flex flex-col justify-start space-y-10">
       {/* SECTION 2: FORMAT & RINCIAN MICRO-RAB */}
@@ -493,7 +493,7 @@ export default function PanduanProposalPage() {
       <section
         id="panduan-frame-3"
         aria-label="Alur Prosedur dan Pengajuan"
-        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+        className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto w-full flex flex-col space-y-8">
         {/* SECTION 4: ALUR 5 TAHAP PENGAJUAN HINGGA PENCAIRAN */}

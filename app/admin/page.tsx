@@ -600,7 +600,7 @@ export default function AdminPage() {
         {/* ========================================================================= */}
         <section
           id="admin-frame-2"
-          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8 border-t border-zinc-200/80"
+          className="py-8 md:py-12 px-4 sm:px-6 lg:px-8"
         >
           <div className="max-w-7xl mx-auto w-full space-y-6">
             {/* Tab Navigation Controls */}
