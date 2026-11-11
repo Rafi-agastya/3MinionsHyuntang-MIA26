@@ -9,9 +9,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export function Footer() {
+export function Footer({ className = "" }: { className?: string } = {}) {
   return (
-    <footer className="w-full border-t border-zinc-200/80 bg-white text-zinc-900 font-sans snap-end">
+    <footer className={`w-full border-t border-zinc-200/80 bg-white text-zinc-900 font-sans snap-end ${className}`}>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-12 lg:px-8 space-y-8">
         {/* Main Grid: Responsive 1 col on mobile, 3 cols on tablet/desktop */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
@@ -153,11 +153,6 @@ export function Footer() {
               Sayembara
             </Link>
           </div>
-        </div>
-
-        {/* Teks Wajib PRD 36.5 */}
-        <div className="w-full text-center text-[11px] text-zinc-400 border-t border-zinc-100 pt-3">
-          Data pada tampilan ini adalah data contoh (fiktif) untuk keperluan lomba.
         </div>
       </div>
     </footer>
