@@ -9,6 +9,7 @@ import {
   HardHat,
   Users,
   ShieldCheck,
+  CheckCircle2,
   Ban,
   Wallet,
   FileSpreadsheet,
@@ -97,14 +98,14 @@ export default function PanduanProposalPage() {
           </div>
 
           {/* 2-COLUMN LAYOUT: 4 SYARAT POKOK (8 COLS) + SIDEBAR BALAI WARGA (4 COLS) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             {/* MAIN COLUMN (8 COLS): 4 SYARAT POKOK */}
-            <div className="lg:col-span-8 space-y-6">
+            <div className="lg:col-span-8 flex flex-col h-full space-y-6">
 
         {/* ========================================================================= */}
         {/* SECTION 1: 4 SYARAT POKOK KELOMPOK PENGUSUL                               */}
         {/* ========================================================================= */}
-        <section aria-labelledby="section-syarat" className="space-y-6">
+        <section aria-labelledby="section-syarat" className="flex flex-col h-full space-y-6 flex-1">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1F6F43]">
               <ShieldCheck className="w-4 h-4" />
@@ -118,57 +119,85 @@ export default function PanduanProposalPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 flex-1 grid-rows-2 h-full">
             {/* Syarat 1: Legalitas Kelompok */}
-            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#1F6F43] flex items-center justify-center font-bold">
-                <Users className="w-5 h-5" />
+            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 md:p-8 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#1F6F43] flex items-center justify-center font-bold shrink-0 mb-4">
+                  <Users className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-zinc-900 leading-snug">
+                  1. Legalitas &amp; Keanggotaan Warga
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-zinc-600">
+                  Kelompok pengusul wajib beranggotakan <strong>minimal 5 orang</strong> warga yang memiliki KTP aktif beralamat di Desa Karang Sari. Susunan kepengurusan (Ketua, Sekretaris, Bendahara, Tukang Utama) disahkan melalui Surat Pengantar dari Ketua RT/RW setempat.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-zinc-900">
-                1. Legalitas &amp; Keanggotaan Warga
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                Kelompok pengusul wajib beranggotakan <strong>minimal 5 orang</strong> warga yang memiliki KTP aktif beralamat di Desa Karang Sari. Susunan kepengurusan (Ketua, Sekretaris, Bendahara, Tukang Utama) disahkan melalui Surat Pengantar dari Ketua RT/RW setempat.
-              </p>
+
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center gap-2 text-xs font-semibold text-[#1F6F43]">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Surat Pengantar RT/RW Wajib Disertakan</span>
+              </div>
             </div>
 
             {/* Syarat 2: Komitmen Tenaga Kerja Lokal */}
-            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-[#8A5A2B] flex items-center justify-center font-bold">
-                <HardHat className="w-5 h-5" />
+            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 md:p-8 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#8A5A2B] flex items-center justify-center font-bold shrink-0 mb-4">
+                  <HardHat className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-zinc-900 leading-snug">
+                  2. Komitmen Tenaga Kerja Lokal (Min. 70%)
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-zinc-600">
+                  Wajib menyerap <strong>minimal 70% tenaga kerja warga desa setempat</strong> sesuai amanat Padat Karya Tunai Desa (PKTD Permendes 16/2025). Prioritas alokasi upah harian diberikan kepada keluarga prasejahtera dan buruh tani musiman.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-zinc-900">
-                2. Komitmen Tenaga Kerja Lokal (Min. 70%)
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                Wajib menyerap <strong>minimal 70% tenaga kerja warga desa setempat</strong> sesuai amanat Padat Karya Tunai Desa (PKTD Permendes 16/2025). Prioritas alokasi upah harian diberikan kepada keluarga prasejahtera dan buruh tani musiman.
-              </p>
+
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center gap-2 text-xs font-semibold text-[#8A5A2B]">
+                <HardHat className="w-4 h-4 shrink-0 text-[#8A5A2B]" />
+                <span>Prioritas Padat Karya Tunai Desa (PKTD)</span>
+              </div>
             </div>
 
             {/* Syarat 3: Larangan Subkontrak Pihak Ketiga */}
-            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:shadow-xs hover:border-red-400/50 transition-all duration-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
-                <Ban className="w-5 h-5" />
+            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 md:p-8 shadow-2xs hover:shadow-xs hover:border-red-400/50 transition-all duration-200 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold shrink-0 mb-4">
+                  <Ban className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-zinc-900 leading-snug">
+                  3. Larangan Subkontrak Pihak Ketiga
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-zinc-600">
+                  Seluruh tahapan pekerjaan <strong>wajib dikerjakan langsung secara swakelola</strong> oleh kelompok pengusul. Dilarang keras mengalihkan, mensubkontrakkan, atau memperjualbelikan paket pekerjaan kepada kontraktor atau badan usaha luar desa.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-zinc-900">
-                3. Larangan Subkontrak Pihak Ketiga
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                Seluruh tahapan pekerjaan <strong>wajib dikerjakan langsung secara swakelola</strong> oleh kelompok pengusul. Dilarang keras mengalihkan, mensubkontrakkan, atau memperjualbelikan paket pekerjaan kepada kontraktor atau badan usaha luar desa.
-              </p>
+
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center gap-2 text-xs font-semibold text-red-600">
+                <Ban className="w-4 h-4 shrink-0 text-red-600" />
+                <span>100% Pengerjaan Mandiri Bebas Calo</span>
+              </div>
             </div>
 
             {/* Syarat 4: Transparansi Rekening Bank */}
-            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#1F6F43] flex items-center justify-center font-bold">
-                <Wallet className="w-5 h-5" />
+            <div className="group rounded-2xl border border-zinc-200/80 bg-white p-6 md:p-8 shadow-2xs hover:shadow-xs hover:border-[#1F6F43]/40 transition-all duration-200 flex flex-col justify-between h-full">
+              <div className="space-y-3">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-[#1F6F43] flex items-center justify-center font-bold shrink-0 mb-4">
+                  <Wallet className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold text-zinc-900 leading-snug">
+                  4. Rekening Operasional Kelompok Resmi
+                </h3>
+                <p className="text-sm md:text-base leading-relaxed text-zinc-600">
+                  Memiliki rekening bank resmi atas nama kelompok (bukan rekening pribadi) yang dibuka di bank mitra operasional kas desa untuk mempermudah audit aliran pencairan bertahap dan pencatatan kas publik.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-zinc-900">
-                4. Rekening Operasional Kelompok Resmi
-              </h3>
-              <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-                Memiliki rekening bank resmi atas nama kelompok (bukan rekening pribadi) yang dibuka di bank mitra operasional kas desa untuk mempermudah audit aliran pencairan bertahap dan pencatatan kas publik.
-              </p>
+
+              <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center gap-2 text-xs font-semibold text-[#1F6F43]">
+                <Wallet className="w-4 h-4 shrink-0 text-[#1F6F43]" />
+                <span>Rekening Bank Operasional Khusus Pokmas</span>
+              </div>
             </div>
           </div>
         </section>
