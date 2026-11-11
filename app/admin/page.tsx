@@ -30,6 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useCurrentRole, UserRole, ROLE_DETAILS } from "@/lib/use-current-role";
 import { formatRupiah } from "@/lib/format";
+import { apiClient } from "@/lib/api-client";
 
 const ADMIN_SLIDES = [
   { id: "admin-frame-1", label: "Ringkasan" },
@@ -42,7 +43,7 @@ interface AdminProject {
   judul: string;
   dusun: string;
   paguAnggaran: number;
-  status: "TENDER_DIBUKA" | "SELEKSI" | "PENGERJAAN" | "SELESAI";
+  status: "TENDER_DIBUKA" | "SELEKSI" | "MASA_SANGGAH" | "PENGERJAAN" | "SELESAI" | string;
   jumlahProposal: number;
   tenggatHari: number;
   pemenang?: string;
@@ -236,6 +237,105 @@ export default function AdminPage() {
   const [kasList, setKasList] = React.useState<AdminKasEntry[]>(INITIAL_KAS);
   const [tickets, setTickets] = React.useState<AdminTicket[]>(INITIAL_TICKETS);
   const [userList, setUserList] = React.useState<AdminUser[]>(INITIAL_USERS);
+
+interface ApiProjectItem {
+  id: string;
+  judul: string;
+  lokasi?: string;
+  pagu: number | string;
+  status: string;
+  proposal?: Array<{ id: string }>;
+}
+
+interface ApiTicketItem {
+  id: string;
+  nomor: string;
+  kategori: string;
+  isi?: string;
+  status: string;
+  anonim?: boolean;
+  tanggapan?: string;
+  dibuatPada?: string;
+  createdAt?: string;
+  proyek?: { lokasi?: string };
+  pelapor?: { nama?: string };
+}
+
+  // Load real database data from API endpoints
+  React.useEffect(() => {
+    async function loadRealData() {
+      try {
+        const [projRes, ticketRes] = await Promise.allSettled([
+          apiClient.get<ApiProjectItem[]>("/api/proyek"),
+          apiClient.get<ApiTicketItem[]>("/api/tiket"),
+        ]);
+
+        if (
+          projRes.status === "fulfilled" &&
+          projRes.value.data &&
+          Array.isArray(projRes.value.data) &&
+          projRes.value.data.length > 0
+        ) {
+          const apiProjects: AdminProject[] = projRes.value.data.map((p: ApiProjectItem) => ({
+            id: p.id,
+            judul: p.judul,
+            dusun: p.lokasi || "Desa Karang Sari",
+            paguAnggaran: Number(p.pagu) || 0,
+            status: p.status as AdminProject["status"],
+            jumlahProposal: p.proposal ? p.proposal.length : 0,
+            tenggatHari: 7,
+            pemenang: p.status === "PENGERJAAN" || p.status === "SELESAI" ? "Pokmas Pelaksana" : undefined,
+          }));
+
+          setProjects((prev) => {
+            const existingIds = new Set(apiProjects.map((p) => p.id));
+            const remaining = prev.filter((p) => !existingIds.has(p.id));
+            return [...apiProjects, ...remaining];
+          });
+        }
+
+        if (
+          ticketRes.status === "fulfilled" &&
+          ticketRes.value.data &&
+          Array.isArray(ticketRes.value.data) &&
+          ticketRes.value.data.length > 0
+        ) {
+          const apiTickets: AdminTicket[] = ticketRes.value.data.map((t: ApiTicketItem) => ({
+            id: t.id,
+            kode: t.nomor,
+            pengirim: t.anonim ? "Warga (Anonim)" : t.pelapor?.nama || "Warga",
+            dusun: t.proyek?.lokasi || "Desa Karang Sari",
+            kategori: t.kategori,
+            judul: t.isi ? t.isi.slice(0, 60) + (t.isi.length > 60 ? "..." : "") : "Aduan Masyarakat",
+            status:
+              t.status === "BARU"
+                ? "MENUNGGU"
+                : t.status === "PROSES"
+                ? "DIVERIFIKASI"
+                : t.status === "SELESAI"
+                ? "SELESAI"
+                : "TINDAK_LANJUT",
+            catatan: t.tanggapan || undefined,
+            tanggal: new Date(t.dibuatPada || t.createdAt || Date.now()).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            }),
+          }));
+
+          setTickets((prev) => {
+            const existingKodes = new Set(apiTickets.map((t) => t.kode));
+            const remaining = prev.filter((t) => !existingKodes.has(t.kode));
+            return [...apiTickets, ...remaining];
+          });
+        }
+      } catch (err) {
+        console.error("Gagal menyinkronkan data admin riil:", err);
+      }
+    }
+
+    loadRealData();
+  }, []);
 
   // Modals & form state
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = React.useState(false);
@@ -766,6 +866,11 @@ export default function AdminPage() {
                                   Tahap Seleksi
                                 </Badge>
                               )}
+                              {proj.status === "MASA_SANGGAH" && (
+                                <Badge variant="outline" className="text-[11px] bg-amber-100 text-amber-900 border-amber-300">
+                                  Masa Sanggah
+                                </Badge>
+                              )}
                               {proj.status === "PENGERJAAN" && (
                                 <Badge variant="earth" className="text-[11px]">
                                   Pengerjaan
@@ -774,6 +879,11 @@ export default function AdminPage() {
                               {proj.status === "SELESAI" && (
                                 <Badge variant="default" className="text-[11px]">
                                   Selesai
+                                </Badge>
+                              )}
+                              {!["TENDER_DIBUKA", "SELEKSI", "MASA_SANGGAH", "PENGERJAAN", "SELESAI"].includes(proj.status) && (
+                                <Badge variant="outline" className="text-[11px]">
+                                  {proj.status}
                                 </Badge>
                               )}
                               {proj.pemenang && (
@@ -816,6 +926,20 @@ export default function AdminPage() {
                                     <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
                                     <span>Pilih Pemenang</span>
                                   </Button>
+                                )}
+
+                                {/* Bandingkan Proposal & Tinjau Flag */}
+                                {proj.jumlahProposal > 0 && (
+                                  <Link href={`/proyek/${proj.id}/bandingkan`}>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="text-xs h-8 px-2.5 border-emerald-300 text-[#1F6F43] hover:bg-emerald-50"
+                                      title="Bandingkan Proposal & Tinjau Flag"
+                                    >
+                                      <span>Bandingkan</span>
+                                    </Button>
+                                  </Link>
                                 )}
 
                                 <Link href={`/proyek/${proj.id}`}>

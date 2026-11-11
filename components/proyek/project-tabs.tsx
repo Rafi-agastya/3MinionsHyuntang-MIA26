@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProjectDetailData, formatRupiah } from "./types";
+import { ModalSanggahan } from "./modal-sanggahan";
 
 interface ProjectTabsProps {
   proyek: ProjectDetailData;
@@ -43,6 +44,10 @@ export function ProjectTabs({
   >({
     [proyek.proposals[0]?.id || ""]: true, // Expand highest ranked by default
   });
+
+  // Modal Sanggahan State
+  const [isSanggahanModalOpen, setIsSanggahanModalOpen] = React.useState(false);
+  const [selectedProposalForSanggah, setSelectedProposalForSanggah] = React.useState<string | undefined>(undefined);
 
   const toggleExpandProposal = (id: string) => {
     setExpandedProposal((prev) => ({
@@ -153,6 +158,41 @@ export function ProjectTabs({
       {/* ========================================================================= */}
       {activeTab === "proposal" && (
         <div className="space-y-6">
+          {/* Masa Sanggah Banner (Jika status proyek adalah MASA_SANGGAH) */}
+          {proyek.status === "MASA_SANGGAH" && (
+            <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-5 sm:p-6 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-in fade-in duration-200">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-100 text-amber-800 border border-amber-200 shrink-0 mt-0.5">
+                  <ShieldAlert className="w-5 h-5 text-amber-800" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-bold text-amber-950 text-base">
+                      Tahap Masa Sanggah Resmi Terbuka (3 Hari Kalender)
+                    </span>
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900 border border-amber-300">
+                      Masa Sanggah Aktif
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-amber-900/80 mt-1 leading-relaxed max-w-2xl">
+                    Calon pelaksana sementara telah diumumkan. Pokmas peserta yang berkeberatan terhadap hasil evaluasi berhak menyampaikan sanggahan resmi disertai bukti/argumen sebelum keputusan definitif disahkan oleh Kepala Desa.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedProposalForSanggah(undefined);
+                  setIsSanggahanModalOpen(true);
+                }}
+                className="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 rounded-full bg-amber-800 hover:bg-amber-900 text-white text-xs sm:text-sm font-semibold transition-all shadow-xs shrink-0 w-full sm:w-auto"
+              >
+                <ShieldAlert className="w-4 h-4" />
+                <span>Ajukan Sanggahan Resmi</span>
+              </button>
+            </div>
+          )}
+
           {/* Header Banner Penjelasan Skor AI */}
           <div className="rounded-2xl border border-emerald-200/90 bg-gradient-to-r from-emerald-50/90 via-emerald-50/40 to-white p-5 sm:p-6 shadow-2xs space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -559,6 +599,22 @@ export function ProjectTabs({
                         </div>
                       </div>
                     )}
+                    {/* Sanggahan CTA if in MASA_SANGGAH */}
+                    {proyek.status === "MASA_SANGGAH" && (
+                      <div className="pt-2 flex items-center justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedProposalForSanggah(prop.id);
+                            setIsSanggahanModalOpen(true);
+                          }}
+                          className="text-xs font-semibold text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3.5 py-2 rounded-xl transition-colors inline-flex items-center gap-1.5 min-h-[38px]"
+                        >
+                          <ShieldAlert className="w-3.5 h-3.5 text-amber-700" />
+                          <span>Ajukan Sanggahan atas Proposal Ini</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -577,7 +633,7 @@ export function ProjectTabs({
             </div>
 
             <Link
-              href="/proyek/panduan"
+              href={`/proyek/${proyek.id}/ajukan`}
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 rounded-full bg-[#1F6F43] hover:bg-[#185935] text-white text-xs sm:text-sm font-semibold transition-all shadow-xs shrink-0 w-full sm:w-auto"
             >
               <span>Ajukan Usulan Proposal Baru</span>
@@ -884,6 +940,19 @@ export function ProjectTabs({
           </div>
         </div>
       )}
+
+      {/* Modal Sanggahan Resmi Sayembara Swakelola */}
+      <ModalSanggahan
+        isOpen={isSanggahanModalOpen}
+        onClose={() => setIsSanggahanModalOpen(false)}
+        proyekId={proyek.id}
+        proyekJudul={proyek.judul}
+        proposals={proyek.proposals.map((p) => ({
+          id: p.id,
+          namaKelompok: p.namaKelompok,
+        }))}
+        defaultProposalId={selectedProposalForSanggah}
+      />
     </div>
   );
 }
